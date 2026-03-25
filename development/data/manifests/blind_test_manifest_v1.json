@@ -1,0 +1,238 @@
+[
+  {
+    "product_id": "1010003676",
+    "product_name": "招商信诺爱享加倍（优选）",
+    "difficulty": "simple",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003676-招商信诺爱享加倍重大疾病保险（优选计划）-条款.pdf"
+      ],
+      "raw_rate": [],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/97-费率表招行补充/实习生处理文件/结果费率表/20-1010003676-结果费率表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1010003758",
+    "product_name": "招商信诺爱享加倍2024（优选）",
+    "difficulty": "simple",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "raw_rate",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/007-第三批交付阶段202410/01-条款文件/544-招商信诺爱享加倍2024重大疾病保险（优选计划）-条款.pdf"
+      ],
+      "raw_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/007-第三批交付阶段202410/02-费率表/00-费率表源文件/544-招商信诺爱享加倍2024重大疾病保险（优选计划）-费率表.xlsx"
+      ],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/007-第三批交付阶段202410/02-费率表/02-结果费率表/544-招商信诺爱享加倍2024重大疾病保险（优选计划）-费率解析结果表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1010003722",
+    "product_name": "金小葵少儿重疾（30年版）",
+    "difficulty": "medium",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "raw_rate",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/02-条款文件/330-金小葵·少儿重疾（30年版）-条款.pdf"
+      ],
+      "raw_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/03-费率表处理/01-费率源文件/330-金小葵·少儿重疾（30年版）-费率表.pdf"
+      ],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/03-费率表处理/04-结果费率表/330-金小葵·少儿重疾（30年版）-费率解析结果表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1010003723",
+    "product_name": "金小葵少儿重疾（保至25岁）",
+    "difficulty": "medium",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/02-条款文件/331-金小葵·少儿重疾（保至25岁）-条款.pdf"
+      ],
+      "raw_rate": [],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/03-费率表处理/04-结果费率表/331-金小葵·少儿重疾（保至25岁）-费率解析结果表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1310003720",
+    "product_name": "阳光人寿康瑞倍致龙腾版",
+    "difficulty": "medium",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "raw_rate",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/02-条款文件/301-阳光人寿康瑞倍致（龙腾版）重大疾病保险-条款.pdf"
+      ],
+      "raw_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/03-费率表处理/01-费率源文件/301-阳光人寿康瑞倍致（龙腾版）重大疾病保险-费率表.pdf"
+      ],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/03-费率表处理/04-结果费率表/301-阳光人寿康瑞倍致（龙腾版）重大疾病保险-费率中转表-费率解析结果表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1360003636",
+    "product_name": "倍佑一生（优享版）",
+    "difficulty": "complex",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "processed_rate",
+      "product_brochure"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/117-1360003636-倍佑一生（优享版）重大疾病保险-条款.pdf"
+      ],
+      "raw_rate": [],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/97-费率表招行补充/实习生处理文件/费率处理/结果费率表/117-1360003636-结果费率表.xlsx"
+      ],
+      "product_brochure": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/00-yyb拆解处理/yyb首批处理-庆丰老师复核部分/117-倍佑一生（优享版）重大疾病保险/47-倍佑一生（优享版）重大疾病保险-产品说明书.pdf"
+      ]
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1360003728",
+    "product_name": "守护一生重大疾病保险",
+    "difficulty": "complex",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "raw_rate",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/02-条款文件/394-守护一生重大疾病保险-条款.pdf"
+      ],
+      "raw_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/03-费率表处理/01-费率源文件/394-守护一生重大疾病保险-费率表.pdf"
+      ],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/006-第二批交付阶段202408/03-费率表处理/04-结果费率表/394-守护一生重大疾病保险-费率解析结果表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1530003621",
+    "product_name": "中信保诚臻享惠康B款",
+    "difficulty": "complex",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "processed_rate",
+      "product_brochure"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.pdf"
+      ],
+      "raw_rate": [],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/05-首批费率&现价补充20240625/140-中信保诚「臻享惠康」重大疾病保险B款-费率解析结果表.xlsx"
+      ],
+      "product_brochure": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/00-yyb拆解处理/yyb首批处理-庆丰老师复核部分/140-中信保诚「臻享惠康」重大疾病保险B款/52-中信保诚「臻享惠康」重大疾病保险B款-产品说明书.pdf"
+      ]
+    },
+    "notes": []
+  },
+  {
+    "product_id": "1010003677",
+    "product_name": "招商信诺爱享加倍（基础）",
+    "difficulty": "simple",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf"
+      ],
+      "raw_rate": [],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/97-费率表招行补充/实习生处理文件/结果费率表/20-1010003676-结果费率表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": [
+      "按业务确认，与 1010003676 属于同条款下不同计划拆成两个产品，首轮盲测允许共用处理后费率。"
+    ]
+  },
+  {
+    "product_id": "1010003851",
+    "product_name": "招商信诺真惠保（互联网）",
+    "difficulty": "medium",
+    "status": "ready",
+    "allowed_sources": [
+      "clause",
+      "raw_rate",
+      "processed_rate"
+    ],
+    "source_files": {
+      "clause": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/008-第四批交付阶段202412/01-条款文件/700-招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf"
+      ],
+      "raw_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/008-第四批交付阶段202412/02-费率表/00-费率表源文件/700-招商信诺真惠保重大疾病保险（互联网专属）-费率表.pdf"
+      ],
+      "processed_rate": [
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/008-第四批交付阶段202412/02-费率表/02-结果费率表/700-1-招商信诺真惠保重大疾病保险（互联网专属）-费率解析结果表.xlsx",
+        "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/008-第四批交付阶段202412/02-费率表/02-结果费率表/700-2-招商信诺真惠保重大疾病保险（互联网专属）-费率解析结果表.xlsx"
+      ],
+      "product_brochure": []
+    },
+    "notes": [
+      "当前清单中存在两份处理后费率，需在拆解结果中记录具体使用的文件。"
+    ]
+  }
+]

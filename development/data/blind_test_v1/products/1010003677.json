@@ -1,0 +1,212 @@
+{
+  "product_id": "1010003677",
+  "product_name": "招商信诺爱享加倍（基础）",
+  "difficulty": "simple",
+  "items": [
+    {
+      "coverage_name": "投保年龄",
+      "value": "0-59周岁",
+      "confidence": 0.98,
+      "status": "candidate_ready",
+      "source_type": "processed_rate",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/97-费率表招行补充/实习生处理文件/结果费率表/20-1010003676-结果费率表.xlsx",
+      "evidence": {
+        "summary": "投保年龄列最小=0，最大=59"
+      },
+      "extract_method": "processed_rate:distinct_age_range"
+    },
+    {
+      "coverage_name": "保险期间",
+      "value": "终身",
+      "confidence": 0.93,
+      "note": "rule: insurance_period_pattern",
+      "block_id": "1010003677_p6_b161",
+      "page": 6,
+      "evidence_text": "主合同的保险期间为终身，自主合同生效时起算，至被保险人身故时止。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p6_b161",
+        "page": 6,
+        "text": "主合同的保险期间为终身，自主合同生效时起算，至被保险人身故时止。"
+      },
+      "extract_method": "rule: insurance_period_pattern"
+    },
+    {
+      "coverage_name": "交费期间",
+      "value": "趸交，5年，10年，15年，20年，30年",
+      "confidence": 0.98,
+      "status": "candidate_ready",
+      "source_type": "processed_rate",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/97-费率表招行补充/实习生处理文件/结果费率表/20-1010003676-结果费率表.xlsx",
+      "evidence": {
+        "summary": "缴费期间去重值=['趸交', '5年', '10年', '15年', '20年', '30年']"
+      },
+      "extract_method": "processed_rate:distinct_pay_periods"
+    },
+    {
+      "coverage_name": "交费频率",
+      "value": "年交，半年交，季交，月交",
+      "confidence": 0.9,
+      "note": "rule: pay_frequency_pattern",
+      "block_id": "1010003677_p7_b219",
+      "page": 7,
+      "evidence_text": "23 保险费约定支付日：为本合同生效日之后每月、每季、每半年或者每年（根据本合同约定的交费方式确定）",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p7_b219",
+        "page": 7,
+        "text": "23 保险费约定支付日：为本合同生效日之后每月、每季、每半年或者每年（根据本合同约定的交费方式确定）"
+      },
+      "extract_method": "rule: pay_frequency_pattern"
+    },
+    {
+      "coverage_name": "等待期",
+      "value": "非意外90天，意外0天",
+      "confidence": 0.93,
+      "note": "rule: waiting_period_pattern",
+      "block_id": "1010003677_p2_b65",
+      "page": 2,
+      "evidence_text": "自主合同生效之日（及每次复效之日）起的 90 天内（含第 90 天）为主合同的等 待期。 如果被保险人在主合同等待期内确诊主合同约定的重大疾病1或者身故，我们不承 担给付保险金的责任，将向您退还主合同累计已支付的全部保险费，主合同效力 终止。如果被保险人在主合同等待期内确诊主合同约定的中症疾病2或主合同约定 的轻症疾病3，我们不承担给付保险金的责任，相应保险责任终止，主合同继续有 效。 被保险人因意外伤害4导致发生主合同所约定疾病或身故的，无等待期。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p2_b65",
+        "page": 2,
+        "text": "自主合同生效之日（及每次复效之日）起的 90 天内（含第 90 天）为主合同的等 待期。 如果被保险人在主合同等待期内确诊主合同约定的重大疾病1或者身故，我们不承 担给付保险金的责任，将向您退还主合同累计已支付的全部保险费，主合同效力 终止。如果被保险人在主合同等待期内确诊主合同约定的中症疾病2或主合同约定 的轻症疾病3，我们不承担给付保险金的责任，相应保险责任终止，主合同继续有 效。 被保险人因意外伤害4导致发生主合同所约定疾病或身故的，无等待期。"
+      },
+      "extract_method": "rule: waiting_period_pattern"
+    },
+    {
+      "coverage_name": "等待期（简化）",
+      "value": "90天",
+      "confidence": 0.93,
+      "note": "rule: waiting_period_simple",
+      "block_id": "1010003677_p2_b65",
+      "page": 2,
+      "evidence_text": "自主合同生效之日（及每次复效之日）起的 90 天内（含第 90 天）为主合同的等 待期。 如果被保险人在主合同等待期内确诊主合同约定的重大疾病1或者身故，我们不承 担给付保险金的责任，将向您退还主合同累计已支付的全部保险费，主合同效力 终止。如果被保险人在主合同等待期内确诊主合同约定的中症疾病2或主合同约定 的轻症疾病3，我们不承担给付保险金的责任，相应保险责任终止，主合同继续有 效。 被保险人因意外伤害4导致发生主合同所约定疾病或身故的，无等待期。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p2_b65",
+        "page": 2,
+        "text": "自主合同生效之日（及每次复效之日）起的 90 天内（含第 90 天）为主合同的等 待期。 如果被保险人在主合同等待期内确诊主合同约定的重大疾病1或者身故，我们不承 担给付保险金的责任，将向您退还主合同累计已支付的全部保险费，主合同效力 终止。如果被保险人在主合同等待期内确诊主合同约定的中症疾病2或主合同约定 的轻症疾病3，我们不承担给付保险金的责任，相应保险责任终止，主合同继续有 效。 被保险人因意外伤害4导致发生主合同所约定疾病或身故的，无等待期。"
+      },
+      "extract_method": "rule: waiting_period_simple"
+    },
+    {
+      "coverage_name": "宽限期",
+      "value": "60天",
+      "confidence": 0.94,
+      "note": "rule: grace_period_pattern",
+      "block_id": "1010003677_p10_b281",
+      "page": 10,
+      "evidence_text": "分期支付保险费的，您支付本合同首期保险费后，我们在保险费约定支付日仍未 收到本合同规定的保险费的，自保险费约定支付日起 60 天内为宽限期。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p10_b281",
+        "page": 10,
+        "text": "分期支付保险费的，您支付本合同首期保险费后，我们在保险费约定支付日仍未 收到本合同规定的保险费的，自保险费约定支付日起 60 天内为宽限期。"
+      },
+      "extract_method": "rule: grace_period_pattern"
+    },
+    {
+      "coverage_name": "犹豫期",
+      "value": "15天",
+      "confidence": 0.94,
+      "note": "rule: cooling_off_pattern",
+      "block_id": "1010003677_p10_b293",
+      "page": 10,
+      "evidence_text": "本合同自您签收之日起 15 天内为犹豫期。如果您在犹豫期内要求解除本合同，我 们将向您无息退还已支付的保险费，对于本合同解除前发生的保险事故我们不承 担给付保险金的责任。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p10_b293",
+        "page": 10,
+        "text": "本合同自您签收之日起 15 天内为犹豫期。如果您在犹豫期内要求解除本合同，我 们将向您无息退还已支付的保险费，对于本合同解除前发生的保险事故我们不承 担给付保险金的责任。"
+      },
+      "extract_method": "rule: cooling_off_pattern"
+    },
+    {
+      "coverage_name": "重疾赔付次数",
+      "value": "1次",
+      "confidence": 0.82,
+      "note": "rule: ci_pay_times",
+      "block_id": "1010003677_p3_b74",
+      "page": 3,
+      "evidence_text": "重大疾病保险金最多给付一次。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p3_b74",
+        "page": 3,
+        "text": "重大疾病保险金最多给付一次。"
+      },
+      "extract_method": "rule: ci_pay_times"
+    },
+    {
+      "coverage_name": "重疾分组",
+      "value": "不涉及",
+      "confidence": 0.9,
+      "note": "rule: ci_grouping_from_pay_times_single",
+      "block_id": "1010003677_p3_b74",
+      "page": 3,
+      "evidence_text": "重大疾病保险金最多给付一次。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p3_b74",
+        "page": 3,
+        "text": "重大疾病保险金最多给付一次。"
+      },
+      "extract_method": "rule: ci_grouping_from_pay_times_single"
+    },
+    {
+      "coverage_name": "重疾数量",
+      "value": "120种",
+      "confidence": 0.95,
+      "note": "rule: ci_count",
+      "block_id": "1010003677_p4_b94",
+      "page": 4,
+      "evidence_text": "我们提供保障的重大疾病共有120种，中症疾病共20种，轻症疾病共40种。主合同 约定的疾病定义于附表中载明，名称如下：",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.md",
+      "evidence": {
+        "block_id": "1010003677_p4_b94",
+        "page": 4,
+        "text": "我们提供保障的重大疾病共有120种，中症疾病共20种，轻症疾病共40种。主合同 约定的疾病定义于附表中载明，名称如下："
+      },
+      "extract_method": "rule: ci_count"
+    }
+  ],
+  "missing_core_fields": [],
+  "used_sources": {
+    "clause": [
+      "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/20-1010003677-招商信诺爱享加倍重大疾病保险（基础计划）-条款.pdf"
+    ],
+    "processed_rate": [
+      "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/97-费率表招行补充/实习生处理文件/结果费率表/20-1010003676-结果费率表.xlsx"
+    ],
+    "product_brochure": []
+  }
+}

@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1700" viewBox="0 0 1600 1700">
+  <defs>
+    <style>
+      .bg { fill: #f5f8fc; }
+      .card { fill: #ffffff; stroke: #d5dfeb; stroke-width: 2; rx: 24; }
+      .title { font: 700 34px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #12324f; }
+      .subtitle { font: 400 18px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #50657d; }
+      .section { font: 700 24px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #123a66; }
+      .label { font: 700 18px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #123a66; }
+      .text { font: 400 16px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #24384d; }
+      .small { font: 400 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #60758c; }
+      .top { fill: #e9f3ff; stroke: #9bc1ea; stroke-width: 2; rx: 18; }
+      .mid { fill: #e8f7ef; stroke: #95cfb1; stroke-width: 2; rx: 18; }
+      .low { fill: #fff3e2; stroke: #e3bb76; stroke-width: 2; rx: 18; }
+      .side { fill: #f1ecff; stroke: #b5a6ef; stroke-width: 2; rx: 18; }
+      .line { stroke: #4f86bf; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .soft { stroke: #8ea4bb; stroke-width: 2.5; fill: none; marker-end: url(#arrowSoft); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4f86bf"/>
+    </marker>
+    <marker id="arrowSoft" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8ea4bb"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="1700"/>
+
+  <text class="title" x="80" y="78">AIX 保险智能体业务能力架构图</text>
+  <text class="subtitle" x="80" y="112">面向非技术听众：重点说明“这个智能体能做什么、靠什么支撑、如何持续变强”。</text>
+
+  <rect class="card" x="60" y="150" width="1480" height="1480"/>
+
+  <text class="section" x="95" y="205">一、用户入口层</text>
+  <rect class="top" x="140" y="235" width="1320" height="100"/>
+  <text class="label" x="800" y="274" text-anchor="middle">保险智能体统一入口</text>
+  <text class="text" x="800" y="306" text-anchor="middle">用户通过文字、语音、图片与智能体交流，提出咨询、规划、推荐、保单分析等需求</text>
+
+  <text class="section" x="95" y="390">二、核心业务能力层</text>
+
+  <rect class="mid" x="120" y="430" width="410" height="210"/>
+  <text class="label" x="325" y="468" text-anchor="middle">需求理解能力</text>
+  <text class="text" x="150" y="510">- 识别用户想咨询什么、担心什么</text>
+  <text class="text" x="150" y="545">- 理解年龄、家庭结构、预算、健康情况</text>
+  <text class="text" x="150" y="580">- 形成结构化需求画像与需求报告</text>
+
+  <rect class="mid" x="595" y="430" width="410" height="210"/>
+  <text class="label" x="800" y="468" text-anchor="middle">规划与推荐能力</text>
+  <text class="text" x="625" y="510">- 根据需求筛选可用产品</text>
+  <text class="text" x="625" y="545">- 综合保障、预算、性价比进行评分</text>
+  <text class="text" x="625" y="580">- 输出 Top3 推荐结果与选择建议</text>
+
+  <rect class="mid" x="1070" y="430" width="410" height="210"/>
+  <text class="label" x="1275" y="468" text-anchor="middle">规划呈现能力</text>
+  <text class="text" x="1100" y="510">- 用卡片展示需求报告、产品对比、结论</text>
+  <text class="text" x="1100" y="545">- 支持填写信息规划与对话规划两条路径</text>
+  <text class="text" x="1100" y="580">- 让用户更容易理解推荐逻辑和风险提示</text>
+
+  <line class="line" x1="800" y1="335" x2="325" y2="430"/>
+  <line class="line" x1="800" y1="335" x2="800" y2="430"/>
+  <line class="line" x1="800" y1="335" x2="1275" y2="430"/>
+
+  <text class="section" x="95" y="700">三、关键支撑能力层</text>
+
+  <rect class="low" x="120" y="740" width="320" height="185"/>
+  <text class="label" x="280" y="778" text-anchor="middle">产品数据库能力</text>
+  <text class="text" x="150" y="818">- 产品基本信息</text>
+  <text class="text" x="150" y="850">- 责任项与病种覆盖</text>
+  <text class="text" x="150" y="882">- 费率与销售状态</text>
+  <text class="small" x="150" y="913">支撑产品检索和推荐结果</text>
+
+  <rect class="low" x="470" y="740" width="320" height="185"/>
+  <text class="label" x="630" y="778" text-anchor="middle">精算定价能力</text>
+  <text class="text" x="500" y="818">- 死亡率与重疾发生率</text>
+  <text class="text" x="500" y="850">- 公允保费测算</text>
+  <text class="text" x="500" y="882">- 性价比判断依据</text>
+  <text class="small" x="500" y="913">支撑公允保费和性价比判断</text>
+
+  <rect class="low" x="820" y="740" width="320" height="185"/>
+  <text class="label" x="980" y="778" text-anchor="middle">预算与规划能力</text>
+  <text class="text" x="850" y="818">- 当用户不给预算时主动估算</text>
+  <text class="text" x="850" y="850">- 给出预算优先分配建议</text>
+  <text class="text" x="850" y="882">- 支持家庭保障规划思路</text>
+  <text class="small" x="850" y="913">支撑预算估算和保障优先级建议</text>
+
+  <rect class="low" x="1170" y="740" width="320" height="185"/>
+  <text class="label" x="1330" y="778" text-anchor="middle">输入与交互能力</text>
+  <text class="text" x="1200" y="818">- 文字输入</text>
+  <text class="text" x="1200" y="850">- 语音输入</text>
+  <text class="text" x="1200" y="882">- 图片识别与理解</text>
+  <text class="small" x="1200" y="913">支撑多模态自然交互</text>
+
+  <line class="soft" x1="325" y1="640" x2="280" y2="740"/>
+  <line class="soft" x1="800" y1="640" x2="630" y2="740"/>
+  <line class="soft" x1="800" y1="640" x2="980" y2="740"/>
+  <line class="soft" x1="1275" y1="640" x2="1330" y2="740"/>
+
+  <text class="section" x="95" y="990">四、智能体三项基础能力</text>
+
+  <rect class="side" x="120" y="1030" width="410" height="240"/>
+  <text class="label" x="325" y="1068" text-anchor="middle">记忆能力</text>
+  <text class="text" x="150" y="1108">- 记住用户年龄、预算、家庭情况、健康信息</text>
+  <text class="text" x="150" y="1143">- 保留重点对话结论和历史推荐结果</text>
+  <text class="text" x="150" y="1178">- 后续对话不必每次从零开始</text>
+  <text class="small" x="150" y="1220">支撑持续服务和连续对话</text>
+
+  <rect class="side" x="595" y="1030" width="410" height="240"/>
+  <text class="label" x="800" y="1068" text-anchor="middle">规则能力</text>
+  <text class="text" x="625" y="1108">- 约束智能体只能在数据库和规则范围内行动</text>
+  <text class="text" x="625" y="1143">- 约束工具调用、推荐边界、风险披露方式</text>
+  <text class="text" x="625" y="1178">- 避免模型自由发挥、编造答案</text>
+  <text class="small" x="625" y="1220">支撑结果稳定、可信、可控</text>
+
+  <rect class="side" x="1070" y="1030" width="410" height="240"/>
+  <text class="label" x="1275" y="1068" text-anchor="middle">学习能力</text>
+  <text class="text" x="1100" y="1108">- 收集无法回答的问题和数据库缺口</text>
+  <text class="text" x="1100" y="1143">- 形成规则更新、产品补录、能力扩展任务</text>
+  <text class="text" x="1100" y="1178">- 支撑从一期重疾险逐步扩展到全险种</text>
+  <text class="small" x="1100" y="1220">支撑系统持续扩展和能力进化</text>
+
+  <line class="line" x1="280" y1="925" x2="325" y2="1030"/>
+  <line class="line" x1="630" y1="925" x2="800" y2="1030"/>
+  <line class="line" x1="980" y1="925" x2="1275" y2="1030"/>
+
+  <text class="section" x="95" y="1330">五、阶段化发展路径</text>
+
+  <rect class="top" x="140" y="1370" width="360" height="140"/>
+  <text class="label" x="320" y="1408" text-anchor="middle">一期</text>
+  <text class="text" x="170" y="1448">- 跑通重疾险主链路</text>
+  <text class="text" x="170" y="1478">- 验证对话、推荐、精算、卡片展示能力</text>
+
+  <rect class="top" x="620" y="1370" width="360" height="140"/>
+  <text class="label" x="800" y="1408" text-anchor="middle">二期</text>
+  <text class="text" x="650" y="1448">- 扩展寿险、医疗险等险种</text>
+  <text class="text" x="650" y="1478">- 深化 OCR、保单分析、跨险种规划</text>
+
+  <rect class="top" x="1100" y="1370" width="360" height="140"/>
+  <text class="label" x="1280" y="1408" text-anchor="middle">长期目标</text>
+  <text class="text" x="1130" y="1448">- 全能力保险智能体</text>
+  <text class="text" x="1130" y="1478">- 全险种、B 端开放、持续学习和迭代</text>
+
+  <line class="line" x1="500" y1="1440" x2="620" y2="1440"/>
+  <line class="line" x1="980" y1="1440" x2="1100" y2="1440"/>
+
+</svg>

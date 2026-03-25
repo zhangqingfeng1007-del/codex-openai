@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIX保险智能体 会议展示版</title>
+  <style>
+    :root {
+      --bg: #f3f7fb;
+      --panel: rgba(255, 255, 255, 0.92);
+      --ink: #0f2740;
+      --muted: #5b7085;
+      --line: #d6e0ea;
+      --blue: #dcecff;
+      --blue-strong: #2c6fbe;
+      --green: #dff5ea;
+      --green-strong: #2d8c66;
+      --sand: #fff2df;
+      --sand-strong: #b87317;
+      --violet: #eee7ff;
+      --violet-strong: #7054be;
+      --shadow: 0 18px 40px rgba(26, 58, 90, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(44, 111, 190, 0.12), transparent 26%),
+        radial-gradient(circle at top right, rgba(112, 84, 190, 0.10), transparent 24%),
+        linear-gradient(180deg, #f7fbff 0%, var(--bg) 100%);
+    }
+
+    .wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ffffff 0%, #eef5ff 55%, #f8fbff 100%);
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      padding: 42px 44px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -30px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(44, 111, 190, 0.12), rgba(44, 111, 190, 0));
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: var(--blue-strong);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      font-size: 42px;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 960px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .hero-grid {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px 20px;
+    }
+
+    .hero-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .hero-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .section {
+      margin-top: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin: 0 0 18px;
+      font-size: 28px;
+    }
+
+    .section-note {
+      margin: -4px 0 22px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      border-radius: 24px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .card.blue { background: linear-gradient(180deg, #f5faff 0%, #eef6ff 100%); }
+    .card.green { background: linear-gradient(180deg, #f4fcf8 0%, #ebf8f1 100%); }
+    .card.sand { background: linear-gradient(180deg, #fffaf1 0%, #fff4e4 100%); }
+    .card.violet { background: linear-gradient(180deg, #faf8ff 0%, #f3efff 100%); }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .card p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .mini {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mini.blue { background: var(--blue); color: var(--blue-strong); }
+    .mini.green { background: var(--green); color: var(--green-strong); }
+    .mini.sand { background: var(--sand); color: var(--sand-strong); }
+    .mini.violet { background: var(--violet); color: var(--violet-strong); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .step {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      position: relative;
+      min-height: 148px;
+    }
+
+    .step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--blue-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 17px;
+    }
+
+    .step span {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      display: block;
+    }
+
+    .layer-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .layer {
+      border-radius: 24px;
+      padding: 20px 22px;
+      border: 1px solid var(--line);
+      background: white;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .layer-label {
+      font-size: 18px;
+      font-weight: 700;
+      padding: 14px 16px;
+      border-radius: 18px;
+    }
+
+    .layer-label.blue { background: var(--blue); color: var(--blue-strong); }
+    .layer-label.green { background: var(--green); color: var(--green-strong); }
+    .layer-label.sand { background: var(--sand); color: var(--sand-strong); }
+    .layer-label.violet { background: var(--violet); color: var(--violet-strong); }
+
+    .layer-content {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .tile {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .tile h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .tile p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .phase {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px;
+      position: relative;
+    }
+
+    .phase .tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--blue);
+      color: var(--blue-strong);
+    }
+
+    .phase h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .phase p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-grid, .grid-3, .grid-4, .flow, .timeline, .layer-content {
+        grid-template-columns: 1fr;
+      }
+      .layer {
+        grid-template-columns: 1fr;
+      }
+      .step:not(:last-child)::after {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">会议展示版 · 2026-03-23</div>
+      <h1>AIX 保险智能体<br />正式版会议展示材料</h1>
+      <p class="subtitle">
+        这份材料基于已确认通过的 v4.1 正式文档整理，适合会议讲解、投屏汇报和团队统一认知。
+        核心目标是让参会者快速看懂：我们到底要做什么、一期做到哪里、系统为什么会持续变强。
+      </p>
+      <div class="hero-grid">
+        <div class="hero-card">
+          <h3>最终目标</h3>
+          <p>建设全能力保险智能体，覆盖重疾险、医疗险、寿险、增额终身寿、分红险等全险种，并逐步支持 B 端使用场景。</p>
+        </div>
+        <div class="hero-card">
+          <h3>当前阶段</h3>
+          <p>一期先跑通重疾险主链路，验证对话、需求分析、产品推荐、精算定价、卡片展示和移动端体验。</p>
+        </div>
+        <div class="hero-card">
+          <h3>核心区别</h3>
+          <p>这不是普通问答机器人，而是具备记忆能力、规则能力、学习能力的持续服务型保险智能体。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>一、系统整体定位</h2>
+      <p class="section-note">系统采用“长期目标完整、当前范围克制、后续路径清晰”的设计方式。一期只做重疾险跑通，但架构从一开始就为全险种扩展预留空间。</p>
+      <div class="timeline">
+        <div class="phase">
+          <div class="tag">一期</div>
+          <h3>重疾险主链路跑通</h3>
+          <p>验证智能体从用户输入、需求分析、预算估算、产品筛选、7 维评分、精算定价到卡片结果展示的完整闭环。</p>
+        </div>
+        <div class="phase">
+          <div class="tag">二期</div>
+          <h3>扩展险种与能力</h3>
+          <p>逐步扩展寿险、增额终身寿、分红险、百万医疗险，并深化保单 OCR、体检分析、跨险种规划能力。</p>
+        </div>
+        <div class="phase">
+          <div class="tag">长期</div>
+          <h3>全能力保险智能体</h3>
+          <p>形成全险种、持续学习、规则可控、支持 B 端和更高并发的保险智能体平台。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>二、用户侧业务主链路</h2>
+      <p class="section-note">从用户视角看，系统不是“先选模块”，而是“先开始对话”，再由智能体引导进入规划和推荐流程。</p>
+      <div class="flow">
+        <div class="step">
+          <strong>1. 用户进入系统</strong>
+          <span>通过文字、语音、图片等方式提出保险问题、保障规划需求或保单分析需求。</span>
+        </div>
+        <div class="step">
+          <strong>2. 智能体理解需求</strong>
+          <span>识别用户年龄、家庭结构、预算、健康情况、核心顾虑，形成结构化画像。</span>
+        </div>
+        <div class="step">
+          <strong>3. 系统分析与测算</strong>
+          <span>结合规则、产品库、预算逻辑和精算能力，筛选可推荐产品并进行评分排序。</span>
+        </div>
+        <div class="step">
+          <strong>4. 输出推荐结果</strong>
+          <span>通过需求报告卡、推荐卡、对比卡、结论卡、风险卡等方式展示结果。</span>
+        </div>
+        <div class="step">
+          <strong>5. 沉淀记忆与反馈</strong>
+          <span>保存关键用户信息与阶段性结论，对无法覆盖的问题进入反馈闭环，为后续升级提供依据。</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>三、业务能力架构</h2>
+      <p class="section-note">系统的业务能力分为前台交互能力、核心决策能力、支撑能力和持续进化能力四层。</p>
+      <div class="layer-stack">
+        <div class="layer">
+          <div class="layer-label blue">前台交互层</div>
+          <div class="layer-content">
+            <div class="tile">
+              <h4>统一对话入口</h4>
+              <p>首页以自然对话为核心入口，避免传统工具式多模块跳转。</p>
+            </div>
+            <div class="tile">
+              <h4>双路径规划</h4>
+              <p>支持“填写信息规划”和“对话规划”两条路径，但底层共用同一套规划 schema。</p>
+            </div>
+            <div class="tile">
+              <h4>多模态输入</h4>
+              <p>支持文字、语音、图片输入，降低用户进入系统的门槛。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label green">核心决策层</div>
+          <div class="layer-content">
+            <div class="tile">
+              <h4>需求分析能力</h4>
+              <p>将用户表达转化为结构化需求画像与需求报告。</p>
+            </div>
+            <div class="tile">
+              <h4>推荐与评分能力</h4>
+              <p>从产品库中筛选候选产品，并基于 7 维评分和精算结果输出 Top3。</p>
+            </div>
+            <div class="tile">
+              <h4>预算规划能力</h4>
+              <p>用户不给预算时主动估算，并给出人员优先级和保障优先级建议。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label sand">数据与模型支撑层</div>
+          <div class="layer-content">
+            <div class="tile">
+              <h4>产品主数据</h4>
+              <p>`my_ensure` 库承担产品主数据，包括产品信息、病种覆盖和费率等核心表。</p>
+            </div>
+            <div class="tile">
+              <h4>业务与精算数据</h4>
+              <p>`aix_engine` 库承担会话、记忆、精算参数等业务运行数据。</p>
+            </div>
+            <div class="tile">
+              <h4>精算定价能力</h4>
+              <p>通过精算服务完成公允保费测算，为性价比判断提供价格依据。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="layer">
+          <div class="layer-label violet">持续进化层</div>
+          <div class="layer-content">
+            <div class="tile">
+              <h4>记忆能力</h4>
+              <p>持续记忆用户画像、历史结论和重点风险提示，支撑跨会话连续服务。</p>
+            </div>
+            <div class="tile">
+              <h4>规则能力</h4>
+              <p>通过系统提示词、规则文件和结构化约束，保证结果稳定、可信、可控。</p>
+            </div>
+            <div class="tile">
+              <h4>学习能力</h4>
+              <p>通过问题反馈、数据补录和规则修订，让系统从一期能力持续走向全险种能力。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>四、三项基础能力原则</h2>
+      <p class="section-note">这三项能力不是附属优化项，而是智能体长期可用、可信和可扩展的基础设施。</p>
+      <div class="grid-3">
+        <div class="card blue">
+          <div class="mini blue">记忆能力</div>
+          <h3>让系统持续理解同一个用户</h3>
+          <p>系统能够记住年龄、家庭、预算、健康情况、已有保险、历史结论等关键信息，避免每一轮都从零开始。</p>
+          <p>对应落点：`memory_store.py`、`update_core_memory`、`save_recall_summary`。</p>
+        </div>
+        <div class="card green">
+          <div class="mini green">规则能力</div>
+          <h3>让系统稳定、可信、可控地行动</h3>
+          <p>系统必须按规则行动，不能在数据缺失时用通用知识编造产品事实或保费。</p>
+          <p>对应落点：`chat_engine.py`、`app/rules/`、结构化约束链路。</p>
+        </div>
+        <div class="card violet">
+          <div class="mini violet">学习能力</div>
+          <h3>让系统随着问题积累不断扩展边界</h3>
+          <p>系统通过 `report_issue` 收集无法回答的问题和数据库缺口，再转化为补录、修规、扩展任务。</p>
+          <p>对应落点：问题反馈工具、问题台账、规则更新和数据治理流程。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>五、当前可交付成果与下一步重点</h2>
+      <p class="section-note">会议上最需要统一的，是“什么已经具备、什么还必须收口、什么属于二期”。</p>
+      <div class="grid-4">
+        <div class="card blue">
+          <div class="mini blue">已完成</div>
+          <h3>入口与交互</h3>
+          <p>ChatPage 欢迎态与对话态双布局已经明确；首页自然问题式快捷建议已经收口。</p>
+        </div>
+        <div class="card green">
+          <div class="mini green">已完成</div>
+          <h3>推荐链路</h3>
+          <p>需求报告卡、推荐卡片组、SSE 事件流、预算分配链路和 AI 工具链路已经定义清楚。</p>
+        </div>
+        <div class="card sand">
+          <div class="mini sand">必须完成</div>
+          <h3>一期闭环</h3>
+          <p>精算数据导入、全链路 E2E 验收、语音/图片链路回归、移动端验证仍是当前必须收口项。</p>
+        </div>
+        <div class="card violet">
+          <div class="mini violet">二期准备</div>
+          <h3>后续扩展</h3>
+          <p>寿险、医疗险、保单 OCR 深化、B 端接口、跨险种预算分配都已经有明确扩展方向。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      文件生成路径：/Users/zqf-openclaw/codex-openai/会议材料/AIX保险智能体_会议展示版_20260323.html
+    </div>
+  </div>
+</body>
+</html>

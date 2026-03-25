@@ -1,0 +1,141 @@
+:root {
+  --bg: #f4efe6;
+  --panel: rgba(255, 252, 247, 0.9);
+  --ink: #213547;
+  --accent: #d06a37;
+  --accent-deep: #9d4420;
+  --line: rgba(33, 53, 71, 0.1);
+  --shadow: 0 20px 45px rgba(70, 42, 22, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "PingFang SC", "Helvetica Neue", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top, rgba(255, 215, 167, 0.45), transparent 28%),
+    linear-gradient(180deg, #f7f1e7 0%, #f1e7d7 100%);
+}
+
+.app-shell {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.hero-card,
+.panel {
+  background: var(--panel);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent-deep);
+  font-size: 12px;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+.hero-copy,
+.summary-box,
+.model-card p {
+  line-height: 1.6;
+}
+
+.field,
+.uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.field input,
+.uploader {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  background: #fffdfa;
+}
+
+.uploader input {
+  margin-bottom: 10px;
+}
+
+.preview {
+  width: 100%;
+  border-radius: 20px;
+  margin: 6px 0 14px;
+  box-shadow: var(--shadow);
+}
+
+.primary-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+}
+
+.result-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.summary-box,
+.model-card,
+.feedback-item {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: white;
+}
+
+.summary-box,
+.model-card {
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.feedback-item {
+  padding: 12px;
+  margin-top: 10px;
+  background: #fffaf4;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    padding-top: 40px;
+  }
+
+  .hero-card,
+  .panel {
+    padding: 28px;
+  }
+}

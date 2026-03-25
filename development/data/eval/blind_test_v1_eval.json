@@ -1,0 +1,766 @@
+{
+  "evaluated_at": "2026-03-25T15:09:26",
+  "product_count": 10,
+  "field_count": 10,
+  "results_by_field": {
+    "投保年龄": {
+      "hit": 2,
+      "mismatch": 8,
+      "miss": 0,
+      "details": [
+        {
+          "product_id": "1310003720",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1530003621",
+          "status": "hit",
+          "source_type": "processed_rate"
+        }
+      ],
+      "hit_rate": 0.2
+    },
+    "保险期间": {
+      "hit": 8,
+      "mismatch": 2,
+      "miss": 0,
+      "details": [
+        {
+          "product_id": "1010003676",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003677",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003758",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1310003720",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1360003636",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1360003728",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1530003621",
+          "status": "hit",
+          "source_type": "processed_rate"
+        }
+      ],
+      "hit_rate": 0.8
+    },
+    "交费期间": {
+      "hit": 0,
+      "mismatch": 9,
+      "miss": 1,
+      "details": [],
+      "hit_rate": 0.0
+    },
+    "交费频率": {
+      "hit": 3,
+      "mismatch": 7,
+      "miss": 0,
+      "details": [
+        {
+          "product_id": "1010003722",
+          "status": "hit",
+          "source_type": "processed_rate"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "processed_rate"
+        },
+        {
+          "product_id": "1360003636",
+          "status": "hit",
+          "source_type": "clause"
+        }
+      ],
+      "hit_rate": 0.3
+    },
+    "等待期": {
+      "hit": 8,
+      "mismatch": 2,
+      "miss": 0,
+      "details": [
+        {
+          "product_id": "1010003676",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003677",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003722",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003758",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003851",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1310003720",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1530003621",
+          "status": "hit",
+          "source_type": "clause"
+        }
+      ],
+      "hit_rate": 0.8
+    },
+    "宽限期": {
+      "hit": 9,
+      "mismatch": 0,
+      "miss": 1,
+      "details": [
+        {
+          "product_id": "1010003676",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003677",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003722",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003758",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003851",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1310003720",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1360003636",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1360003728",
+          "status": "hit",
+          "source_type": "clause"
+        }
+      ],
+      "hit_rate": 0.9
+    },
+    "犹豫期": {
+      "hit": 10,
+      "mismatch": 0,
+      "miss": 0,
+      "details": [
+        {
+          "product_id": "1010003676",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003677",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003722",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003758",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003851",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1310003720",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1360003636",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1360003728",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1530003621",
+          "status": "hit",
+          "source_type": "clause"
+        }
+      ],
+      "hit_rate": 1.0
+    },
+    "重疾赔付次数": {
+      "hit": 6,
+      "mismatch": 3,
+      "miss": 1,
+      "details": [
+        {
+          "product_id": "1010003676",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003677",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003722",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003758",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1310003720",
+          "status": "hit",
+          "source_type": "clause"
+        }
+      ],
+      "hit_rate": 0.6
+    },
+    "重疾分组": {
+      "hit": 6,
+      "mismatch": 3,
+      "miss": 1,
+      "details": [
+        {
+          "product_id": "1010003676",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003677",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003722",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003758",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1310003720",
+          "status": "hit",
+          "source_type": "clause"
+        }
+      ],
+      "hit_rate": 0.6
+    },
+    "重疾数量": {
+      "hit": 6,
+      "mismatch": 1,
+      "miss": 3,
+      "details": [
+        {
+          "product_id": "1010003676",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003677",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003722",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003723",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003758",
+          "status": "hit",
+          "source_type": "clause"
+        },
+        {
+          "product_id": "1010003851",
+          "status": "hit",
+          "source_type": "clause"
+        }
+      ],
+      "hit_rate": 0.6
+    }
+  },
+  "results_by_product": {
+    "1010003676": {
+      "hit": 7,
+      "mismatch": 3,
+      "miss": 0
+    },
+    "1010003677": {
+      "hit": 7,
+      "mismatch": 3,
+      "miss": 0
+    },
+    "1010003722": {
+      "hit": 7,
+      "mismatch": 3,
+      "miss": 0
+    },
+    "1010003723": {
+      "hit": 8,
+      "mismatch": 2,
+      "miss": 0
+    },
+    "1010003758": {
+      "hit": 7,
+      "mismatch": 3,
+      "miss": 0
+    },
+    "1010003851": {
+      "hit": 4,
+      "mismatch": 6,
+      "miss": 0
+    },
+    "1310003720": {
+      "hit": 7,
+      "mismatch": 2,
+      "miss": 1
+    },
+    "1360003636": {
+      "hit": 4,
+      "mismatch": 5,
+      "miss": 1
+    },
+    "1360003728": {
+      "hit": 3,
+      "mismatch": 6,
+      "miss": 1
+    },
+    "1530003621": {
+      "hit": 4,
+      "mismatch": 2,
+      "miss": 4
+    }
+  },
+  "mismatch_detail": [
+    {
+      "product_id": "1010003676",
+      "coverage_name": "投保年龄",
+      "candidate": "0-59周岁",
+      "gold": "0（28天）-59周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003676",
+      "coverage_name": "交费期间",
+      "candidate": "趸交，5年，10年，15年，20年，30年",
+      "gold": "趸交，5/10/15/20/30年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003676",
+      "coverage_name": "交费频率",
+      "candidate": "年交，半年交，季交，月交",
+      "gold": "趸交，年交",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003677",
+      "coverage_name": "投保年龄",
+      "candidate": "0-59周岁",
+      "gold": "0（28天）-60周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003677",
+      "coverage_name": "交费期间",
+      "candidate": "趸交，5年，10年，15年，20年，30年",
+      "gold": "趸交，5/10/15/20/30年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003677",
+      "coverage_name": "交费频率",
+      "candidate": "年交，半年交，季交，月交",
+      "gold": "趸交，年交",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003722",
+      "coverage_name": "投保年龄",
+      "candidate": "0-17周岁",
+      "gold": "0（28天）-17周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003722",
+      "coverage_name": "保险期间",
+      "candidate": "至25周岁",
+      "gold": "30年",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003722",
+      "coverage_name": "交费期间",
+      "candidate": "10年，20年，30年",
+      "gold": "10/20/30年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003723",
+      "coverage_name": "投保年龄",
+      "candidate": "0-15周岁",
+      "gold": "0（28天）-15周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003723",
+      "coverage_name": "交费期间",
+      "candidate": "至25周岁",
+      "gold": "交至25周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003758",
+      "coverage_name": "投保年龄",
+      "candidate": "0-59周岁",
+      "gold": "0（28天）-59周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003758",
+      "coverage_name": "交费期间",
+      "candidate": "趸交，5年，10年，15年，20年，30年",
+      "gold": "趸交，5/10/15/20/30年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003758",
+      "coverage_name": "交费频率",
+      "candidate": "趸交，年交",
+      "gold": "趸交，年交，月交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003851",
+      "coverage_name": "投保年龄",
+      "candidate": "0-65周岁",
+      "gold": "0（28天）-65周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003851",
+      "coverage_name": "保险期间",
+      "candidate": "10年，20年，30年",
+      "gold": "10/20/30年",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003851",
+      "coverage_name": "交费期间",
+      "candidate": "10年，20年，30年",
+      "gold": "10/20/30年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003851",
+      "coverage_name": "交费频率",
+      "candidate": "年交",
+      "gold": "年交，月交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003851",
+      "coverage_name": "重疾赔付次数",
+      "candidate": "1次",
+      "gold": "2次",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1010003851",
+      "coverage_name": "重疾分组",
+      "candidate": "不涉及",
+      "gold": "不分组",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1310003720",
+      "coverage_name": "交费期间",
+      "candidate": null,
+      "gold": "趸交，5/10/15/20年交",
+      "source_type": null,
+      "status": "miss"
+    },
+    {
+      "product_id": "1310003720",
+      "coverage_name": "交费频率",
+      "candidate": "年交，月交",
+      "gold": "趸交，年交，月交",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1310003720",
+      "coverage_name": "重疾数量",
+      "candidate": "28种",
+      "gold": "120种",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003636",
+      "coverage_name": "投保年龄",
+      "candidate": "0-55周岁",
+      "gold": "0（30天）-55周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003636",
+      "coverage_name": "交费期间",
+      "candidate": "10年，20年，30年",
+      "gold": "10/20/30年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003636",
+      "coverage_name": "等待期",
+      "candidate": "90天",
+      "gold": "非意外90天，意外0天",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003636",
+      "coverage_name": "重疾赔付次数",
+      "candidate": "1次",
+      "gold": "5次",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003636",
+      "coverage_name": "重疾分组",
+      "candidate": "不涉及",
+      "gold": "5组",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003636",
+      "coverage_name": "重疾数量",
+      "candidate": null,
+      "gold": "105种",
+      "source_type": null,
+      "status": "miss"
+    },
+    {
+      "product_id": "1360003728",
+      "coverage_name": "投保年龄",
+      "candidate": "0-55周岁",
+      "gold": "0（30天）-55周岁",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003728",
+      "coverage_name": "交费期间",
+      "candidate": "10年，20年，30年",
+      "gold": "10/20/30年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003728",
+      "coverage_name": "交费频率",
+      "candidate": "年交",
+      "gold": "年交，半年交，季交，月交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003728",
+      "coverage_name": "等待期",
+      "candidate": "90天",
+      "gold": "非意外90天，意外0天",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003728",
+      "coverage_name": "重疾赔付次数",
+      "candidate": "1次",
+      "gold": "5次",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003728",
+      "coverage_name": "重疾分组",
+      "candidate": "不涉及",
+      "gold": "5组",
+      "source_type": "clause",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1360003728",
+      "coverage_name": "重疾数量",
+      "candidate": null,
+      "gold": "105种",
+      "source_type": null,
+      "status": "miss"
+    },
+    {
+      "product_id": "1530003621",
+      "coverage_name": "交费期间",
+      "candidate": "趸交，5年，10年，14年，19年，24年，29年",
+      "gold": "趸交，5/10/14/19/24/29年交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1530003621",
+      "coverage_name": "交费频率",
+      "candidate": "趸交，年交，月交",
+      "gold": "趸交，年交，半年交，季交，月交",
+      "source_type": "processed_rate",
+      "status": "mismatch"
+    },
+    {
+      "product_id": "1530003621",
+      "coverage_name": "宽限期",
+      "candidate": null,
+      "gold": "60天",
+      "source_type": null,
+      "status": "miss"
+    },
+    {
+      "product_id": "1530003621",
+      "coverage_name": "重疾赔付次数",
+      "candidate": null,
+      "gold": "重大疾病1次；少儿重大疾病1次",
+      "source_type": null,
+      "status": "miss"
+    },
+    {
+      "product_id": "1530003621",
+      "coverage_name": "重疾分组",
+      "candidate": null,
+      "gold": "不涉及",
+      "source_type": null,
+      "status": "miss"
+    },
+    {
+      "product_id": "1530003621",
+      "coverage_name": "重疾数量",
+      "candidate": null,
+      "gold": "120种重大疾病；20种少儿重大疾病",
+      "source_type": null,
+      "status": "miss"
+    }
+  ]
+}

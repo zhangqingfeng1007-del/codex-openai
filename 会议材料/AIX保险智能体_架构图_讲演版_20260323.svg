@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2100" viewBox="0 0 1600 2100">
+  <defs>
+    <style>
+      .bg { fill: #f4f7fb; }
+      .title { font: 700 34px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #10243e; }
+      .subtitle { font: 400 18px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #4a607a; }
+      .section { fill: #ffffff; stroke: #d7e1ec; stroke-width: 2; rx: 24; }
+      .sectionTitle { font: 700 24px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #113a67; }
+      .label { font: 700 18px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #113a67; }
+      .text { font: 400 16px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #20354d; }
+      .small { font: 400 14px 'PingFang SC', 'Microsoft YaHei', sans-serif; fill: #52667d; }
+      .chip { fill: #e9f3ff; stroke: #9ec5ef; stroke-width: 1.5; rx: 12; }
+      .blue { fill: #d9ebff; stroke: #7fb0e4; stroke-width: 2; rx: 18; }
+      .green { fill: #dff6ec; stroke: #7fc8a6; stroke-width: 2; rx: 18; }
+      .orange { fill: #fff1dc; stroke: #e7b86b; stroke-width: 2; rx: 18; }
+      .violet { fill: #ece7ff; stroke: #af9de8; stroke-width: 2; rx: 18; }
+      .gray { fill: #eef2f7; stroke: #c6d1dd; stroke-width: 2; rx: 18; }
+      .tableHead { fill: #edf5ff; }
+      .tableLine { stroke: #d7e1ec; stroke-width: 1.5; }
+      .arrow { stroke: #3d7fc1; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .softArrow { stroke: #7a92ab; stroke-width: 2.5; fill: none; marker-end: url(#arrowheadSoft); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3d7fc1"/>
+    </marker>
+    <marker id="arrowheadSoft" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7a92ab"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="2100"/>
+
+  <text class="title" x="80" y="78">AIX 保险智能体架构图讲演版</text>
+  <text class="subtitle" x="80" y="112">依据 v4.1 文档第 2.1、2.2、2.3 节重排。适合会议讲演，突出系统分层、对话链路和模块职责。</text>
+
+  <rect class="section" x="60" y="150" width="1480" height="790"/>
+  <text class="sectionTitle" x="90" y="200">一、系统架构总览</text>
+
+  <rect class="gray" x="520" y="225" width="560" height="76"/>
+  <text class="label" x="760" y="255" text-anchor="middle">用户入口</text>
+  <text class="text" x="800" y="285" text-anchor="middle">浏览器端：文字输入 / 语音输入（ASR）/ 图片上传</text>
+
+  <rect class="gray" x="430" y="335" width="740" height="80"/>
+  <text class="label" x="800" y="368" text-anchor="middle">接入层</text>
+  <text class="text" x="800" y="397" text-anchor="middle">Nginx 反向代理：/api → BFF，/health → BFF，其余 → 前端静态资源</text>
+
+  <line class="arrow" x1="800" y1="301" x2="800" y2="335"/>
+
+  <rect class="blue" x="95" y="470" width="430" height="320"/>
+  <text class="label" x="310" y="505" text-anchor="middle">前端 React SPA（Vite）</text>
+  <rect class="tableHead" x="125" y="530" width="370" height="42" rx="12"/>
+  <text class="label" x="160" y="557">核心界面</text>
+  <line class="tableLine" x1="125" y1="582" x2="495" y2="582"/>
+  <text class="text" x="145" y="615">ChatPage：欢迎态 / 对话态</text>
+  <text class="text" x="145" y="650">NeedsReportCard / ProductRecommendCard / RouteCard</text>
+  <text class="text" x="145" y="685">AIX 测算引擎 Module1~7：基本信息 → 财务 → 需求 → 结果</text>
+  <text class="text" x="145" y="720">Zustand store：页面状态、会话状态、持久化数据</text>
+  <text class="small" x="145" y="760">演讲提示：前端不是单页面静态壳，而是“对话入口 + 测算引擎”双形态承载层。</text>
+
+  <rect class="green" x="585" y="470" width="430" height="320"/>
+  <text class="label" x="800" y="505" text-anchor="middle">BFF Node.js Express :3001</text>
+  <rect class="tableHead" x="615" y="530" width="370" height="42" rx="12"/>
+  <text class="label" x="650" y="557">职责与接口</text>
+  <line class="tableLine" x1="615" y1="582" x2="985" y2="582"/>
+  <text class="text" x="635" y="615">POST /api/chat/stream → 代理 AI SSE</text>
+  <text class="text" x="635" y="650">GET /api/asr/token → 阿里云 NLS Token</text>
+  <text class="text" x="635" y="685">/api/actuarial/* → 精算服务代理</text>
+  <text class="text" x="635" y="720">鉴权、加密、会话管理、客户档案、管理后台 API</text>
+  <text class="small" x="635" y="760">演讲提示：BFF 负责把前端调用整成可控接口，不让前端直接接所有后端。</text>
+
+  <rect class="orange" x="1075" y="470" width="430" height="320"/>
+  <text class="label" x="1290" y="505" text-anchor="middle">AI 服务 FastAPI :8000</text>
+  <rect class="tableHead" x="1105" y="530" width="370" height="42" rx="12"/>
+  <text class="label" x="1140" y="557">核心服务链</text>
+  <line class="tableLine" x1="1105" y1="582" x2="1475" y2="582"/>
+  <text class="text" x="1125" y="615">chat.py：SSE 对话编排</text>
+  <text class="text" x="1125" y="650">chat_engine.py：Kimi 提示词 + 6 个工具</text>
+  <text class="text" x="1125" y="685">needs_analysis.py：需求报告 + 预算测算</text>
+  <text class="text" x="1125" y="720">product_scorer.py / memory_store.py</text>
+  <text class="small" x="1125" y="760">演讲提示：AI 服务是核心业务编排层，不只是简单调用模型。</text>
+
+  <line class="arrow" x1="800" y1="415" x2="310" y2="470"/>
+  <line class="arrow" x1="800" y1="415" x2="800" y2="470"/>
+  <line class="arrow" x1="800" y1="415" x2="1290" y2="470"/>
+
+  <rect class="violet" x="380" y="825" width="390" height="90"/>
+  <text class="label" x="575" y="858" text-anchor="middle">精算服务 Java Spring :8080</text>
+  <text class="text" x="575" y="889" text-anchor="middle">PricingController / ActuarialPricingEngine / PVFB-GP / fairPremium</text>
+
+  <rect class="gray" x="830" y="825" width="390" height="90"/>
+  <text class="label" x="1025" y="858" text-anchor="middle">MySQL 8.0</text>
+  <text class="text" x="1025" y="889" text-anchor="middle">产品库、会话、核心记忆、精算配置、死亡率表、重疾发生率表</text>
+
+  <line class="arrow" x1="1290" y1="790" x2="575" y2="825"/>
+  <line class="arrow" x1="1290" y1="790" x2="1025" y2="825"/>
+  <line class="softArrow" x1="310" y1="790" x2="800" y2="825"/>
+  <line class="softArrow" x1="800" y1="790" x2="800" y2="825"/>
+
+  <rect class="section" x="60" y="980" width="1480" height="470"/>
+  <text class="sectionTitle" x="90" y="1030">二、核心对话链路（SSE 全事件流）</text>
+
+  <rect class="chip" x="100" y="1075" width="190" height="44"/>
+  <text class="label" x="195" y="1104" text-anchor="middle">1. 用户发送消息</text>
+  <rect class="chip" x="330" y="1075" width="230" height="44"/>
+  <text class="label" x="445" y="1104" text-anchor="middle">2. BFF 调用 /api/chat/stream</text>
+  <rect class="chip" x="600" y="1075" width="240" height="44"/>
+  <text class="label" x="720" y="1104" text-anchor="middle">3. AI 服务 chat.py 编排</text>
+  <rect class="chip" x="880" y="1075" width="250" height="44"/>
+  <text class="label" x="1005" y="1104" text-anchor="middle">4. Kimi Function Calling</text>
+  <rect class="chip" x="1170" y="1075" width="270" height="44"/>
+  <text class="label" x="1305" y="1104" text-anchor="middle">5. SSE 事件持续回推前端</text>
+
+  <line class="arrow" x1="290" y1="1097" x2="330" y2="1097"/>
+  <line class="arrow" x1="560" y1="1097" x2="600" y2="1097"/>
+  <line class="arrow" x1="840" y1="1097" x2="880" y2="1097"/>
+  <line class="arrow" x1="1130" y1="1097" x2="1170" y2="1097"/>
+
+  <rect class="blue" x="110" y="1160" width="660" height="240"/>
+  <text class="label" x="150" y="1195">SSE 事件表</text>
+  <line class="tableLine" x1="110" y1="1215" x2="770" y2="1215"/>
+  <line class="tableLine" x1="240" y1="1160" x2="240" y2="1400"/>
+  <line class="tableLine" x1="540" y1="1160" x2="540" y2="1400"/>
+  <rect class="tableHead" x="110" y="1160" width="660" height="55" rx="14"/>
+  <text class="label" x="175" y="1195">事件</text>
+  <text class="label" x="390" y="1195">作用</text>
+  <text class="label" x="655" y="1195">前端表现</text>
+  <text class="text" x="135" y="1255">chunk</text>
+  <text class="text" x="260" y="1255">流式文本片段</text>
+  <text class="text" x="560" y="1255">逐字渲染回复</text>
+  <text class="text" x="135" y="1295">options</text>
+  <text class="text" x="260" y="1295">普通多选项</text>
+  <text class="text" x="560" y="1295">用户快捷选择</text>
+  <text class="text" x="135" y="1335">route_options</text>
+  <text class="text" x="260" y="1335">规划分流：填写信息 / 对话规划</text>
+  <text class="text" x="560" y="1335">显示路由卡</text>
+  <text class="text" x="135" y="1375">needs_report / product_recommendations / done / error</text>
+  <text class="text" x="560" y="1375">报告卡、推荐卡、结束、兜底</text>
+
+  <rect class="green" x="820" y="1160" width="610" height="240"/>
+  <text class="label" x="860" y="1195">product_recommendations 载荷</text>
+  <line class="tableLine" x1="820" y1="1215" x2="1430" y2="1215"/>
+  <line class="tableLine" x1="1045" y1="1160" x2="1045" y2="1400"/>
+  <rect class="tableHead" x="820" y="1160" width="610" height="55" rx="14"/>
+  <text class="label" x="935" y="1195">字段</text>
+  <text class="label" x="1238" y="1195">业务含义</text>
+  <text class="text" x="845" y="1255">top3</text>
+  <text class="text" x="1065" y="1255">3 款产品推荐，含评分和性价比</text>
+  <text class="text" x="845" y="1295">conclusion</text>
+  <text class="text" x="1065" y="1295">选购建议总结</text>
+  <text class="text" x="845" y="1335">risk_notes</text>
+  <text class="text" x="1065" y="1335">数据库边界、核保限制、风险提示</text>
+  <text class="text" x="845" y="1375">budget_allocation</text>
+  <text class="text" x="1065" y="1375">按人群 / 按保障类型给预算分配建议</text>
+
+  <text class="small" x="110" y="1432">讲演提示：这一页适合强调“不是一次性整包返回”，而是事件流式推动用户完成规划过程。</text>
+
+  <rect class="section" x="60" y="1490" width="1480" height="550"/>
+  <text class="sectionTitle" x="90" y="1540">三、模块职责概览（2.3 文字版重排）</text>
+
+  <rect class="tableHead" x="100" y="1580" width="1400" height="56" rx="14"/>
+  <line class="tableLine" x1="100" y1="1636" x2="1500" y2="1636"/>
+  <line class="tableLine" x1="315" y1="1580" x2="315" y2="2010"/>
+  <line class="tableLine" x1="790" y1="1580" x2="790" y2="2010"/>
+  <line class="tableLine" x1="1160" y1="1580" x2="1160" y2="2010"/>
+  <text class="label" x="205" y="1615" text-anchor="middle">层级</text>
+  <text class="label" x="552" y="1615" text-anchor="middle">核心模块</text>
+  <text class="label" x="975" y="1615" text-anchor="middle">主要职责</text>
+  <text class="label" x="1330" y="1615" text-anchor="middle">讲演时可强调</text>
+
+  <text class="label" x="205" y="1700" text-anchor="middle">前端</text>
+  <text class="text" x="340" y="1675">ChatPage、AIX 测算引擎、卡片组件、store</text>
+  <text class="text" x="340" y="1710">欢迎态承接首次进入；对话态承接持续咨询；</text>
+  <text class="text" x="340" y="1745">结构化测算入口承接更完整信息采集</text>
+  <text class="text" x="815" y="1692">同一前端既服务“自然对话”，也服务“结构化填写”</text>
+  <text class="text" x="1180" y="1692">不是两个割裂系统</text>
+
+  <line class="tableLine" x1="100" y1="1775" x2="1500" y2="1775"/>
+
+  <text class="label" x="205" y="1840" text-anchor="middle">BFF</text>
+  <text class="text" x="340" y="1815">chat/stream、asr/token、actuarial 代理、会话管理</text>
+  <text class="text" x="340" y="1850">统一前后端通信边界，隔离底层服务复杂度</text>
+  <text class="text" x="815" y="1832">把多后端能力变成统一可控接口</text>
+  <text class="text" x="1180" y="1832">便于权限、审计、扩展</text>
+
+  <line class="tableLine" x1="100" y1="1905" x2="1500" y2="1905"/>
+
+  <text class="label" x="205" y="1970" text-anchor="middle">AI 服务</text>
+  <text class="text" x="340" y="1945">chat.py / chat_engine.py / needs_analysis.py</text>
+  <text class="text" x="340" y="1980">product_scorer.py / memory_store.py</text>
+  <text class="text" x="815" y="1962">完成“理解需求 → 生成报告 → 检索评分 → 回推卡片”主链路</text>
+  <text class="text" x="1180" y="1962">这是智能体真正的业务大脑</text>
+
+  <line class="tableLine" x1="100" y1="2010" x2="1500" y2="2010"/>
+
+  <text class="small" x="100" y="2065">文件生成时间：2026-03-23。建议讲演顺序：先讲分层，再讲事件流，最后讲各层职责如何配合。</text>
+</svg>

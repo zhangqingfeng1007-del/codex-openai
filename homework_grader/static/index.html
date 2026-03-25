@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作业批改助手</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero-card">
+        <p class="eyebrow">Homework Grader</p>
+        <h1>给孩子的拍照作业批改工具</h1>
+        <p class="hero-copy">
+          拍照上传后，后台会并行调用 2-3 个大模型给出批改意见，并预留标准答案库接口用于核对。
+        </p>
+      </section>
+
+      <section class="panel">
+        <form id="grader-form">
+          <label class="field">
+            <span>学科</span>
+            <input type="text" name="subject" value="数学" />
+          </label>
+
+          <label class="field">
+            <span>年级</span>
+            <input type="text" name="grade_level" value="三年级" />
+          </label>
+
+          <label class="field">
+            <span>标准答案库编号（可选）</span>
+            <input
+              type="text"
+              name="answer_key"
+              placeholder="例如：math-grade3-unit2-001"
+            />
+          </label>
+
+          <label class="uploader" for="image">
+            <input
+              id="image"
+              type="file"
+              name="image"
+              accept="image/*"
+              capture="environment"
+              required
+            />
+            <span>点击拍照或选择相册图片</span>
+          </label>
+
+          <img id="preview" alt="作业预览" class="preview hidden" />
+
+          <button class="primary-btn" type="submit">开始批改</button>
+        </form>
+      </section>
+
+      <section class="panel hidden" id="result-panel">
+        <div class="result-header">
+          <h2>批改结果</h2>
+          <p id="score"></p>
+        </div>
+        <div id="summary" class="summary-box"></div>
+        <div id="models" class="model-list"></div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

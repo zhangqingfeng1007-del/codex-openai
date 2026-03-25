@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>AIX保险智能体会议版摘要</title>
+  <style>
+    body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; margin: 36px; color: #1f2937; line-height: 1.65; }
+    h1 { font-size: 26px; color: #0f172a; margin-bottom: 8px; }
+    h2 { font-size: 18px; color: #1d4ed8; margin-top: 28px; margin-bottom: 8px; }
+    h3 { font-size: 15px; color: #0f172a; margin-top: 18px; margin-bottom: 6px; }
+    p, li { font-size: 12px; }
+    .meta { color: #475569; margin-bottom: 18px; }
+    .highlight { background: #eff6ff; border-left: 4px solid #2563eb; padding: 10px 12px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px 10px; font-size: 12px; vertical-align: top; }
+    th { background: #eff6ff; text-align: left; }
+    ul { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>AIX保险智能体会议版摘要</h1>
+  <p class="meta">基于《AIX智能体需求与开发文档 v4.1》整理，供 2026-03-23 会议沟通使用</p>
+
+  <div class="highlight">
+    <strong>一句话目标：</strong>基于公司现有保险产品数据库、责任标准库和精算能力，建设一个以 AI 对话为核心的保险规划与推荐系统，让普通人成为保险专家。
+  </div>
+
+  <h2>1. 为什么现在做</h2>
+  <ul>
+    <li>公司已经具备 1 万+ 结构化保险产品数据库、责任标准库和精算能力，当前最缺的是统一的智能体交互层和规划闭环。</li>
+    <li>项目重点不是“从零造数据”，而是把既有数据资产、规则能力和 AI 交互能力连成产品。</li>
+    <li>当前第一阶段优先服务个人用户，先把重疾险主链路做稳，再扩险种、扩用户、扩性能。</li>
+  </ul>
+
+  <h2>2. 第一阶段要交付什么</h2>
+  <table>
+    <tr>
+      <th>维度</th>
+      <th>目标</th>
+    </tr>
+    <tr>
+      <td>用户体验</td>
+      <td>首页极简，以“开始对话”为唯一焦点，欢迎态与对话态清晰分离。</td>
+    </tr>
+    <tr>
+      <td>输入能力</td>
+      <td>支持文字、语音、图片识别三种输入。</td>
+    </tr>
+    <tr>
+      <td>产品范围</td>
+      <td>聚焦重疾险（aix_category_id=6001）和全量在售产品。</td>
+    </tr>
+    <tr>
+      <td>结果能力</td>
+      <td>具备需求分析、预算测算、产品评分、精算报告能力。</td>
+    </tr>
+    <tr>
+      <td>终端</td>
+      <td>桌面网页和手机网页双端响应式可用。</td>
+    </tr>
+  </table>
+
+  <h2>3. 核心产品设计决策</h2>
+  <h3>3.1 首页定位</h3>
+  <ul>
+    <li>首页不是流程导航页，而是 AI 对话入口。</li>
+    <li>页面主体层级固定为：保险智能体 → 人人都是保险专家 → 有任何保险问题，尽管问我。</li>
+    <li>左上角品牌统一为蓝色文字 AIx，不再使用厚重科技风或 PNG Logo。</li>
+  </ul>
+
+  <h3>3.2 两条规划路径</h3>
+  <ul>
+    <li>当用户提出规划类需求时，先弹出二选一路由卡。</li>
+    <li>填写信息规划：跳转已有 AIX 测算引擎 Module1，不新建独立规划页。</li>
+    <li>对话规划：继续在 AI 对话里补充信息。</li>
+    <li>两条路径共用同一套底层 schema，前端只做交互分流，不做业务分流。</li>
+  </ul>
+
+  <h2>4. 当前系统架构</h2>
+  <table>
+    <tr>
+      <th>层</th>
+      <th>职责</th>
+    </tr>
+    <tr>
+      <td>前端 React</td>
+      <td>保险智能体首页、对话页、AIX 测算引擎入口、结果卡片展示。</td>
+    </tr>
+    <tr>
+      <td>BFF Node.js</td>
+      <td>会话管理、客户档案、计算代理。</td>
+    </tr>
+    <tr>
+      <td>AI 服务 Python</td>
+      <td>SSE 对话编排、系统提示词、需求分析、预算测算、产品评分、记忆系统。</td>
+    </tr>
+    <tr>
+      <td>精算服务 Java</td>
+      <td>费率计算和精算模型。</td>
+    </tr>
+  </table>
+
+  <h2>5. 本轮版本收口点</h2>
+  <ul>
+    <li>品牌区改为蓝色 AIx 文字，首页视觉层级收口。</li>
+    <li>旧 HomePage 降级为测算引擎内部入口，默认首页统一到 ChatPage。</li>
+    <li>预算分配能力正式进入 store 接口，为后续 UI 展示留好结构。</li>
+    <li>规划类需求统一走 route_options 路由卡，target 统一为 aix-engine。</li>
+    <li>验收清单已经补全，便于按固定口径回归。</li>
+  </ul>
+
+  <h2>6. 当前会议建议重点</h2>
+  <table>
+    <tr>
+      <th>议题</th>
+      <th>会议里要确认的点</th>
+    </tr>
+    <tr>
+      <td>第一阶段边界</td>
+      <td>是否继续只聚焦重疾险主链路，不在本轮扩展到医疗险和 B 端。</td>
+    </tr>
+    <tr>
+      <td>交互闭环</td>
+      <td>是否确认首页以 AI 对话为唯一入口，结构化测算作为路由后的内部引擎。</td>
+    </tr>
+    <tr>
+      <td>数据与精算协同</td>
+      <td>产品标准库、责任库、费率引擎、预算测算规则的协同节奏如何安排。</td>
+    </tr>
+    <tr>
+      <td>验收口径</td>
+      <td>是否以品牌层级、路由逻辑、预算能力、结构化推荐结果作为本轮正式验收项。</td>
+    </tr>
+  </table>
+
+  <h2>7. 明天会议建议话术</h2>
+  <ul>
+    <li>我们不是在做一个新的问卷工具，而是在把公司现有数据资产和精算能力产品化。</li>
+    <li>第一阶段先把重疾险智能规划主链路做实，先证明“AI 对话 + 结构化推荐 + 精算支撑”这条路跑得通。</li>
+    <li>架构上已经明确：ChatPage 是统一入口，AIX 测算引擎是被路由复用的内部能力，不再各自为战。</li>
+    <li>接下来管理重点不是继续发散需求，而是按边界推进、按验收口径收口、按分工并行推进。</li>
+  </ul>
+</body>
+</html>

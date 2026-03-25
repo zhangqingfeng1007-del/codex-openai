@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>AIX保险智能体项目分工单</title>
+  <style>
+    body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; margin: 36px; color: #1f2937; line-height: 1.65; }
+    h1 { font-size: 26px; color: #0f172a; margin-bottom: 8px; }
+    h2 { font-size: 18px; color: #1d4ed8; margin-top: 28px; margin-bottom: 8px; }
+    p, li { font-size: 12px; }
+    .meta { color: #475569; margin-bottom: 18px; }
+    .tip { background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px 12px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px 10px; font-size: 12px; vertical-align: top; }
+    th { background: #eff6ff; text-align: left; }
+    ul { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>AIX保险智能体项目分工单</h1>
+  <p class="meta">基于已知团队配置整理，供开发、精算、项目协同执行使用</p>
+
+  <div class="tip">
+    <strong>团队已知配置：</strong>你负责项目管理并兼任 1 名开发角色；另有 2 名开发同事、2 名精算同事。<br />
+    其中：精算同事 1 负责产品定价；精算同事 2 带队负责保险产品拆解入库；两名开发同事主要维护既有系统与数据能力。
+  </div>
+
+  <h2>1. 分工原则</h2>
+  <ul>
+    <li>主链路优先：先做“AI 对话入口 → 路由分流 → AIX 测算 → 推荐结果 → 精算支撑”闭环。</li>
+    <li>数据与代码并行：前端、AI 编排、精算配置、产品数据准备必须同时推进，避免串行等待。</li>
+    <li>先收口再扩展：本轮只把重疾险主链路做稳，不把医疗险、B 端、复杂运营后台拉进当前关键路径。</li>
+  </ul>
+
+  <h2>2. 建议角色分工</h2>
+  <table>
+    <tr>
+      <th>角色</th>
+      <th>负责人</th>
+      <th>主要职责</th>
+      <th>本轮交付物</th>
+    </tr>
+    <tr>
+      <td>项目经理 / 联调负责人</td>
+      <td>你</td>
+      <td>定边界、排优先级、跨角色协调、主链路验收、关键决策拍板。</td>
+      <td>版本边界确认、联调安排、验收结论、交付说明。</td>
+    </tr>
+    <tr>
+      <td>前端 / 交互负责人</td>
+      <td>开发同事 A</td>
+      <td>ChatPage 首页、欢迎态/对话态切换、路由卡跳转、结果卡片渲染、移动端适配。</td>
+      <td>首页收口、路由交互、结果卡片结构、前端验收清单通过。</td>
+    </tr>
+    <tr>
+      <td>BFF / AI 接口负责人</td>
+      <td>开发同事 B</td>
+      <td>SSE 对话编排接入、会话管理、预算分配接口对接、路由 target 收口、后端联调。</td>
+      <td>稳定接口、预算字段落地、路由逻辑闭环、日志与错误处理。</td>
+    </tr>
+    <tr>
+      <td>精算模型负责人</td>
+      <td>精算同事 1</td>
+      <td>费率逻辑、责任配置、预算测算口径、推荐结果与精算解释一致性。</td>
+      <td>精算配置表、关键责任口径、测算验证结果、误差说明。</td>
+    </tr>
+    <tr>
+      <td>产品数据负责人</td>
+      <td>精算同事 2</td>
+      <td>标准责任库、产品拆解入库、病种与责任映射、历史产品数据整理。</td>
+      <td>产品数据清单、责任标准映射、缺口产品列表、数据质量核对。</td>
+    </tr>
+  </table>
+
+  <h2>3. 本轮建议任务拆解</h2>
+  <table>
+    <tr>
+      <th>模块</th>
+      <th>负责人</th>
+      <th>关键任务</th>
+      <th>依赖关系</th>
+    </tr>
+    <tr>
+      <td>首页与入口收口</td>
+      <td>开发同事 A</td>
+      <td>蓝色 AIx 品牌、首页层级、欢迎态输入框、快捷建议、对话态底部输入栏。</td>
+      <td>无需等待，先做。</td>
+    </tr>
+    <tr>
+      <td>路由与会话闭环</td>
+      <td>开发同事 B</td>
+      <td>route_options、aix-engine 跳转、TARGET_MODULE_MAP 收口、SSE 数据联通。</td>
+      <td>与前端并行。</td>
+    </tr>
+    <tr>
+      <td>预算与需求分析</td>
+      <td>你 + 开发同事 B + 精算同事 1</td>
+      <td>预算区间规则、budget_allocation 字段、NeedsReportCard 展示、提示词口径统一。</td>
+      <td>需要精算口径先对齐。</td>
+    </tr>
+    <tr>
+      <td>推荐与精算解释</td>
+      <td>精算同事 1</td>
+      <td>评分逻辑校验、费率说明、风险说明口径、推荐结果解释一致性。</td>
+      <td>依赖产品数据准备。</td>
+    </tr>
+    <tr>
+      <td>产品数据准备</td>
+      <td>精算同事 2</td>
+      <td>重疾险产品、责任标准项、病种映射、数据缺口补齐。</td>
+      <td>是精算和推荐的基础。</td>
+    </tr>
+    <tr>
+      <td>联调与验收</td>
+      <td>你</td>
+      <td>按固定验收清单组织回归，确认主链路、边界、展示口径、异常处理。</td>
+      <td>等上述模块基本完成后集中收口。</td>
+    </tr>
+  </table>
+
+  <h2>4. 建议排期</h2>
+  <table>
+    <tr>
+      <th>阶段</th>
+      <th>时间</th>
+      <th>目标</th>
+    </tr>
+    <tr>
+      <td>阶段 1：结构收口</td>
+      <td>2~3 天</td>
+      <td>首页入口、路由逻辑、预算字段、结果卡片结构全部跑通。</td>
+    </tr>
+    <tr>
+      <td>阶段 2：精算联调</td>
+      <td>3~5 天</td>
+      <td>需求分析、预算测算、推荐结果、精算解释一致。</td>
+    </tr>
+    <tr>
+      <td>阶段 3：回归验收</td>
+      <td>1~2 天</td>
+      <td>按验收清单做浏览器走查、接口回归、交付收口。</td>
+    </tr>
+  </table>
+
+  <h2>5. 你在会上可以直接布置的要求</h2>
+  <ul>
+    <li>开发同事 A：优先把首页、路由卡、结果卡片和移动端体验做稳，不做额外功能发散。</li>
+    <li>开发同事 B：优先把会话、接口、预算字段、日志和错误处理打通，保证联调可测。</li>
+    <li>精算同事 1：优先给出预算口径、关键责任配置和推荐解释规则，不要只给结果不给规则。</li>
+    <li>精算同事 2：优先保证重疾险产品数据和标准责任映射可用，缺口产品要显式列出来。</li>
+    <li>你自己：每天看主链路，不要被局部小功能牵走；所有任务都以“是否有助于当前主链路交付”为判断标准。</li>
+  </ul>
+
+  <h2>6. 当前建议的管理动作</h2>
+  <ul>
+    <li>每天一次 15 分钟站会，只讲昨天完成、今天计划、当前阻塞。</li>
+    <li>所有阻塞分为三类：数据缺失、规则未定、联调失败；会上只解决这三类。</li>
+    <li>验收标准提前写清楚，避免开发和精算各自觉得“差不多完成”。</li>
+  </ul>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>家庭健康一周计划打印版</title>
+  <style>
+    :root {
+      --paper: #f6f1e8;
+      --panel: #fffdf9;
+      --ink: #21313b;
+      --muted: #62727c;
+      --line: #d8cdc0;
+      --accent: #2f6c63;
+      --accent-soft: #dff0eb;
+      --warm: #d1884b;
+      --warm-soft: #f8eadc;
+      --rose: #b15e63;
+      --rose-soft: #f7e3e5;
+      --sky: #7f9db3;
+      --sky-soft: #e6eef4;
+      --shadow: 0 18px 50px rgba(41, 45, 50, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    @page {
+      size: A4;
+      margin: 12mm;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(209, 136, 75, 0.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(47, 108, 99, 0.12), transparent 26%),
+        linear-gradient(180deg, #faf6ef 0%, var(--paper) 100%);
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 12mm;
+    }
+
+    .sheet {
+      background: var(--panel);
+      border: 1px solid rgba(216, 205, 192, 0.8);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      position: relative;
+      padding: 26px 28px 22px;
+      background:
+        linear-gradient(135deg, rgba(47, 108, 99, 0.13), rgba(255, 255, 255, 0) 40%),
+        linear-gradient(135deg, #fffaf4 0%, #fffdf9 55%, #f7f4ef 100%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -24px;
+      top: -18px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(209, 136, 75, 0.18), rgba(209, 136, 75, 0));
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    h1 {
+      margin: 14px 0 8px;
+      font-size: 30px;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 90%;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .hero-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 15px;
+    }
+
+    .hero-card h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+    }
+
+    .hero-card p {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .content {
+      padding: 20px 22px 22px;
+    }
+
+    .section {
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      background: #fffdfa;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fffaf4 0%, #fffdf9 100%);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .section-note {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 11px;
+      vertical-align: top;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    th:last-child, td:last-child { border-right: none; }
+    tr:last-child td { border-bottom: none; }
+
+    th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--muted);
+      background: #fbf7f1;
+      font-weight: 700;
+    }
+
+    .day {
+      width: 11%;
+      font-weight: 700;
+      color: var(--accent);
+      background: #fcf6ef;
+    }
+
+    .person {
+      width: 29.66%;
+    }
+
+    .tag-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tag-card {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      padding: 14px;
+      background: #fff;
+    }
+
+    .tag-card h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .tag-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .tone-accent { background: linear-gradient(180deg, #f4fbf8 0%, #eef8f4 100%); }
+    .tone-warm { background: linear-gradient(180deg, #fff8f1 0%, #fff3e7 100%); }
+    .tone-rose { background: linear-gradient(180deg, #fff8f8 0%, #fdf0f2 100%); }
+    .tone-sky { background: linear-gradient(180deg, #f8fbfd 0%, #eef5f9 100%); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .panel h3 {
+      margin: 0;
+      padding: 12px 14px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--line);
+      background: #fbf7f1;
+    }
+
+    .panel .body {
+      padding: 12px 14px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    li {
+      margin: 0 0 8px;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #faf5ee;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.75;
+      border: 1px dashed var(--line);
+    }
+
+    .small {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+      }
+
+      .sheet {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+      }
+
+      .section, .panel, .tag-card, .hero-card {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="sheet">
+      <header class="hero">
+        <div class="eyebrow">FAMILY HEALTH WEEKLY PLAN</div>
+        <h1>家庭健康一周计划</h1>
+        <p class="subtitle">
+          目标不是一周做到完美，而是让全家以稳定、可重复的方式，把运动、饮食、恢复变成生活节奏。
+          本计划适用于你、妻子与孩子的家庭协同执行，打印后可贴在书房、冰箱侧面或健身区。
+        </p>
+          <div class="hero-grid">
+          <div class="hero-card">
+            <h3>你</h3>
+            <p>每周 3 次健身房力量训练，2 次轻活动；重点减脂保肌、腰围下降、力量不掉。</p>
+          </div>
+          <div class="hero-card">
+            <h3>妻子</h3>
+            <p>每周 2 次动感单车，2 次哑铃力量；重点塑形、提升下肢和背部力量。</p>
+          </div>
+          <div class="hero-card">
+            <h3>孩子</h3>
+            <p>周一、周三、周四、周六训练，周日比赛；重点补足恢复、核心稳定和赛前赛后补给。</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="section">
+          <div class="section-head">
+            <h2 class="section-title">每周执行重点</h2>
+            <p class="section-note">先完成，再优化。家庭计划越简单，越容易持续。</p>
+          </div>
+          <div class="body" style="padding:16px;">
+            <div class="tag-row">
+              <div class="tag-card tone-accent">
+                <h3>运动底线</h3>
+                <p>你做满 3 次力量，妻子做满 2 次力量 + 2 次单车，孩子按训练日补水并每周做 2 次恢复小练习。</p>
+              </div>
+              <div class="tag-card tone-warm">
+                <h3>饮食底线</h3>
+                <p>每餐先保证主菜，再配蔬菜和主食。孩子不控热量，成年人不靠挨饿完成计划。</p>
+              </div>
+              <div class="tag-card tone-sky">
+                <h3>恢复底线</h3>
+                <p>晚饭后尽量走 10 分钟；成年人尽量 23:00 前睡，孩子优先保证训练后睡眠质量。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2 class="section-title">一周运动计划</h2>
+            <p class="section-note">每次训练都以“动作标准、留一点余力”作为原则。</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="day">星期</th>
+                  <th class="person">你</th>
+                  <th class="person">妻子</th>
+                  <th class="person">孩子</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="day">周一</td>
+                  <td>健身房上肢：卧推、坐姿划船、高位下拉、肩推、平板支撑，各 3 组；结束快走 15 分钟。</td>
+                  <td>动感单车 35 分钟，中等强度，骑完拉伸小腿和大腿前侧。</td>
+                  <td>足球训练；训练前吃香蕉或面包，训练后先补水再吃晚餐。</td>
+                </tr>
+                <tr>
+                  <td class="day">周二</td>
+                  <td>轻活动日：晚饭后快走 30 分钟，拉伸 10 分钟。</td>
+                  <td>居家力量 A：杯式深蹲、罗马尼亚硬拉、臀桥、分腿蹲、提踵，各 3 组。</td>
+                  <td>恢复日或轻活动；睡前做 5 到 8 分钟腿后侧、髋部和小腿拉伸。</td>
+                </tr>
+                <tr>
+                  <td class="day">周三</td>
+                  <td>健身房下肢：深蹲或腿举、罗马尼亚硬拉、箭步蹲、腿弯举、提踵；椭圆机 15 分钟。</td>
+                  <td>动感单车 30 分钟，后 5 分钟稍提速。</td>
+                  <td>足球训练；训练后加牛奶或酸奶，减少第二天疲劳。</td>
+                </tr>
+                <tr>
+                  <td class="day">周四</td>
+                  <td>恢复日：快走 30 分钟或完全休息，重点保证睡眠。</td>
+                  <td>居家力量 B：哑铃划船、肩推、地板卧推或俯卧撑、侧平举、平板支撑，各 3 组。</td>
+                  <td>足球训练；训练后做 8 分钟拉伸，睡前如腿紧可做泡沫轴或热水泡脚。</td>
+                </tr>
+                <tr>
+                  <td class="day">周五</td>
+                  <td>健身房全身：上斜推胸、单臂划船、臀推、壶铃硬拉、农夫行走；单车 15 分钟。</td>
+                  <td>动感单车 25 到 30 分钟，轻松完成即可。</td>
+                  <td>恢复日；做 10 到 15 分钟核心和单腿稳定练习，给周六训练留体能。</td>
+                </tr>
+                <tr>
+                  <td class="day">周六</td>
+                  <td>全家户外快走 40 分钟，或者轻松骑车。</td>
+                  <td>轻松活动：瑜伽、拉伸或单车 20 分钟。</td>
+                  <td>足球训练日；注意午餐和加餐不能太少，训练后尽快补水和晚餐。</td>
+                </tr>
+                <tr>
+                  <td class="day">周日</td>
+                  <td>休息或散步 30 分钟，准备下周训练安排。</td>
+                  <td>休息，做简单拉伸。</td>
+                  <td>比赛日或户外活动；比赛前 1 到 2 小时吃面包、香蕉或米饭类食物。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <h2 class="section-title">一周饮食计划</h2>
+            <p class="section-note">不算蛋白质克数，直接按肉、蛋、奶、豆腐的大致份量执行。</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="day">星期</th>
+                  <th class="person">你</th>
+                  <th class="person">妻子</th>
+                  <th class="person">孩子</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="day">周一</td>
+                  <td>早餐 3 个鸡蛋 + 牛奶 300ml + 全麦面包 2 片；午餐鸡胸肉 180g；晚餐鱼 200g + 蔬菜 + 米饭半碗到 1 碗。</td>
+                  <td>早餐 2 个鸡蛋 + 酸奶 1 杯；午餐牛肉 120g；晚餐鱼 150g + 蔬菜 + 米饭半碗。</td>
+                  <td>早餐 2 个鸡蛋 + 牛奶 300ml；午餐鸡肉 120g + 米饭 1 碗；晚餐鱼 120g 到 150g + 米饭 1 碗。</td>
+                </tr>
+                <tr>
+                  <td class="day">周二</td>
+                  <td>早餐 2 个鸡蛋 + 酸奶；午餐牛肉 150g + 米饭 1 碗；晚餐豆腐 300g + 鸡蛋 2 个 + 青菜。</td>
+                  <td>早餐 2 个鸡蛋 + 牛奶；午餐虾 150g；晚餐豆腐 250g + 鸡蛋 2 个 + 少量主食。</td>
+                  <td>早餐鸡蛋 + 牛奶 + 面包；午餐牛肉 100g；加餐酸奶 1 杯，晚餐豆腐 200g + 鸡蛋 1 到 2 个 + 米饭 1 碗。</td>
+                </tr>
+                <tr>
+                  <td class="day">周三</td>
+                  <td>早餐 3 个鸡蛋 + 牛奶 + 燕麦；午餐牛肉 180g；晚餐虾 200g + 时蔬 + 米饭半碗到 1 碗。</td>
+                  <td>早餐 2 个鸡蛋 + 酸奶；午餐鸡肉 120g；晚餐虾 150g + 蔬菜 + 米饭半碗。</td>
+                  <td>早餐鸡蛋 + 牛奶 + 面包；午餐鸡肉 120g；训练前香蕉，晚餐虾 120g + 米饭 1 碗。</td>
+                </tr>
+                <tr>
+                  <td class="day">周四</td>
+                  <td>早餐 2 个鸡蛋 + 酸奶；午餐鱼 180g；晚餐鸡蛋 3 个 + 豆腐 200g + 蔬菜。</td>
+                  <td>早餐 2 个鸡蛋 + 牛奶；午餐鱼 150g；晚餐鸡蛋 2 个 + 豆腐 250g。</td>
+                  <td>早餐鸡蛋 + 牛奶；午餐鱼 100g 到 120g；训练前香蕉和小面包，晚餐鸡蛋豆腐 + 米饭 1 碗。</td>
+                </tr>
+                <tr>
+                  <td class="day">周五</td>
+                  <td>早餐 3 个鸡蛋 + 牛奶 + 面包；午餐鸡胸肉 180g；晚餐牛肉 180g 到 200g + 蔬菜 + 米饭半碗到 1 碗。</td>
+                  <td>早餐 2 个鸡蛋 + 酸奶；午餐鸡肉 120g；晚餐牛肉 120g 到 150g + 少量主食。</td>
+                  <td>早餐鸡蛋 + 牛奶 + 面包；午餐鸡肉 120g；下午加餐小面包或酸奶，晚餐牛肉 120g + 米饭 1 碗。</td>
+                </tr>
+                <tr>
+                  <td class="day">周六</td>
+                  <td>早餐鸡蛋 2 个 + 牛奶；午餐牛肉面 1 碗，牛肉约 150g；晚餐鸡肉 180g + 蔬菜。</td>
+                  <td>早餐酸奶 + 鸡蛋 2 个；午餐面条加牛肉 120g；晚餐鸡肉 120g 到 150g。</td>
+                  <td>早餐鸡蛋 + 牛奶 + 面包；午餐牛肉面；加餐酸奶和香蕉，晚餐鸡肉 120g 到 150g + 米饭。</td>
+                </tr>
+                <tr>
+                  <td class="day">周日</td>
+                  <td>早餐鸡蛋 2 个 + 牛奶 + 馒头；午餐牛肉或羊肉 150g；晚餐鱼 200g + 蔬菜 + 少量主食。</td>
+                  <td>早餐鸡蛋 2 个 + 酸奶；午餐牛肉 120g；晚餐鱼 150g + 蔬菜。</td>
+                  <td>早餐鸡蛋 2 个 + 牛奶 + 香蕉；比赛前面包或香蕉；午餐牛肉或鸡肉 120g，晚餐鱼 120g + 米饭。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="grid-2">
+          <section class="panel">
+            <h3>家庭晚餐轮换菜单</h3>
+            <div class="body">
+              <ul>
+                <li>周一：清蒸鱼 + 西兰花胡萝卜 + 米饭</li>
+                <li>周二：豆腐炒蛋 + 青菜 + 米饭</li>
+                <li>周三：虾仁炒时蔬 + 米饭</li>
+                <li>周四：番茄鸡蛋豆腐 + 蒜蓉青菜</li>
+                <li>周五：黑椒牛肉 + 彩椒洋葱 + 米饭</li>
+                <li>周六：煎鸡胸或烤鸡腿 + 生菜 + 玉米或米饭</li>
+                <li>周日：菌菇鱼片汤 + 清炒蔬菜 + 米饭</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>分量速查</h3>
+            <div class="body">
+              <ul>
+                <li>你：肉类每餐 150g 到 200g；鸡蛋 2 到 3 个；豆腐 250g 到 300g。</li>
+                <li>妻子：肉类每餐 120g 到 150g；鸡蛋 2 个；豆腐 200g 到 250g。</li>
+                <li>孩子：肉类每餐 100g 到 150g；鸡蛋 1 到 2 个；牛奶每天约 300ml。</li>
+                <li>训练日：你和孩子的主食不要刻意压太低，恢复比少吃半口更重要。</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <div class="grid-2" style="margin-top:16px;">
+          <section class="panel">
+            <h3>每周记录</h3>
+            <div class="body">
+              <ul>
+                <li>你和妻子：周三、周日晨起称重；每周量血压 2 次；每月量腰围 2 次。</li>
+                <li>你：看腰围是否下降、卧推和深蹲重量是否稳定。</li>
+                <li>妻子：看腰臀围、体态和力量动作是否更轻松。</li>
+                <li>孩子：不盯体重，看训练后疲劳、食欲、睡眠和疼痛情况。</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3>本周采购清单</h3>
+            <div class="body">
+              <ul>
+                <li>蛋白质：鸡蛋 30 个、鸡胸肉、牛肉、鱼、虾、豆腐、酸奶、牛奶。</li>
+                <li>主食：米、面、燕麦、全麦面包、馒头、玉米。</li>
+                <li>蔬果：西兰花、番茄、胡萝卜、彩椒、绿叶菜、菌菇、香蕉、苹果。</li>
+                <li>备用加餐：奶酪、无糖酸奶、小面包、花生酱。</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <div class="footer-note">
+          使用建议：每周日晚用 10 分钟复盘一次。只看三件事: 训练完成率、晚餐执行率、睡眠情况。
+          如果一周太忙，就优先守住“主菜吃够、每周力量训练不断、孩子训练后有恢复”这三条。
+        </div>
+      </main>
+    </div>
+    <p class="small" style="text-align:center; margin:10px 0 0;">打印建议：A4 纵向，页边距默认，背景图形可开启打印。</p>
+  </div>
+</body>
+</html>

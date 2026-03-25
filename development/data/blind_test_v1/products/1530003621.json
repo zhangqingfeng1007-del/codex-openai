@@ -1,0 +1,147 @@
+{
+  "product_id": "1530003621",
+  "product_name": "中信保诚臻享惠康B款",
+  "difficulty": "complex",
+  "items": [
+    {
+      "coverage_name": "投保年龄",
+      "value": "0-65周岁",
+      "confidence": 0.98,
+      "status": "candidate_ready",
+      "source_type": "processed_rate",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/05-首批费率&现价补充20240625/140-中信保诚「臻享惠康」重大疾病保险B款-费率解析结果表.xlsx",
+      "evidence": {
+        "summary": "投保年龄列最小=0，最大=65"
+      },
+      "extract_method": "processed_rate:distinct_age_range"
+    },
+    {
+      "coverage_name": "保险期间",
+      "value": "终身",
+      "confidence": 0.96,
+      "status": "candidate_ready",
+      "source_type": "processed_rate",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/05-首批费率&现价补充20240625/140-中信保诚「臻享惠康」重大疾病保险B款-费率解析结果表.xlsx",
+      "evidence": {
+        "summary": "保险期间去重值=['终身']"
+      },
+      "extract_method": "processed_rate:distinct_insurance_period"
+    },
+    {
+      "coverage_name": "交费期间",
+      "value": "趸交，5年，10年，14年，19年，24年，29年",
+      "confidence": 0.98,
+      "status": "candidate_ready",
+      "source_type": "processed_rate",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/05-首批费率&现价补充20240625/140-中信保诚「臻享惠康」重大疾病保险B款-费率解析结果表.xlsx",
+      "evidence": {
+        "summary": "缴费期间去重值=['趸交', '5年', '10年', '14年', '19年', '24年', '29年']"
+      },
+      "extract_method": "processed_rate:distinct_pay_periods"
+    },
+    {
+      "coverage_name": "交费频率",
+      "value": "趸交，年交，月交",
+      "confidence": 0.98,
+      "status": "candidate_ready",
+      "source_type": "processed_rate",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/05-首批费率&现价补充20240625/140-中信保诚「臻享惠康」重大疾病保险B款-费率解析结果表.xlsx",
+      "evidence": {
+        "summary": "交费方式去重值=['趸交', '年交', '月交']"
+      },
+      "extract_method": "processed_rate:distinct_pay_frequency"
+    },
+    {
+      "coverage_name": "等待期",
+      "value": "非意外90天，意外0天",
+      "confidence": 0.93,
+      "note": "rule: waiting_period_pattern",
+      "block_id": "1530003621_p2_b29",
+      "page": 2,
+      "evidence_text": "自本主险合同生效日或最后复效日（以较迟者为准）起 90 天为等待期。在等待期内， 若被保险人发生并被确诊患有附录 1、2、3、4、5 中列明的疾病，我们无息返还本主 险合同当时的基本保险金额对应的已缴保险费，本主险合同效力终止。但被保险人因 遭受意外伤害事故（见 8 名词释义）导致附录 1、2、3、4、5 中列明的疾病的，不受 等待期限制。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.md",
+      "evidence": {
+        "block_id": "1530003621_p2_b29",
+        "page": 2,
+        "text": "自本主险合同生效日或最后复效日（以较迟者为准）起 90 天为等待期。在等待期内， 若被保险人发生并被确诊患有附录 1、2、3、4、5 中列明的疾病，我们无息返还本主 险合同当时的基本保险金额对应的已缴保险费，本主险合同效力终止。但被保险人因 遭受意外伤害事故（见 8 名词释义）导致附录 1、2、3、4、5 中列明的疾病的，不受 等待期限制。"
+      },
+      "extract_method": "rule: waiting_period_pattern"
+    },
+    {
+      "coverage_name": "等待期（简化）",
+      "value": "90天",
+      "confidence": 0.93,
+      "note": "rule: waiting_period_simple",
+      "block_id": "1530003621_p2_b29",
+      "page": 2,
+      "evidence_text": "自本主险合同生效日或最后复效日（以较迟者为准）起 90 天为等待期。在等待期内， 若被保险人发生并被确诊患有附录 1、2、3、4、5 中列明的疾病，我们无息返还本主 险合同当时的基本保险金额对应的已缴保险费，本主险合同效力终止。但被保险人因 遭受意外伤害事故（见 8 名词释义）导致附录 1、2、3、4、5 中列明的疾病的，不受 等待期限制。",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.md",
+      "evidence": {
+        "block_id": "1530003621_p2_b29",
+        "page": 2,
+        "text": "自本主险合同生效日或最后复效日（以较迟者为准）起 90 天为等待期。在等待期内， 若被保险人发生并被确诊患有附录 1、2、3、4、5 中列明的疾病，我们无息返还本主 险合同当时的基本保险金额对应的已缴保险费，本主险合同效力终止。但被保险人因 遭受意外伤害事故（见 8 名词释义）导致附录 1、2、3、4、5 中列明的疾病的，不受 等待期限制。"
+      },
+      "extract_method": "rule: waiting_period_simple"
+    },
+    {
+      "coverage_name": "犹豫期",
+      "value": "15天",
+      "confidence": 0.94,
+      "note": "rule: cooling_off_pattern",
+      "block_id": "1530003621_p8_b218",
+      "page": 8,
+      "evidence_text": "5.1  您签收本主险合同次日起，我们给予您 15 日的犹豫期，以便您在此期间浏览本主险",
+      "status": "candidate_ready",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.md",
+      "evidence": {
+        "block_id": "1530003621_p8_b218",
+        "page": 8,
+        "text": "5.1  您签收本主险合同次日起，我们给予您 15 日的犹豫期，以便您在此期间浏览本主险"
+      },
+      "extract_method": "rule: cooling_off_pattern"
+    },
+    {
+      "coverage_name": "重疾分组",
+      "value": "",
+      "confidence": 0.0,
+      "note": "rule: ci_grouping_review_required",
+      "block_id": null,
+      "page": null,
+      "evidence_text": null,
+      "status": "review_required",
+      "source_type": "clause",
+      "source_file": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.pdf",
+      "source_md_file": "/Users/zqf-openclaw/codex-openai/development/data/blind_test_v1/md_cache/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.md",
+      "evidence": {
+        "block_id": null,
+        "page": null,
+        "text": null
+      },
+      "extract_method": "rule: ci_grouping_review_required"
+    }
+  ],
+  "missing_core_fields": [
+    "宽限期",
+    "重疾赔付次数",
+    "重疾数量"
+  ],
+  "used_sources": {
+    "clause": [
+      "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/02-首批产品拆解入库/140-1530003621-中信保诚「臻享惠康」重大疾病保险B款-条款.pdf"
+    ],
+    "processed_rate": [
+      "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/05-首批费率&现价补充20240625/140-中信保诚「臻享惠康」重大疾病保险B款-费率解析结果表.xlsx"
+    ],
+    "product_brochure": [
+      "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/003-首批交付阶段202404/00-yyb拆解处理/yyb首批处理-庆丰老师复核部分/140-中信保诚「臻享惠康」重大疾病保险B款/52-中信保诚「臻享惠康」重大疾病保险B款-产品说明书.pdf"
+    ]
+  }
+}
