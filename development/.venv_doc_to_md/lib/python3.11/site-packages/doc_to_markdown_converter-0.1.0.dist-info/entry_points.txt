@@ -1,3 +1,0 @@
-[console_scripts]
-doc-to-md = doc_to_md.cli:app
-doc-to-md-api = doc_to_md.api:run

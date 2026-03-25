@@ -1,0 +1,28 @@
+# 虚拟环境
+development/.venv_doc_to_md/
+.venv/
+venv/
+
+# 样本数据与中间产物（不入库）
+development/data/blind_test_v1/md_cache/
+development/data/blind_test_v1/products/
+development/data/
+
+# 记忆快照（内容在 Claude memory 里维护）
+development/memory/*/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 嵌套 git 仓库（单独维护）
+development/vendor/
+
+# macOS
+.DS_Store
+
+# 临时文件
+*.tmp
+*.log
+/tmp/
