@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -62,6 +63,25 @@ def rate_sort_key(value: str) -> tuple[int, int | str]:
             return (2, value)
     order = {"年交": 3, "半年交": 4, "季交": 5, "月交": 6}
     return (order.get(value, 99), value)
+
+
+def normalize_pay_period_from_rate(periods: list[str]) -> str:
+    dunhan = []
+    years = []
+    for value in periods:
+        value = value.strip()
+        if "趸" in value or "一次性" in value:
+            dunhan.append("趸交")
+        else:
+            match = re.match(r"(\d+)年?$", value)
+            if match:
+                years.append(int(match.group(1)))
+    result = []
+    if dunhan:
+        result.append("趸交")
+    if years:
+        result.append("/".join(str(y) for y in sorted(years)) + "年交")
+    return "，".join(result)
 
 
 def convert_clause_to_md(clause_path: Path, output_dir: Path, engine: str) -> Path:
@@ -156,7 +176,7 @@ def load_processed_rate_candidates(rate_files: list[str]) -> dict[str, dict[str,
         ordered = sorted(pay_periods, key=rate_sort_key)
         results["交费期间"] = {
             "coverage_name": "交费期间",
-            "value": "，".join(ordered),
+            "value": normalize_pay_period_from_rate(ordered),
             "confidence": 0.98,
             "status": "candidate_ready",
             "source_type": "processed_rate",
@@ -223,11 +243,59 @@ def merge_candidates(clause_candidates: dict[str, dict[str, Any]], rate_candidat
     for field, candidate in rate_candidates.items():
         current = merged.get(field)
         if field in RATE_FIRST_FIELDS:
+            if field == "投保年龄" and current:
+                clause_value = normalize_value(current.get("value"))
+                rate_value = normalize_value(candidate.get("value"))
+                if "天" in clause_value and rate_value.startswith("0-"):
+                    merged[field] = current
+                    continue
             merged[field] = candidate
             continue
         if current is None:
             merged[field] = candidate
     return merged
+
+
+def upgrade_age_with_clause_days(merged: dict[str, dict[str, Any]], blocks: list[dict]) -> None:
+    current = merged.get("投保年龄")
+    if not current:
+        return
+    if current.get("source_type") != "processed_rate":
+        return
+    current_value = normalize_value(current.get("value"))
+    match = re.fullmatch(r"0-(\d+)周岁", current_value)
+    if not match:
+        return
+    all_text = "\n".join(block.get("text", "") for block in blocks)
+    compact = re.sub(r"\s+", "", all_text)
+    day_patterns = [
+        r"出生满(\d+)(?:天|日).*?(\d+)周岁",
+        r"出生([一二三四五六七八九十百零〇]+)(?:天|日)以上.*?([一二三四五六七八九十百零〇\d]+)周岁",
+        r"投保年龄.*?出生满(\d+)(?:天|日)",
+    ]
+    days = None
+    for pattern in day_patterns:
+        m = re.search(pattern, compact)
+        if not m:
+            continue
+        raw = m.group(1)
+        if raw.isdigit():
+            days = int(raw)
+        else:
+            from extract_tier_a_rules import chinese_to_int  # noqa: WPS433
+            days = chinese_to_int(raw)
+        if days:
+            break
+    if not days:
+        return
+    upper = match.group(1)
+    current["value"] = f"0（{days}天）-{upper}周岁"
+    current["confidence"] = max(float(current.get("confidence", 0)), 0.99)
+    current["status"] = current.get("status", "candidate_ready")
+    current["extract_method"] = f"{current.get('extract_method', 'processed_rate:distinct_age_range')}+clause_days"
+    evidence = current.setdefault("evidence", {})
+    summary = evidence.get("summary", "")
+    evidence["summary"] = f"{summary}；条款全文命中出生满{days}天".strip("；")
 
 
 def run_product(product: dict[str, Any], md_dir: Path) -> dict[str, Any]:
@@ -241,6 +309,7 @@ def run_product(product: dict[str, Any], md_dir: Path) -> dict[str, Any]:
     )
     rate_candidates = load_processed_rate_candidates(product["source_files"].get("processed_rate", []))
     merged = merge_candidates(clause_candidates, rate_candidates)
+    upgrade_age_with_clause_days(merged, blocks)
 
     items = [merged[field] for field in CORE_FIELDS if field in merged]
     missing = [field for field in CORE_FIELDS if field not in merged]

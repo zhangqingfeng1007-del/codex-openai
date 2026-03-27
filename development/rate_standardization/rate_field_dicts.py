@@ -7,6 +7,7 @@ from __future__ import annotations
 当前做法：保留核心业务口径，统一命名，补齐中文字段 -> DB 字段映射。
 """
 
+import re as _re
 from typing import Final
 
 
@@ -75,8 +76,6 @@ INTERNAL_TO_DB_FIELD: Final[dict[str, str]] = {
     "product_id": "product_id",
     "product_name": "product_name",
     "age": "age",
-    "payment_years": "payment_years",
-    "insurance_period": "insurance_period",
     "gender": "gender",
     "amount": "amount",
     "min_copies": "min_copies",
@@ -104,8 +103,10 @@ CORE_CMB_PRODUCT_RATE_FIELDS: Final[list[str]] = [
     "rate",
     "age",
     "gender",
-    "payment_years",
-    "insurance_period",
+    "pay_time",
+    "pay_time_type",
+    "insure_period",
+    "period_type",
     "pay_type",
     "company_name",
     "product_name",
@@ -357,10 +358,12 @@ DATABASE_DEFAULTS: Final[dict[str, object]] = {
     "product_id": "",
     "product_name": "",
     "age": 0,
-    "payment_years": "",
-    "insurance_period": "",
     "gender": 0,
     "amount": 1000,
+    "pay_time": 0,
+    "pay_time_type": 0,
+    "insure_period": 0,
+    "period_type": 0,
     "min_copies": 1,
     "max_copies": 999999999,
     "annuity_age": 0,
@@ -379,3 +382,43 @@ DATABASE_DEFAULTS: Final[dict[str, object]] = {
     "rate": 0.0,
 }
 
+
+EXCLUDED_SHEET_KEYWORDS: Final[list[str]] = ["次标准", "次标准体", "优选体", "加费"]
+"""
+原始费率表 xlsx 中需要排除的非主表 sheet 关键词。
+用于 select_sheet() 的自动选择逻辑。
+"""
+
+
+def encode_payment_years(value: str) -> dict[str, int]:
+    """
+    将标准化后的缴费期间字符串编码为 DB 整数字段对。
+
+    返回 {"pay_time": int, "pay_time_type": int}
+    """
+    if value == "趸交":
+        return {"pay_time": 0, "pay_time_type": 12}
+    if "交至" in value:
+        match = _re.search(r"(\d+)", value)
+        age = int(match.group(1)) if match else 0
+        return {"pay_time": age, "pay_time_type": 11}
+    match = _re.search(r"(\d+)", value)
+    years = int(match.group(1)) if match else 0
+    return {"pay_time": years, "pay_time_type": 10}
+
+
+def encode_insurance_period(value: str) -> dict[str, int]:
+    """
+    将标准化后的保险期间字符串编码为 DB 整数字段对。
+
+    返回 {"insure_period": int, "period_type": int}
+    """
+    if value == "终身":
+        return {"insure_period": 999, "period_type": 14}
+    if "周岁" in value:
+        match = _re.search(r"(\d+)", value)
+        age = int(match.group(1)) if match else 0
+        return {"insure_period": age, "period_type": 13}
+    match = _re.search(r"(\d+)", value)
+    years = int(match.group(1)) if match else 0
+    return {"insure_period": years, "period_type": 10}

@@ -20,6 +20,8 @@ from rate_standardization.rate_field_dicts import (
     COMPANY_NAME_ALIASES,
     CORE_CMB_PRODUCT_RATE_FIELDS,
     DATABASE_DEFAULTS,
+    encode_insurance_period,
+    encode_payment_years,
     FINAL_RATE_HEADERS_3,
     GENDER_NORMALIZATION_MAP,
     INSURANCE_PERIOD_NORMALIZATION_MAP,
@@ -67,6 +69,18 @@ def normalize_pay_type(value: Any) -> int:
     return PAY_TYPE_NORMALIZATION_MAP.get(text, 0)
 
 
+def _infer_pay_type(pay_type_raw: Any, payment_years_raw: Any) -> int:
+    """
+    优先使用"交费方式"列；若为空，则从"缴费期间"推断。
+    缴费期间=趸交 -> 0；其他 -> 12（年交）。
+    """
+    explicit = normalize_pay_type(pay_type_raw)
+    if explicit != 0 or normalize_text(pay_type_raw) in PAY_TYPE_NORMALIZATION_MAP:
+        return explicit
+    payment_years = normalize_payment_years(payment_years_raw)
+    return 0 if payment_years == "趸交" else 12
+
+
 def normalize_amount(value: Any) -> int:
     text = normalize_text(value).replace(",", "")
     return int(text) if text.isdigit() else 1000
@@ -104,6 +118,8 @@ def to_db_row(row: tuple[Any, ...], header_index: dict[str, int], source_file: s
     company_id = normalize_text(cell(row, header_index, "公司编号")) or COMPANY_ID_BY_NAME.get(company_name, "")
     product_id = normalize_text(cell(row, header_index, "产品编号"))
     product_name = normalize_text(cell(row, header_index, "产品"))
+    payment_years = normalize_payment_years(cell(row, header_index, "缴费期间"))
+    insurance_period = normalize_insurance_period(cell(row, header_index, "保险期间"))
 
     db_row: dict[str, Any] = {
         "product_id": product_id,
@@ -111,9 +127,12 @@ def to_db_row(row: tuple[Any, ...], header_index: dict[str, int], source_file: s
         "rate": normalize_rate(cell(row, header_index, "费率")),
         "age": normalize_age(cell(row, header_index, "投保年龄")),
         "gender": normalize_gender(cell(row, header_index, "性别")),
-        "payment_years": normalize_payment_years(cell(row, header_index, "缴费期间")),
-        "insurance_period": normalize_insurance_period(cell(row, header_index, "保险期间")),
-        "pay_type": normalize_pay_type(cell(row, header_index, "交费方式")),
+        **encode_payment_years(payment_years),
+        **encode_insurance_period(insurance_period),
+        "pay_type": _infer_pay_type(
+            cell(row, header_index, "交费方式"),
+            cell(row, header_index, "缴费期间"),
+        ),
         "company_id": company_id,
         "company_name": company_name,
         "product_name": product_name,

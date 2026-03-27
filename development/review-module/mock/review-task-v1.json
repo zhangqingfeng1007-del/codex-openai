@@ -1,0 +1,199 @@
+{
+  "task_id": "task_20260326_001",
+  "product_id": "1010003851",
+  "product_name": "招商信诺真惠保重大疾病保险（互联网专属）",
+  "document_package_id": "pkg_1010003851_001",
+  "task_status": "review_required",
+  "rule_version": "blind_test_v1_rule_fix",
+  "model_version": "none",
+  "created_at": "2026-03-26T09:30:00+08:00",
+  "updated_at": "2026-03-26T14:10:00+08:00",
+  "source_files": [
+    {
+      "source_type": "clause",
+      "document_id": "doc_clause_1010003851_001",
+      "document_type": "clause_pdf",
+      "file_name": "544-招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf"
+    },
+    {
+      "source_type": "processed_rate",
+      "document_id": "doc_rate_1010003851_001",
+      "document_type": "rate_result_xlsx",
+      "file_name": "700-1-招商信诺真惠保重大疾病保险（互联网专属）-结果费率表.xlsx"
+    },
+    {
+      "source_type": "product_brochure",
+      "document_id": "doc_brochure_1010003851_001",
+      "document_type": "product_brochure_pdf",
+      "file_name": "招商信诺真惠保产品说明书.pdf"
+    }
+  ],
+  "items": [
+    {
+      "candidate_id": "cand_001",
+      "coverage_id": 1001,
+      "coverage_name": "投保年龄",
+      "raw_value": "0-65周岁",
+      "normalized_value": "0-65周岁",
+      "final_value": "",
+      "confidence": 0.92,
+      "status": "review_required",
+      "extract_method": "processed_rate:distinct_age_range",
+      "source": {
+        "source_type": "processed_rate",
+        "source_file": "700-1-招商信诺真惠保重大疾病保险（互联网专属）-结果费率表.xlsx",
+        "source_document_id": "doc_rate_1010003851_001",
+        "source_page": null,
+        "source_raw_value": "0-65周岁"
+      },
+      "evidence": {
+        "md_text": "投保年龄列最小=0，最大=65",
+        "block_id": null,
+        "block_type": null,
+        "title_path": [],
+        "block_text": "processed_rate distinct age range -> 0-65周岁"
+      },
+      "logic_trace": {
+        "priority_trace": [
+          "processed_rate 命中",
+          "条款未提供可用婴儿起保天数",
+          "产品说明书待补证"
+        ],
+        "normalization_trace": [
+          "年龄列去重",
+          "生成区间 0-65周岁"
+        ],
+        "mapping_trace": [
+          "coverage_name=投保年龄",
+          "最终进入 cmb_product_coverage.standard_content"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_002",
+      "coverage_id": 1002,
+      "coverage_name": "交费频率",
+      "raw_value": "年交",
+      "normalized_value": "年交",
+      "final_value": "",
+      "confidence": 0.81,
+      "status": "review_required",
+      "extract_method": "processed_rate:pay_type_only",
+      "source": {
+        "source_type": "processed_rate",
+        "source_file": "700-1-招商信诺真惠保重大疾病保险（互联网专属）-结果费率表.xlsx",
+        "source_document_id": "doc_rate_1010003851_001",
+        "source_page": null,
+        "source_raw_value": "pay_type=12"
+      },
+      "evidence": {
+        "md_text": "当前结果费率表仅有年交列，未包含月交折算附注。",
+        "block_id": null,
+        "block_type": null,
+        "title_path": [],
+        "block_text": "pay_type encoded from processed rate"
+      },
+      "logic_trace": {
+        "priority_trace": [
+          "processed_rate 命中",
+          "条款脚注属于定义性文本，已降级",
+          "月交能力待原始费率附注接入"
+        ],
+        "normalization_trace": [
+          "pay_type=12 -> 年交"
+        ],
+        "mapping_trace": [
+          "coverage_name=交费频率",
+          "最终进入 cmb_product_coverage.standard_content"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_003",
+      "coverage_id": 1003,
+      "coverage_name": "重疾赔付次数",
+      "raw_value": "2次",
+      "normalized_value": "2次",
+      "final_value": "",
+      "confidence": 0.85,
+      "status": "candidate_ready",
+      "extract_method": "rule:cross_block_firm_multi",
+      "source": {
+        "source_type": "clause",
+        "source_file": "544-招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+        "source_document_id": "doc_clause_1010003851_001",
+        "source_page": 2,
+        "source_raw_value": "第二次重大疾病保险金"
+      },
+      "evidence": {
+        "md_text": "第二次重大疾病保险金给付后，本合同继续有效。",
+        "block_id": "1010003851_p2_b51",
+        "block_type": "paragraph",
+        "title_path": [
+          "第一部分",
+          "保险责任",
+          "重大疾病保险金"
+        ],
+        "block_text": "首次重大疾病保险金给付后，第二次重大疾病保险金仍可给付。"
+      },
+      "logic_trace": {
+        "priority_trace": [
+          "条款主来源命中",
+          "跨 block 固定多次结构命中"
+        ],
+        "normalization_trace": [
+          "序数命中两次",
+          "输出 2次"
+        ],
+        "mapping_trace": [
+          "coverage_name=重疾赔付次数",
+          "最终进入 cmb_product_coverage.standard_content"
+        ]
+      }
+    },
+    {
+      "candidate_id": "cand_004",
+      "coverage_id": 1004,
+      "coverage_name": "重疾分组",
+      "raw_value": "不分组",
+      "normalized_value": "不分组",
+      "final_value": "",
+      "confidence": 0.83,
+      "status": "candidate_ready",
+      "extract_method": "rule:ci_grouping_firm_multi_no_group",
+      "source": {
+        "source_type": "clause",
+        "source_file": "544-招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+        "source_document_id": "doc_clause_1010003851_001",
+        "source_page": 2,
+        "source_raw_value": "未见分组重大疾病保险金声明"
+      },
+      "evidence": {
+        "md_text": "第二次重大疾病保险金给付后，本合同继续有效。",
+        "block_id": "1010003851_p2_b51",
+        "block_type": "paragraph",
+        "title_path": [
+          "第一部分",
+          "保险责任",
+          "重大疾病保险金"
+        ],
+        "block_text": "跨块检测到固定多次赔付，且未发现分组声明。"
+      },
+      "logic_trace": {
+        "priority_trace": [
+          "条款主来源命中",
+          "先判定多次赔付",
+          "未见分组声明"
+        ],
+        "normalization_trace": [
+          "固定多次赔付",
+          "输出 不分组"
+        ],
+        "mapping_trace": [
+          "coverage_name=重疾分组",
+          "最终进入 cmb_product_coverage.standard_content"
+        ]
+      }
+    }
+  ]
+}

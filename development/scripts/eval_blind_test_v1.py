@@ -8,8 +8,12 @@ Outputs:
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from normalize_value import normalize_value as format_normalize
 
 CORE_FIELDS = [
     "投保年龄",
@@ -26,13 +30,19 @@ CORE_FIELDS = [
 
 RESULTS_PATH = Path("~/codex-openai/development/data/blind_test_v1/blind_test_results_v1.json").expanduser()
 GOLD_PATH = Path("~/codex-openai/development/data/gold/blind_test_v1_gold.json").expanduser()
-OUTPUT_PATH = Path("~/codex-openai/development/data/eval/blind_test_v1_eval.json").expanduser()
+OUTPUT_PATH = Path("~/codex-openai/development/data/eval/blind_test_v1_eval_v2.json").expanduser()
 
 
-def normalize(value: str | None) -> str:
+def _strip_ws(value: str | None) -> str:
     if value is None:
         return ""
     return "".join(str(value).split())
+
+
+def _normalize_for_compare(coverage_name: str, value: str | None) -> str:
+    if not value:
+        return ""
+    return _strip_ws(format_normalize(coverage_name, value))
 
 
 def load_candidates(path: Path) -> dict[str, dict[str, dict]]:
@@ -57,11 +67,6 @@ def load_gold(path: Path) -> dict[str, dict[str, str]]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def classify(candidate_norm: str, gold_norm: str) -> str:
-    """Returns 'hit' or 'mismatch'."""
-    return "hit" if candidate_norm == gold_norm else "mismatch"
-
-
 def main() -> None:
     candidates = load_candidates(RESULTS_PATH)
     gold = load_gold(GOLD_PATH)
@@ -71,7 +76,7 @@ def main() -> None:
     # Per-field stats
     results_by_field: dict[str, dict] = {}
     for field in CORE_FIELDS:
-        results_by_field[field] = {"hit": 0, "mismatch": 0, "miss": 0, "details": []}
+        results_by_field[field] = {"hit": 0, "format_diff": 0, "mismatch": 0, "miss": 0, "details": []}
 
     # Per-product stats
     results_by_product: dict[str, dict] = {}
@@ -80,7 +85,7 @@ def main() -> None:
 
     mismatch_detail = []
 
-    # cell_status[pid][field] = "hit" | "MM" | "miss"
+    # cell_status[pid][field] = "hit" | "FD" | "MM" | "miss"
     cell_status: dict[str, dict[str, str]] = {pid: {} for pid in product_ids}
 
     for pid in product_ids:
@@ -89,8 +94,10 @@ def main() -> None:
             cand_info = candidates.get(pid, {}).get(field)
             cand_value = cand_info["value"] if cand_info else None
 
-            gold_norm = normalize(gold_value)
-            cand_norm = normalize(cand_value)
+            gold_norm = _normalize_for_compare(field, gold_value)
+            cand_norm = _normalize_for_compare(field, cand_value)
+            cand_raw_norm = _strip_ws(cand_value or "")
+            gold_raw_norm = _strip_ws(gold_value or "")
 
             if not gold_norm:
                 # No gold → skip (shouldn't happen for core fields)
@@ -105,20 +112,39 @@ def main() -> None:
                 mismatch_detail.append({
                     "product_id": pid,
                     "coverage_name": field,
-                    "candidate": None,
+                    "candidate_raw": None,
+                    "candidate_normalized": "",
                     "gold": gold_value,
+                    "gold_normalized": gold_norm,
                     "source_type": None,
-                    "status": "miss",
+                    "status": status,
                 })
             elif cand_norm == gold_norm:
-                cell_status[pid][field] = "hit"
-                results_by_field[field]["hit"] += 1
+                if cand_raw_norm != gold_raw_norm:
+                    status = "format_diff"
+                    cell_status[pid][field] = "FD"
+                    results_by_field[field]["format_diff"] += 1
+                else:
+                    status = "hit"
+                    cell_status[pid][field] = "hit"
+                    results_by_field[field]["hit"] += 1
                 results_by_product[pid]["hit"] += 1
                 results_by_field[field]["details"].append({
                     "product_id": pid,
-                    "status": "hit",
+                    "status": status,
                     "source_type": cand_info["source_type"],
                 })
+                if status == "format_diff":
+                    mismatch_detail.append({
+                        "product_id": pid,
+                        "coverage_name": field,
+                        "candidate_raw": cand_value,
+                        "candidate_normalized": cand_norm,
+                        "gold": gold_value,
+                        "gold_normalized": gold_norm,
+                        "source_type": cand_info["source_type"] if cand_info else None,
+                        "status": status,
+                    })
             else:
                 cell_status[pid][field] = "MM"
                 results_by_field[field]["mismatch"] += 1
@@ -126,17 +152,20 @@ def main() -> None:
                 mismatch_detail.append({
                     "product_id": pid,
                     "coverage_name": field,
-                    "candidate": cand_value,
+                    "candidate_raw": cand_value,
+                    "candidate_normalized": cand_norm,
                     "gold": gold_value,
+                    "gold_normalized": gold_norm,
                     "source_type": cand_info["source_type"] if cand_info else None,
-                    "status": "mismatch",
+                    "status": "true_mismatch",
                 })
 
     # Compute hit rates
     for field in CORE_FIELDS:
         stats = results_by_field[field]
-        denom = stats["hit"] + stats["mismatch"] + stats["miss"]
-        stats["hit_rate"] = round(stats["hit"] / denom, 4) if denom else 0.0
+        hit_count = stats["hit"] + stats.get("format_diff", 0)
+        denom = hit_count + stats["mismatch"] + stats["miss"]
+        stats["hit_rate"] = round(hit_count / denom, 4) if denom else 0.0
 
     # ── Console matrix ──────────────────────────────────────────
     # Column headers (abbreviated)
@@ -178,13 +207,13 @@ def main() -> None:
     print("\n── 字段命中明细 ──")
     for field in CORE_FIELDS:
         s = results_by_field[field]
-        print(f"  {field}: hit={s['hit']} mismatch={s['mismatch']} miss={s['miss']} rate={s['hit_rate']:.0%}")
+        print(f"  {field}: hit={s['hit']} format_diff={s['format_diff']} mismatch={s['mismatch']} miss={s['miss']} rate={s['hit_rate']:.0%}")
 
     print("\n── mismatch/miss 明细 ──")
     for d in mismatch_detail:
         print(f"  [{d['status'].upper()}] {d['product_id']} / {d['coverage_name']}")
-        print(f"    候选: {d['candidate']}  (source: {d['source_type']})")
-        print(f"    gold: {d['gold']}")
+        print(f"    候选: {d['candidate_raw']} -> {d['candidate_normalized']}  (source: {d['source_type']})")
+        print(f"    gold: {d['gold']} -> {d['gold_normalized']}")
 
     # ── JSON output ──────────────────────────────────────────────
     output = {

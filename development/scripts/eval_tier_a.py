@@ -3,11 +3,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent))
+from normalize_value import normalize_value as format_normalize
 
-def normalize_value(value: str | None) -> str:
+
+def _strip_ws(value: str | None) -> str:
     if value is None:
         return ""
     return "".join(str(value).split())
@@ -45,6 +49,12 @@ def load_tier_a_whitelist(path: Path) -> list[dict]:
     return [item for item in items if item.get("tier") == "A"]
 
 
+def _values_match(coverage_name: str, candidate_value: str | None, gold_value: str | None) -> tuple[bool, str, str]:
+    candidate_normalized = _strip_ws(format_normalize(coverage_name, candidate_value or ""))
+    gold_normalized = _strip_ws(format_normalize(coverage_name, gold_value or ""))
+    return candidate_normalized == gold_normalized, candidate_normalized, gold_normalized
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate Tier A extraction results against gold data.")
     parser.add_argument("--candidates", required=True)
@@ -70,7 +80,8 @@ def main() -> None:
             for product_id in product_ids:
                 candidate_value = candidates.get(product_id, {}).get(coverage_name)
                 gold_value = gold.get(product_id, {}).get(coverage_name)
-                if candidate_value and gold_value and normalize_value(candidate_value) == normalize_value(gold_value):
+                matched, _, _ = _values_match(coverage_name, candidate_value, gold_value)
+                if candidate_value and gold_value and matched:
                     hit_count += 1
                 else:
                     miss_products.append(product_id)
@@ -93,16 +104,25 @@ def main() -> None:
         for product_id in product_ids:
             gold_value = gold.get(product_id, {}).get(coverage_name)
             candidate_value = candidates.get(product_id, {}).get(coverage_name)
+            matched, candidate_normalized, gold_normalized = _values_match(coverage_name, candidate_value, gold_value)
 
             if not gold_value:
                 continue
 
-            if candidate_value and normalize_value(candidate_value) == normalize_value(gold_value):
+            if candidate_value and matched:
                 hit_products.append(product_id)
             elif not candidate_value:
                 miss_extractable_products.append(product_id)
             else:
-                mismatch_products.append(product_id)
+                mismatch_products.append(
+                    {
+                        "product_id": product_id,
+                        "candidate_value": candidate_value,
+                        "gold_value": gold_value,
+                        "candidate_normalized": candidate_normalized,
+                        "gold_normalized": gold_normalized,
+                    }
+                )
 
         denominator = len(hit_products) + len(miss_extractable_products) + len(mismatch_products)
         hit_rate = round(hit_products.__len__() / denominator, 4) if denominator else 0.0
@@ -114,7 +134,8 @@ def main() -> None:
             "miss_extractable_count": len(miss_extractable_products),
             "mismatch_count": len(mismatch_products),
             "miss_products": miss_extractable_products,
-            "mismatch_products": mismatch_products,
+            "mismatch_products": [row["product_id"] for row in mismatch_products],
+            "mismatch_details": mismatch_products,
             "hit_rate": hit_rate,
         }
         results.append(result)

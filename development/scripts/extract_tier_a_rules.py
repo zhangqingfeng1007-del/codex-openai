@@ -5,6 +5,9 @@ import argparse
 import json
 import re
 from pathlib import Path
+from typing import Any
+
+from openpyxl import load_workbook
 
 
 TARGET_FIELDS = [
@@ -40,6 +43,16 @@ PAY_FREQ_ORDER = ["趸交", "年交", "半年交", "季交", "月交"]
 WAITING_PRIORITY_TITLES = ("等待期", "观察期", "投保须知")
 WAITING_SKIP_HINTS = ("案例", "举例", "示例", "利益演示", "演示")
 WAITING_SKIP_TEXT_HINTS = ("确诊日起满", "保单周年日", "小王", "案例")
+PAY_PERIOD_TITLES = [
+    "交费期间", "交费期限", "交费年期",
+    "缴费期间", "缴费期限", "缴费年期",
+    "保险费缴纳期间", "缴费方式",
+]
+RATE_SEARCH_ROOTS = [
+    Path("/Users/zqf-openclaw/Desktop/开发材料/10款重疾"),
+    Path("/Users/zqf-openclaw/Desktop/开发材料/招行数据"),
+]
+EXCLUDED_SHEET_KEYWORDS = ("次标准", "次标准体", "优选体")
 
 
 def chinese_to_int(text: str) -> int | None:
@@ -77,6 +90,14 @@ def normalize_spaces(text: str) -> str:
     return re.sub(r"\s+", "", text)
 
 
+def normalize_cell_text(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return str(value).strip()
+
+
 def add_candidate(results: dict, field: str, value: str | None, block: dict | None, confidence: float, note: str) -> None:
     if not value:
         return
@@ -87,6 +108,7 @@ def add_candidate(results: dict, field: str, value: str | None, block: dict | No
         "value": value,
         "confidence": round(confidence, 2),
         "note": note,
+        "source_type": None,
         "block_id": block["block_id"] if block else None,
         "page": block["page"] if block else None,
         "evidence_text": block["text"] if block else None,
@@ -102,6 +124,7 @@ def set_candidate(results: dict, field: str, value: str, block: dict | None, con
         "value": value,
         "confidence": round(confidence, 2),
         "note": note,
+        "source_type": None,
         "block_id": block.get("block_id") if block else None,
         "page": block.get("page") if block else None,
         "evidence_text": block.get("text") or block.get("evidence_text") if block else None,
@@ -239,22 +262,95 @@ def extract_insurance_period(text: str) -> str | None:
 
 def extract_pay_period(text: str) -> str | None:
     compact = normalize_spaces(text)
-    if not any(k in compact for k in ["交费期间", "缴费期间", "交费方式和交费期间", "保险费的支付"]):
+    if not any(k in compact for k in PAY_PERIOD_TITLES + ["交费方式和交费期间", "保险费的支付"]):
         return None
-    freqs = []
-    if "趸交" in compact:
+    return format_pay_periods_from_text(compact)
+
+
+def format_pay_periods_from_text(compact: str) -> str | None:
+    freqs: list[str] = []
+    if "趸交" in compact or "一次性交付" in compact or "一次性付清" in compact:
         freqs.append("趸交")
-    years = sorted({int(x) for x in re.findall(r"(\d+)年交", compact)})
+
+    years = {int(x) for x in re.findall(r"(\d+)年交", compact)}
+    if not years:
+        m = re.search(r"交费期间分为(.+?)(?:两种|三种|四种|五种|六种|七种|八种|九种|十种|，|。)", compact)
+        if m:
+            segment = m.group(1)
+            years |= {int(x) for x in re.findall(r"(\d+)年", segment)}
+            for raw in re.findall(r"([一二三四五六七八九十百零〇]+)年", segment):
+                val = chinese_to_int(raw)
+                if val is not None:
+                    years.add(val)
     if years:
-        parts = [str(y) for y in years]
-        freqs.append("/".join(parts) + "年交")
-    if not freqs and re.search(r"交至\d+岁", compact):
-        return re.search(r"(交至\d+岁)", compact).group(1)
-    return "，".join(freqs) if freqs else None
+        freqs.append("/".join(str(y) for y in sorted(years)) + "年交")
+
+    age_match = re.search(r"交至(\d+)(?:周岁|岁)", compact)
+    if age_match:
+        freqs.append(f"交至{age_match.group(1)}周岁")
+
+    if not freqs:
+        return None
+    # 去重并保序
+    ordered: list[str] = []
+    for item in freqs:
+        if item not in ordered:
+            ordered.append(item)
+    return "，".join(ordered)
+
+
+def locate_rate_xlsx(product_id: str) -> Path | None:
+    for root in RATE_SEARCH_ROOTS:
+        if not root.exists():
+            continue
+        matches = sorted(root.rglob(f"*{product_id}*费率表.xlsx"))
+        if matches:
+            return matches[0]
+    return None
+
+
+def select_rate_sheet(workbook) -> str:
+    if "费率表" in workbook.sheetnames:
+        return "费率表"
+    candidates = [s for s in workbook.sheetnames if not any(k in s for k in EXCLUDED_SHEET_KEYWORDS)]
+    return candidates[0] if candidates else workbook.sheetnames[0]
+
+
+def extract_pay_period_from_rate_xlsx(product_id: str) -> tuple[str | None, Path | None, str | None]:
+    path = locate_rate_xlsx(product_id)
+    if path is None:
+        return None, None, None
+    try:
+        workbook = load_workbook(path, read_only=True, data_only=True)
+    except Exception:
+        return None, path, None
+    sheet_name = select_rate_sheet(workbook)
+    ws = workbook[sheet_name]
+    texts: list[str] = []
+    for row in ws.iter_rows(min_row=1, max_row=10, values_only=True):
+        for value in row:
+            text = normalize_cell_text(value)
+            if text:
+                texts.append(text)
+    compact = normalize_spaces(" ".join(texts))
+    compact = compact.replace("一次性付清", "趸交")
+    value = format_pay_periods_from_text(compact)
+    return value, path, sheet_name
 
 
 def extract_pay_frequency(text: str) -> str | None:
     compact = normalize_spaces(text)
+    definition_like_patterns = [
+        "保险费约定支付日",
+        "指保险合同生效日在每月或每年对应的日期",
+        "指保险合同生效日在每月或每年对应的日",
+        "保险费约定支付日为本合同生效日之后每月每季每半年或者每年对应的日期",
+        "保险费约定支付日为本合同生效日之后每月每季每半年或每年对应的日期",
+    ]
+    if any(pattern in compact for pattern in definition_like_patterns):
+        return None
+    if "指保险合同生效日在每月或每年" in compact and "对应日" in compact:
+        return None
     if not any(k in compact for k in ["交费频率", "交费方式", "保险费的支付"]):
         if not any(k in compact for k in ["每月", "每季", "每半年", "每年", "趸交"]):
             return None
@@ -270,6 +366,28 @@ def extract_pay_frequency(text: str) -> str | None:
             found.append(freq)
     found = [freq for freq in PAY_FREQ_ORDER if freq in found]
     return "，".join(found) if found else None
+
+
+def infer_frequency_from_pay_period(pay_period_value: str) -> str | None:
+    """
+    当条款/费率表无法直接抽到交费频率时，从交费期间推断。
+    规则：
+      - 有"趸交" AND 有"年交/交至" -> 趸交，年交
+      - 只有"趸交"                 -> 趸交
+      - 有"年交/交至"，无趸交       -> 年交
+    注意：无法推断月交/季交/半年交，这些需费率表来源。
+    """
+    if not pay_period_value:
+        return None
+    has_dunce = "趸交" in pay_period_value
+    has_annual = "年交" in pay_period_value or "交至" in pay_period_value
+    if has_dunce and has_annual:
+        return "趸交，年交"
+    if has_dunce:
+        return "趸交"
+    if has_annual:
+        return "年交"
+    return None
 
 
 def extract_ci_pay_times(text: str) -> str | None:
@@ -295,6 +413,12 @@ def extract_ci_pay_times(text: str) -> str | None:
         num = _CN_NUM.get(raw, raw)
         return f"{num}次"
 
+    m_all = re.findall(r"(?:累计给付次数|保险金的累计给付次数)以([一二三四五六七八九十\d]+)次为限", compact)
+    if m_all:
+        nums = [_CN_NUM[r] if r in _CN_NUM else int(r) if r.isdigit() else 0 for r in m_all]
+        num = max(nums) if "分组重大疾病保险金" in compact else nums[0]
+        return f"{num}次"
+
     negative_markers = [
         "多次给付重大疾病保险金",
         "第二次重大疾病保险金",
@@ -314,11 +438,14 @@ def extract_ci_pay_times(text: str) -> str | None:
 
 def extract_ci_grouping(text: str) -> str | None:
     compact = normalize_spaces(text)
-    if "分组" in compact:
-        if "不分组" in compact:
-            return "不分组"
-        if "不同组" in compact or "分为" in compact:
-            return "涉及分组"
+    if "分组" not in compact:
+        return None
+    if "不分组" in compact:
+        return "不分组"
+    if "分组重大疾病保险金" in compact:
+        return "涉及分组"
+    if "不同组" in compact or "分为" in compact:
+        return "涉及分组"
     return None
 
 
@@ -371,7 +498,47 @@ def ci_count_confidence(text: str) -> float:
     return 0.8
 
 
-def extract_candidates(blocks: list[dict]) -> dict:
+def get_ci_count_from_db(product_id: str, counts_path: Path) -> dict | None:
+    """
+    从 product_disease_counts_v1.json 读取产品重疾数量。
+    返回格式：
+      {"value": "120种", "source_type": "product_disease_db", "confidence": 0.99}
+    复杂产品（含少儿重大疾病）：
+      {"value": "120种重大疾病；20种少儿重大疾病", ...}
+    未找到返回 None。
+    """
+    if not counts_path.exists():
+        return None
+    data = json.loads(counts_path.read_text(encoding="utf-8"))
+    cats = data.get("products", {}).get(product_id, {})
+    ci = cats.get("重大疾病", 0)
+    if ci == 0:
+        return None
+    pediatric = cats.get("少儿重大疾病", 0)
+    if pediatric:
+        value = f"{ci}种重大疾病；{pediatric}种少儿重大疾病"
+    else:
+        value = f"{ci}种"
+    return {"value": value, "source_type": "product_disease_db", "confidence": 0.99}
+
+
+def get_coverage_from_db(product_id: str, coverage_name: str, db_path: Path) -> dict | None:
+    """
+    从 product_coverage_db_v1.json 读取产品字段标准值。
+    db_path: data/manifests/product_coverage_db_v1.json
+    返回格式：{"value": "...", "source_type": "product_coverage_db", "confidence": 0.99}
+    未找到返回 None。
+    """
+    if not db_path.exists():
+        return None
+    data = json.loads(db_path.read_text(encoding="utf-8"))
+    value = data.get("products", {}).get(product_id, {}).get(coverage_name)
+    if not value:
+        return None
+    return {"value": value, "source_type": "product_coverage_db", "confidence": 0.99}
+
+
+def extract_candidates(blocks: list[dict], disease_lookup_id: str, counts_path: Path, product_id: str, coverage_db_path: Path) -> dict:
     results: dict = {}
     grouping_match: dict | None = None
     text_blocks: list[dict] = []
@@ -409,8 +576,9 @@ def extract_candidates(blocks: list[dict]) -> dict:
             }
             if grouping_match is None or candidate["confidence"] > grouping_match["confidence"]:
                 grouping_match = candidate
-        count_value = extract_ci_count(text)
-        add_candidate(results, "重疾数量", count_value, block, ci_count_confidence(text), "rule: ci_count")
+        if "重疾数量" not in results:
+            count_value = extract_ci_count(text)
+            add_candidate(results, "重疾数量", count_value, block, ci_count_confidence(text), "rule: ci_count")
 
     # 跨block兜底：重疾赔付次数单次判定
     if "重疾赔付次数" not in results:
@@ -448,6 +616,37 @@ def extract_candidates(blocks: list[dict]) -> dict:
             add_candidate(results, "重疾赔付次数", "1次（若选择多次给付责任，2次）",
                           evidence_block, 0.78, "rule: cross_block_optional_multi")
 
+    current_pay_times = results.get("重疾赔付次数", {}).get("value")
+    if "重疾赔付次数" not in results or current_pay_times == "1次":
+        ci_ord = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5,
+                  "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
+        all_text = " ".join(b["text"] for b in blocks)
+        has_optional_lang = any(m in all_text for m in ["选择多次给付", "附加多次给付", "可选择多次"])
+        if not has_optional_lang:
+            ord_hits: set[int] = set()
+            for cn, val in ci_ord.items():
+                if f"第{cn}次重大疾病保险金" in all_text or f"第{cn}次重度疾病保险金" in all_text:
+                    ord_hits.add(val)
+            for d in re.findall(r"第(\d+)次重大疾病保险金", all_text):
+                ord_hits.add(int(d))
+            for d in re.findall(r"第(\d+)次重度疾病保险金", all_text):
+                ord_hits.add(int(d))
+            firm_count = max(ord_hits) if ord_hits else 0
+            if firm_count >= 2:
+                evidence_block = next(
+                    (b for b in blocks if "第二次重大疾病保险金" in b["text"]
+                     or "第二次重度疾病保险金" in b["text"]),
+                    blocks[0],
+                )
+                set_candidate(
+                    results,
+                    "重疾赔付次数",
+                    f"{firm_count}次",
+                    evidence_block,
+                    0.85,
+                    "rule: cross_block_firm_multi",
+                )
+
     # 保险期间兜底：从合同名称推断终身
     if "保险期间" not in results:
         for b in blocks:
@@ -457,9 +656,28 @@ def extract_candidates(blocks: list[dict]) -> dict:
 
     pay_times_value = results.get("重疾赔付次数", {}).get("value")
     multi_pay = is_multi_ci_pay_times(pay_times_value)
+    all_compact_text = normalize_spaces(" ".join(b["text"] for b in text_blocks))
+    has_grouped_ci_declaration = "分组重大疾病保险金" in all_compact_text
+    if has_grouped_ci_declaration and "重疾赔付次数" in results:
+        m_n = re.search(r"^(\d+)次$", pay_times_value or "")
+        if m_n:
+            n_groups = int(m_n.group(1))
+            evidence_block = next(
+                (b for b in text_blocks if "分组重大疾病保险金" in normalize_spaces(b["text"])),
+                text_blocks[0] if text_blocks else None,
+            )
+            set_candidate(
+                results,
+                "重疾分组",
+                f"{n_groups}组",
+                evidence_block,
+                0.82,
+                "rule: ci_grouping_from_分组保险金_and_pay_times",
+            )
+            grouping_match = results["重疾分组"]
     if multi_pay is None:
         set_candidate(results, "重疾分组", "", None, 0.0, "rule: ci_grouping_review_required", status="review_required")
-    elif multi_pay is False:
+    elif multi_pay is False and not has_grouped_ci_declaration:
         pay_times_block = results.get("重疾赔付次数")
         set_candidate(
             results,
@@ -479,6 +697,19 @@ def extract_candidates(blocks: list[dict]) -> dict:
             0.75,
             "rule: ci_grouping_optional_multi",
         )
+    elif multi_pay is True and "若选择多次给付责任" not in (pay_times_value or ""):
+        if has_grouped_ci_declaration:
+            pass
+        else:
+            pay_times_block = results.get("重疾赔付次数")
+            set_candidate(
+                results,
+                "重疾分组",
+                "不分组",
+                pay_times_block,
+                0.78,
+                "rule: ci_grouping_firm_multi_no_group",
+            )
     elif grouping_match is not None:
         results["重疾分组"] = grouping_match
     else:
@@ -491,7 +722,13 @@ def extract_candidates(blocks: list[dict]) -> dict:
             all_compact = normalize_spaces(" ".join(b["text"] for b in blocks))
             has_no_waiting_accident = (
                 any("意外" in b["text"] and "无等待期" in b["text"] for b in blocks)
-                or re.search(r"意外伤害.*无等待期|无等待期.*意外伤害", all_compact)
+                or re.search(
+                    r"意外伤害.*?无等待期|无等待期.*?意外伤害"
+                    r"|因意外伤害.*?不受.*?限制"
+                    r"|因意外伤害.*?不设.*?等待期"
+                    r"|意外伤害事故.*?无等待期|无等待期.*?意外伤害事故",
+                    all_compact,
+                )
             )
             if has_no_waiting_accident:
                 results["等待期"]["value"] = f"非意外{waiting_val}，意外0天"
@@ -510,6 +747,35 @@ def extract_candidates(blocks: list[dict]) -> dict:
                     add_candidate(results, "等待期（简化）", simplified, b, 0.75, "rule: waiting_embedded_coverage_clause")
                 break
 
+    if "交费频率" not in results:
+        pay_period_value = results.get("交费期间", {}).get("value")
+        inferred_frequency = infer_frequency_from_pay_period(pay_period_value)
+        if inferred_frequency:
+            results["交费频率"] = {
+                "coverage_name": "交费频率",
+                "value": inferred_frequency,
+                "confidence": 0.6,
+                "note": "rule: inferred_from_pay_period",
+                "source_type": "inferred_from_pay_period",
+                "block_id": results.get("交费期间", {}).get("block_id"),
+                "page": results.get("交费期间", {}).get("page"),
+                "evidence_text": results.get("交费期间", {}).get("evidence_text"),
+            }
+
+    if "交费期间" not in results:
+        rate_value, rate_path, sheet_name = extract_pay_period_from_rate_xlsx(product_id)
+        if rate_value:
+            results["交费期间"] = {
+                "coverage_name": "交费期间",
+                "value": rate_value,
+                "confidence": 0.82,
+                "note": f"rule: raw_rate_xlsx_header{f'[{sheet_name}]' if sheet_name else ''}",
+                "source_type": "raw_rate_xlsx",
+                "block_id": None,
+                "page": None,
+                "evidence_text": str(rate_path) if rate_path else None,
+            }
+
     return results
 
 
@@ -525,6 +791,8 @@ def main() -> None:
     manifest_path = args.manifest or args.manifest_pos
     output_path_arg = args.output or args.output_pos
     blocks_dir_arg = args.blocks_dir or str(Path(__file__).resolve().parents[1] / "data" / "blocks")
+    counts_path = Path(__file__).resolve().parents[1] / "data" / "manifests" / "product_disease_counts_v1.json"
+    coverage_db_path = Path(__file__).resolve().parents[1] / "data" / "manifests" / "product_coverage_db_v1.json"
 
     if not manifest_path or not output_path_arg:
         parser.error("must provide manifest and output, either as positional args or with --manifest/--output")
@@ -542,7 +810,8 @@ def main() -> None:
         if not blocks_path.exists():
             continue
         blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
-        extracted = extract_candidates(blocks)
+        disease_lookup_id = str(item.get("db_product_id") or item["product_id"])
+        extracted = extract_candidates(blocks, disease_lookup_id, counts_path, item["product_id"], coverage_db_path)
         rows.append(
             {
                 "product_id": item["product_id"],
