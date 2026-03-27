@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIX Review Module Test Suite</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #f5f5f7;
+        color: #1d1d1f;
+        font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        height: 56px;
+        background: rgba(255,255,255,0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+      }
+      header h1 { margin: 0; font-size: 15px; font-weight: 600; }
+      #run-btn {
+        border: 0;
+        border-radius: 999px;
+        background: #0071e3;
+        color: #fff;
+        padding: 8px 16px;
+        font: inherit;
+        cursor: pointer;
+      }
+      .summary {
+        display: flex;
+        gap: 10px;
+        padding: 14px 28px;
+        background: #fff;
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+      }
+      .chip {
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .chip-total { background: rgba(0,0,0,0.07); }
+      .chip-pass { background: rgba(52,199,89,.13); color: #1c8a41; }
+      .chip-fail { background: rgba(255,59,48,.13); color: #c0261c; }
+      main { padding: 24px 28px 48px; display: flex; flex-direction: column; gap: 18px; }
+      .group-title {
+        margin: 0 0 8px;
+        color: #6e6e73;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .case-list { display: flex; flex-direction: column; gap: 6px; }
+      .case {
+        display: flex;
+        gap: 12px;
+        padding: 12px 14px;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 10px;
+      }
+      .icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .wait { background: rgba(0,0,0,0.07); color: #86868b; }
+      .pass { background: rgba(52,199,89,.13); color: #1c8a41; }
+      .fail { background: rgba(255,59,48,.13); color: #c0261c; }
+      .case-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+      .case-detail { font-size: 12px; color: #6e6e73; }
+      .case-error {
+        margin-top: 6px;
+        padding: 6px 8px;
+        background: rgba(255,59,48,.08);
+        border-radius: 6px;
+        font-size: 11px;
+        color: #c0261c;
+        font-family: "SF Mono", monospace;
+        white-space: pre-wrap;
+      }
+      #module-frame {
+        position: fixed;
+        left: -9999px;
+        top: -9999px;
+        width: 1440px;
+        height: 960px;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>AIX 人工复核模块测试套件</h1>
+      <button id="run-btn" onclick="runAllTests()">▶ 运行全部测试</button>
+    </header>
+    <div class="summary" id="summary"></div>
+    <main id="main"></main>
+    <iframe id="module-frame" src="../index.html"></iframe>
+
+    <script type="module">
+      const results = [];
+
+      function test(group, name, detail, fn) {
+        results.push({ group, name, detail, fn, status: "wait", error: "" });
+      }
+
+      function assert(condition, message) {
+        if (!condition) throw new Error(message);
+      }
+
+      function frameDoc() {
+        return document.getElementById("module-frame").contentDocument;
+      }
+
+      function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      async function resetFrame() {
+        const frame = document.getElementById("module-frame");
+        frame.src = "../index.html?_t=" + Date.now();
+        await new Promise((resolve, reject) => {
+          const timer = setTimeout(() => reject(new Error("iframe 加载超时")), 4000);
+          frame.onload = () => {
+            clearTimeout(timer);
+            setTimeout(resolve, 500);
+          };
+        });
+        const win = frame.contentWindow;
+        if (win?.localStorage) {
+          win.localStorage.removeItem("aix-review-module-v1");
+        }
+        frame.src = "../index.html?_t=" + (Date.now() + 1);
+        await new Promise((resolve, reject) => {
+          const timer = setTimeout(() => reject(new Error("iframe 重置超时")), 4000);
+          frame.onload = () => {
+            clearTimeout(timer);
+            setTimeout(resolve, 500);
+          };
+        });
+      }
+
+      async function loadMock() {
+        const res = await fetch("../mock/review-task-v1.json");
+        if (!res.ok) throw new Error("mock 加载失败");
+        return res.json();
+      }
+
+      function render() {
+        const pass = results.filter((r) => r.status === "pass").length;
+        const fail = results.filter((r) => r.status === "fail").length;
+        document.getElementById("summary").innerHTML = `
+          <span class="chip chip-total">共 ${results.length} 项</span>
+          <span class="chip chip-pass">通过 ${pass}</span>
+          <span class="chip chip-fail">失败 ${fail}</span>
+        `;
+
+        const groups = [...new Set(results.map((r) => r.group))];
+        document.getElementById("main").innerHTML = groups.map((group) => {
+          const list = results.filter((r) => r.group === group);
+          return `
+            <section>
+              <p class="group-title">${group}</p>
+              <div class="case-list">
+                ${list.map((r) => `
+                  <div class="case">
+                    <div class="icon ${r.status}">${r.status === "pass" ? "✓" : r.status === "fail" ? "✕" : "·"}</div>
+                    <div>
+                      <div class="case-name">${r.name}</div>
+                      <div class="case-detail">${r.detail}</div>
+                      ${r.error ? `<div class="case-error">${r.error}</div>` : ""}
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          `;
+        }).join("");
+      }
+
+      async function runAllTests() {
+        for (const item of results) {
+          item.status = "wait";
+          item.error = "";
+        }
+        render();
+        for (const item of results) {
+          try {
+            await item.fn();
+            item.status = "pass";
+          } catch (error) {
+            item.status = "fail";
+            item.error = error.message || String(error);
+          }
+          render();
+        }
+      }
+
+      // 数据结构校验 5
+      test("数据结构校验", "mock JSON 可加载", "review-task-v1.json 返回合法 JSON", async () => {
+        const data = await loadMock();
+        assert(!!data.task_id, "缺少 task_id");
+      });
+      test("数据结构校验", "任务级字段完整", "task_id/product_id/product_name/items 必须存在", async () => {
+        const data = await loadMock();
+        assert(data.product_id && data.product_name, "任务级字段缺失");
+        assert(Array.isArray(data.items), "items 不是数组");
+      });
+      test("数据结构校验", "item 基本字段完整", "candidate_id/coverage_name/status/source/evidence 必须存在", async () => {
+        const data = await loadMock();
+        data.items.forEach((item) => {
+          assert(item.candidate_id, "candidate_id 缺失");
+          assert(item.coverage_name, "coverage_name 缺失");
+          assert(item.status, "status 缺失");
+          assert(item.source, "source 缺失");
+          assert(item.evidence, "evidence 缺失");
+        });
+      });
+      test("数据结构校验", "置信度区间合法", "confidence 必须在 0 到 1 之间", async () => {
+        const data = await loadMock();
+        data.items.forEach((item) => {
+          if (item.confidence !== undefined && item.confidence !== null) {
+            assert(item.confidence >= 0 && item.confidence <= 1, `${item.coverage_name} confidence 非法`);
+          }
+        });
+      });
+      test("数据结构校验", "logic_trace 格式正确", "priority/normalization/mapping 三类链路必须是数组", async () => {
+        const data = await loadMock();
+        data.items.forEach((item) => {
+          assert(Array.isArray(item.logic_trace.priority_trace), "priority_trace 非数组");
+          assert(Array.isArray(item.logic_trace.normalization_trace), "normalization_trace 非数组");
+          assert(Array.isArray(item.logic_trace.mapping_trace), "mapping_trace 非数组");
+        });
+      });
+
+      // 页面渲染 7
+      test("页面渲染", "三栏结构存在", "source/candidate/decision 三栏必须渲染", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        assert(doc.querySelector(".source-panel"), "缺少 source-panel");
+        assert(doc.querySelector(".candidate-panel"), "缺少 candidate-panel");
+        assert(doc.querySelector(".decision-panel"), "缺少 decision-panel");
+      });
+      test("页面渲染", "候选行数正确", "候选列表行数应等于 mock items 数量", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        const data = await loadMock();
+        assert(doc.querySelectorAll(".candidate-row").length === data.items.length, "候选行数不一致");
+      });
+      test("页面渲染", "状态徽章渲染", "页面至少渲染一个 status-pill", async () => {
+        await resetFrame();
+        assert(frameDoc().querySelectorAll(".status-pill").length > 0, "未渲染状态徽章");
+      });
+      test("页面渲染", "置信度条渲染", "页面至少渲染一个 confidence-bar", async () => {
+        await resetFrame();
+        assert(frameDoc().querySelectorAll(".confidence-bar").length > 0, "未渲染置信度条");
+      });
+      test("页面渲染", "顶部进度条渲染", "progressFill/progressLabel 必须存在", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        assert(doc.getElementById("progressFill"), "缺少 progressFill");
+        assert(doc.getElementById("progressLabel"), "缺少 progressLabel");
+      });
+      test("页面渲染", "入库按钮初始禁用", "初始未裁决时 submitImport 应禁用", async () => {
+        await resetFrame();
+        assert(frameDoc().getElementById("submitImport").disabled, "submitImport 未禁用");
+      });
+      test("页面渲染", "panel-body 分层存在", "三栏都应有 panel-body 包裹", async () => {
+        await resetFrame();
+        assert(frameDoc().querySelectorAll(".panel-body").length >= 2, "panel-body 层级不足");
+      });
+
+      // 交互流程 4
+      test("交互流程", "点击候选行更新详情", "点击第二行后 detailCoverageName 应变化", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        const before = doc.getElementById("detailCoverageName").textContent;
+        const rows = doc.querySelectorAll(".candidate-row");
+        rows[1].click();
+        await delay(80);
+        const after = doc.getElementById("detailCoverageName").textContent;
+        assert(before !== after, "详情区未更新");
+      });
+      test("交互流程", "接受动作高亮", "点击接受后按钮应增加 is-selected", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        const btn = doc.querySelector(".action-btn[data-action='accept']");
+        btn.click();
+        await delay(40);
+        assert(btn.classList.contains("is-selected"), "接受按钮未高亮");
+      });
+      test("交互流程", "保存后状态刷新", "保存后当前候选状态应更新", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        doc.querySelector(".candidate-row").click();
+        await delay(60);
+        doc.querySelector(".action-btn[data-action='accept']").click();
+        doc.getElementById("saveDecision").click();
+        await delay(80);
+        const status = doc.querySelector(".candidate-row .status-pill")?.dataset.status;
+        assert(status === "accepted" || status === "modified", "状态未刷新");
+      });
+      test("交互流程", "搜索过滤生效", "搜索后候选行数应减少", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        const data = await loadMock();
+        const total = doc.querySelectorAll(".candidate-row").length;
+        doc.getElementById("searchInput").value = data.items[0].coverage_name;
+        doc.getElementById("searchInput").dispatchEvent(new Event("input"));
+        await delay(80);
+        const after = doc.querySelectorAll(".candidate-row").length;
+        assert(after < total, "搜索过滤未生效");
+      });
+
+      // 可视化有效性 5
+      test("可视化有效性", "徽章颜色语义正确", "待审/已接受/已驳回颜色应不同", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        doc.querySelector(".candidate-row").click();
+        await delay(50);
+        doc.querySelector(".action-btn[data-action='accept']").click();
+        doc.getElementById("saveDecision").click();
+        await delay(60);
+        const accepted = doc.querySelector(".status-pill[data-status='accepted']");
+        const review = [...doc.querySelectorAll(".status-pill")].find((el) => el.dataset.status === "review_required");
+        assert(accepted && review, "缺少对比徽章");
+        assert(getComputedStyle(accepted).backgroundColor !== getComputedStyle(review).backgroundColor, "颜色语义未区分");
+      });
+      test("可视化有效性", "置信度条宽度精度", "span width 应与 confidence*100 一致", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        const data = await loadMock();
+        const first = data.items.find((item) => item.confidence !== undefined && item.confidence !== null);
+        const expected = Math.round(first.confidence * 100) + "%";
+        const actual = doc.querySelector(".confidence-bar span").style.width;
+        assert(actual === expected, `宽度不一致: ${actual} !== ${expected}`);
+      });
+      test("可视化有效性", "进度条推进", "保存一条后 progressFill 宽度应增加", async () => {
+        await resetFrame();
+        const doc = frameDoc();
+        const before = parseFloat(doc.getElementById("progressFill").style.width || "0");
+        doc.querySelector(".candidate-row").click();
+        await delay(50);
+        doc.querySelector(".action-btn[data-action='accept']").click();
+        doc.getElementById("saveDecision").click();
+        await delay(70);
+        const after = parseFloat(doc.getElementById("progressFill").style.width || "0");
+        assert(after > before, "进度条未推进");
+      });
+      test("可视化有效性", "判定链路节点存在", "至少应渲染一个 timeline-item", async () => {
+        await resetFrame();
+        assert(frameDoc().querySelectorAll(".timeline-item").length > 0, "无 timeline-item");
+      });
+      test("可视化有效性", "三栏无水平溢出", "workspace 内 panel 不应出现水平溢出", async () => {
+        await resetFrame();
+        frameDoc().querySelectorAll(".panel").forEach((panel) => {
+          assert(panel.scrollWidth <= panel.clientWidth + 2, `panel 溢出: ${panel.className}`);
+        });
+      });
+
+      // 接口契约 3
+      test("接口契约", "source_files 结构正确", "source_type/document_id/file_name/document_type 必须存在", async () => {
+        const data = await loadMock();
+        data.source_files.forEach((item) => {
+          assert(item.source_type && item.document_id && item.file_name && item.document_type, "source_files 字段缺失");
+        });
+      });
+      test("接口契约", "item.source 结构正确", "source_type/source_file/source_raw_value 必须存在", async () => {
+        const data = await loadMock();
+        data.items.forEach((item) => {
+          assert("source_type" in item.source, "source_type 缺失");
+          assert("source_file" in item.source, "source_file 缺失");
+          assert("source_raw_value" in item.source, "source_raw_value 缺失");
+        });
+      });
+      test("接口契约", "item.evidence 结构正确", "block_id/md_text/title_path 必须存在", async () => {
+        const data = await loadMock();
+        data.items.forEach((item) => {
+          assert("block_id" in item.evidence, "block_id 缺失");
+          assert("md_text" in item.evidence, "md_text 缺失");
+          assert("title_path" in item.evidence, "title_path 缺失");
+        });
+      });
+
+      window.runAllTests = runAllTests;
+      render();
+    </script>
+  </body>
+  </html>

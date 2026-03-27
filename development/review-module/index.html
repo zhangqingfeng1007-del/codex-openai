@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AIX 人工复核工作台 V2</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="topbar-main">
+          <div>
+            <div class="eyebrow">AIX Review Workbench</div>
+            <h1 id="productTitle">加载中…</h1>
+            <div class="topbar-subline">
+              <span id="companyName">—</span>
+              <span class="dot"></span>
+              <span id="taskStatusText">—</span>
+              <span class="dot"></span>
+              <span id="ruleVersion">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="topbar-progress">
+          <div class="progress-meta">
+            <span id="progressText">0 / 0 已裁决</span>
+            <span id="riskSummary">冲突 0 · 缺失 0 · 待审 0</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button type="button" class="ghost-btn">打回补资料</button>
+          <button type="button" class="ghost-btn">暂存</button>
+          <button type="button" id="submitImport" class="primary-btn" disabled>提交入库</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="panel panel-left">
+          <div class="panel-header">
+            <div>
+              <h2>标准项清单</h2>
+              <p>按字段组展示，支持依赖联动高亮。</p>
+            </div>
+            <input id="searchInput" class="search-input" type="search" placeholder="搜索字段名或候选值" />
+          </div>
+          <div class="panel-body" id="fieldGroupList"></div>
+        </aside>
+
+        <section class="panel panel-center">
+          <div class="split-panel">
+            <section class="split-section">
+              <div class="panel-header">
+                <div>
+                  <h2>多来源证据</h2>
+                  <p id="evidenceTitle">选择左侧字段查看来源。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div id="dependencyBanner"></div>
+                <div class="package-card">
+                  <div class="package-head">
+                    <h3>资料包</h3>
+                    <span id="packageId">—</span>
+                  </div>
+                  <div class="package-files" id="packageFiles"></div>
+                </div>
+                <div id="sourcesList" class="sources-list"></div>
+              </div>
+            </section>
+
+            <section class="split-section split-trace">
+              <div class="panel-header">
+                <div>
+                  <h2>判定链路</h2>
+                  <p>原始文件值 → md 值 → block 值 → 标准值。</p>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div id="logicTrace" class="logic-trace"></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <aside class="panel panel-right">
+          <div class="panel-header">
+            <div>
+              <h2>人工裁决</h2>
+              <p>接受、修改、驳回并记录错因。</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="decision-warning" id="decisionWarning"></div>
+
+            <section class="decision-card">
+              <div class="decision-head">
+                <div>
+                  <div class="eyebrow">当前字段</div>
+                  <h3 id="decisionCoverageName">请选择字段</h3>
+                </div>
+                <div id="decisionBadges" class="decision-badges"></div>
+              </div>
+
+              <div class="decision-grid">
+                <div class="field-block">
+                  <label>当前候选摘要</label>
+                  <div id="candidateSummary" class="value-box">—</div>
+                </div>
+                <div class="field-block">
+                  <label>最终标准值</label>
+                  <textarea id="finalValueInput" class="text-input" rows="3" placeholder="输入最终标准值"></textarea>
+                  <div id="standardValueHints" class="standard-hints"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="decision-card">
+              <h3>来源补录</h3>
+              <div class="decision-grid">
+                <div class="field-block">
+                  <label for="sourceFileSelect">来源文件</label>
+                  <select id="sourceFileSelect" class="text-input">
+                    <option value="">请选择来源文件</option>
+                  </select>
+                </div>
+                <div class="field-block">
+                  <label for="sourcePageInput">页码</label>
+                  <input id="sourcePageInput" class="text-input" type="number" min="1" placeholder="例如 12" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="sourceQuoteInput">原文来源值 / 描述文字</label>
+                <textarea id="sourceQuoteInput" class="text-input" rows="4" placeholder="填写原始来源值、原文摘录或人工补录说明"></textarea>
+              </div>
+            </section>
+
+            <section class="decision-card">
+              <h3>裁决动作</h3>
+              <div class="action-row" id="actionRow">
+                <button type="button" class="action-btn action-accept" data-action="accepted">接受</button>
+                <button type="button" class="action-btn action-modify" data-action="modified">修改后接受</button>
+                <button type="button" class="action-btn action-reject" data-action="rejected">驳回</button>
+                <button type="button" class="action-btn action-missing" data-action="cannot_extract">标记缺失</button>
+              </div>
+            </section>
+
+            <section class="decision-card">
+              <div class="form-group">
+                <label for="reasonCode">错因</label>
+                <select id="reasonCode" class="text-input">
+                  <option value="">请选择</option>
+                  <option value="source_conflict">来源冲突</option>
+                  <option value="source_missing">来源缺失</option>
+                  <option value="logic_wrong">判定逻辑错误</option>
+                  <option value="normalization_wrong">标准化错误</option>
+                  <option value="manual_confirmation_required">需人工确认</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reviewComment">备注</label>
+                <textarea id="reviewComment" class="text-input" rows="4" placeholder="记录裁决说明"></textarea>
+              </div>
+              <div class="action-footer">
+                <button type="button" id="saveDecision" class="primary-btn">保存裁决</button>
+                <span id="submitStatus" class="submit-status"></span>
+              </div>
+            </section>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

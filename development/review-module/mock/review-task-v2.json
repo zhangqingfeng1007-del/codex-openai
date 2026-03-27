@@ -1,0 +1,672 @@
+{
+  "task": {
+    "task_id": "task_20260326_001",
+    "task_status": "in_review",
+    "rule_version": "rule_v2.4"
+  },
+  "catalog_version_at_creation": "v1.2",
+  "product": {
+    "product_id": "1010003851",
+    "product_name": "招商信诺真惠保重大疾病保险（互联网专属）",
+    "company_name": "招商信诺",
+    "aix_category_id": 6001
+  },
+  "document_package": {
+    "document_package_id": "pkg_1010003851_001",
+    "files": [
+      {
+        "source_type": "clause",
+        "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+        "parse_quality": "good",
+        "local_path": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/008-第四批交付阶段202412/01-条款文件/700-招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf"
+      },
+      {
+        "source_type": "product_brochure",
+        "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-产品说明书.pdf",
+        "parse_quality": "good",
+        "local_path": null
+      },
+      {
+        "source_type": "processed_rate",
+        "file_name": "1010003851-结果费率表.xlsx",
+        "parse_quality": "good",
+        "local_path": "/Users/zqf-openclaw/Desktop/开发材料/招行数据/010-招行项目（待整理）/008-第四批交付阶段202412/02-费率表/02-结果费率表/700-1-招商信诺真惠保重大疾病保险（互联网专属）-费率解析结果表.xlsx"
+      }
+    ]
+  },
+  "field_groups": [
+    {
+      "group_type": "tier_a_basic",
+      "group_name": "基础规则字段",
+      "items": [
+        {
+          "item_id": "item_age",
+          "coverage_name": "投保年龄",
+          "status": "review_required",
+          "candidate_summary": "条款: 0（28天）-55周岁 | 费率: 0-55周岁",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 1,
+          "source_count": 2,
+          "sources": [
+            {
+              "source_id": "src_age_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 3,
+              "block_id": "1010003851_p3_b42",
+              "title_path": ["投保规则", "投保年龄"],
+              "source_raw_value": "出生满28天至55周岁",
+              "md_text": "被保险人的投保年龄为出生满28天至55周岁。",
+              "block_text": "被保险人的投保年龄为出生满28天至55周岁。",
+              "raw_value": "出生满28天至55周岁",
+              "normalized_value": "0（28天）-55周岁",
+              "confidence": 0.95,
+              "extract_method": "rule: age_with_days",
+              "conflict": true
+            },
+            {
+              "source_id": "src_age_rate",
+              "source_type": "processed_rate",
+              "file_name": "1010003851-结果费率表.xlsx",
+              "page": null,
+              "block_id": null,
+              "title_path": [],
+              "source_raw_value": "0-55周岁",
+              "md_text": "",
+              "block_text": "",
+              "raw_value": "0-55周岁",
+              "normalized_value": "0-55周岁",
+              "confidence": 0.88,
+              "extract_method": "rate_parser: age_axis",
+              "conflict": true
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "来源优先级：条款 > 说明书 > 费率表",
+              "条款含天数说明，优先于费率侧范围值"
+            ],
+            "normalization_trace": [
+              "出生满28天至55周岁 -> 0（28天）-55周岁"
+            ],
+            "mapping_trace": [
+              "coverage_name=投保年龄",
+              "standard_content=0（28天）-55周岁"
+            ]
+          }
+        },
+        {
+          "item_id": "item_period",
+          "coverage_name": "保险期间",
+          "status": "candidate_ready",
+          "candidate_summary": "终身",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 5,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_period_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 2,
+              "block_id": "1010003851_p2_b14",
+              "title_path": ["保险期间"],
+              "source_raw_value": "保险期间为终身",
+              "md_text": "本合同的保险期间为终身。",
+              "block_text": "本合同的保险期间为终身。",
+              "raw_value": "终身",
+              "normalized_value": "终身",
+              "confidence": 0.97,
+              "extract_method": "rule: insurance_period_pattern",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款标题命中“保险期间”"
+            ],
+            "normalization_trace": [
+              "无需变更"
+            ],
+            "mapping_trace": [
+              "coverage_name=保险期间",
+              "standard_content=终身"
+            ]
+          }
+        },
+        {
+          "item_id": "item_pay_period",
+          "coverage_name": "交费期间",
+          "status": "candidate_ready",
+          "candidate_summary": "趸交，5/10/20/30年交",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 5,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_pay_period_rate",
+              "source_type": "processed_rate",
+              "file_name": "1010003851-结果费率表.xlsx",
+              "page": null,
+              "block_id": null,
+              "title_path": [],
+              "source_raw_value": "趸交, 5年交, 10年交, 20年交, 30年交",
+              "md_text": "",
+              "block_text": "",
+              "raw_value": "趸交, 5年交, 10年交, 20年交, 30年交",
+              "normalized_value": "趸交，5/10/20/30年交",
+              "confidence": 0.93,
+              "extract_method": "rate_parser: pay_period_axis",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "费率表为交费期间主来源"
+            ],
+            "normalization_trace": [
+              "趸交, 5年交, 10年交, 20年交, 30年交 -> 趸交，5/10/20/30年交"
+            ],
+            "mapping_trace": [
+              "coverage_name=交费期间",
+              "standard_content=趸交，5/10/20/30年交"
+            ]
+          }
+        },
+        {
+          "item_id": "item_waiting_period",
+          "coverage_name": "等待期",
+          "status": "candidate_ready",
+          "candidate_summary": "非意外180天，意外0天",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 5,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_waiting_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 8,
+              "block_id": "1010003851_p8_b19",
+              "title_path": ["保险责任", "等待期"],
+              "source_raw_value": "非因意外伤害导致的，等待期为180天；因意外伤害导致的无等待期",
+              "md_text": "非因意外伤害导致的，等待期为180天；因意外伤害导致的无等待期。",
+              "block_text": "非因意外伤害导致的，等待期为180天；因意外伤害导致的无等待期。",
+              "raw_value": "180天；因意外伤害导致的无等待期",
+              "normalized_value": "非意外180天，意外0天",
+              "confidence": 0.96,
+              "extract_method": "rule: waiting_period",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款“等待期”章节直接命中"
+            ],
+            "normalization_trace": [
+              "180天；因意外伤害导致的无等待期 -> 非意外180天，意外0天"
+            ],
+            "mapping_trace": [
+              "coverage_name=等待期",
+              "standard_content=非意外180天，意外0天"
+            ]
+          }
+        },
+        {
+          "item_id": "item_pay_frequency",
+          "coverage_name": "交费频率",
+          "status": "review_required",
+          "candidate_summary": "年交，月交",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 5,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_payfreq_brochure",
+              "source_type": "product_brochure",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-产品说明书.pdf",
+              "page": 5,
+              "block_id": "brochure_p5_b17",
+              "title_path": ["投保规则", "交费方式"],
+              "source_raw_value": "可选择年交或月交",
+              "md_text": "交费方式支持年交、月交。",
+              "block_text": "交费方式支持年交、月交。",
+              "raw_value": "年交、月交",
+              "normalized_value": "年交，月交",
+              "confidence": 0.91,
+              "extract_method": "rule: pay_frequency_text",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "说明书明确声明交费方式"
+            ],
+            "normalization_trace": [
+              "年交、月交 -> 年交，月交"
+            ],
+            "mapping_trace": [
+              "coverage_name=交费频率",
+              "standard_content=年交，月交"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group_type": "tier_a_ci",
+      "group_name": "重疾责任字段",
+      "items": [
+        {
+          "item_id": "item_ci_pay_times",
+          "coverage_name": "重疾赔付次数",
+          "status": "review_required",
+          "candidate_summary": "2次",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 4,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_ci_pay_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 12,
+              "block_id": "1010003851_p12_b51",
+              "title_path": ["保险责任", "重大疾病保险金"],
+              "source_raw_value": "第二次重大疾病保险金",
+              "md_text": "被保险人首次重大疾病保险金给付后，如再次发生重大疾病，给付第二次重大疾病保险金。",
+              "block_text": "被保险人首次重大疾病保险金给付后，如再次发生重大疾病，给付第二次重大疾病保险金。",
+              "raw_value": "第二次重大疾病保险金",
+              "normalized_value": "2次",
+              "confidence": 0.9,
+              "extract_method": "rule: cross_block_firm_multi",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款识别到固定多次赔付结构"
+            ],
+            "normalization_trace": [
+              "第二次重大疾病保险金 -> 2次"
+            ],
+            "mapping_trace": [
+              "coverage_name=重疾赔付次数",
+              "standard_content=2次"
+            ]
+          }
+        },
+        {
+          "item_id": "item_ci_grouping",
+          "coverage_name": "重疾分组",
+          "status": "review_required",
+          "candidate_summary": "不分组",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 4,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_ci_group_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 12,
+              "block_id": "1010003851_p12_b51",
+              "title_path": ["保险责任", "重大疾病保险金"],
+              "source_raw_value": "未按组别区分",
+              "md_text": "再次发生重大疾病时不按组别区分给付。",
+              "block_text": "再次发生重大疾病时不按组别区分给付。",
+              "raw_value": "未按组别区分",
+              "normalized_value": "不分组",
+              "confidence": 0.88,
+              "extract_method": "rule: ci_grouping_firm_multi_no_group",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "多次赔付 > 再判断分组"
+            ],
+            "normalization_trace": [
+              "未按组别区分 -> 不分组"
+            ],
+            "mapping_trace": [
+              "coverage_name=重疾分组",
+              "standard_content=不分组"
+            ]
+          }
+        },
+        {
+          "item_id": "item_ci_count",
+          "coverage_name": "重疾数量",
+          "status": "candidate_ready",
+          "candidate_summary": "120种",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 4,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_ci_count_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 33,
+              "block_id": "1010003851_p33_b08",
+              "title_path": ["重大疾病定义"],
+              "source_raw_value": "120种重大疾病",
+              "md_text": "本合同保障120种重大疾病。",
+              "block_text": "本合同保障120种重大疾病。",
+              "raw_value": "120种重大疾病",
+              "normalized_value": "120种",
+              "confidence": 0.96,
+              "extract_method": "rule: ci_count",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款重大疾病定义清单"
+            ],
+            "normalization_trace": [
+              "120种重大疾病 -> 120种"
+            ],
+            "mapping_trace": [
+              "coverage_name=重疾数量",
+              "standard_content=120种"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group_type": "tier_a_ci_extra",
+      "group_name": "重疾责任扩展",
+      "items": [
+        {
+          "item_id": "item_ci_interval",
+          "coverage_name": "重疾赔付时间间隔",
+          "status": "not_extracted",
+          "candidate_summary": "—",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 2,
+          "source_count": 0,
+          "sources": [],
+          "logic_trace": {
+            "priority_trace": [
+              "模板存在该字段，但抽取层未产出候选"
+            ],
+            "normalization_trace": [],
+            "mapping_trace": [
+              "需人工判断是否补录或标记不适用"
+            ]
+          }
+        },
+        {
+          "item_id": "item_ci_desc",
+          "coverage_name": "重疾保障说明",
+          "status": "review_required",
+          "candidate_summary": "等待期内重疾退还已交保费；意外或等待期后给付基本保额",
+          "final_value": "",
+          "is_tier_a": false,
+          "review_priority": 5,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_ci_desc_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 10,
+              "block_id": "1010003851_p10_b11",
+              "title_path": ["保险责任", "重大疾病保险金"],
+              "source_raw_value": "等待期内重疾退还已交保费；意外或等待期后给付基本保额",
+              "md_text": "等待期内初次发生重疾，退还已交保费；因意外或等待期后初次发生重疾，给付基本保险金额。",
+              "block_text": "等待期内初次发生重疾，退还已交保费；因意外或等待期后初次发生重疾，给付基本保险金额。",
+              "raw_value": "等待期内重疾退还已交保费；意外或等待期后给付基本保额",
+              "normalized_value": "等待期内重疾退还已交保费；意外或等待期后给付基本保额",
+              "confidence": 0.87,
+              "extract_method": "rule: ci_desc",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款重大疾病责任段落命中"
+            ],
+            "normalization_trace": [
+              "保留原业务语义"
+            ],
+            "mapping_trace": [
+              "coverage_name=重疾保障说明"
+            ]
+          }
+        },
+        {
+          "item_id": "item_specific_disease_count",
+          "coverage_name": "特定疾病数量",
+          "status": "cannot_extract",
+          "candidate_summary": "—",
+          "final_value": "",
+          "is_tier_a": true,
+          "review_priority": 2,
+          "source_count": 0,
+          "sources": [],
+          "logic_trace": {
+            "priority_trace": [
+              "条款、说明书、费率表均未命中"
+            ],
+            "normalization_trace": [],
+            "mapping_trace": [
+              "待人工确认是否允许空值入库"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group_type": "tier_policy_rights",
+      "group_name": "保单权益",
+      "items": [
+        {
+          "item_id": "item_loan",
+          "coverage_name": "保单贷款",
+          "status": "not_extracted",
+          "candidate_summary": "—",
+          "final_value": "",
+          "is_tier_a": false,
+          "review_priority": 2,
+          "source_count": 0,
+          "sources": [],
+          "logic_trace": {
+            "priority_trace": [
+              "模板存在，但当前未抽取到候选"
+            ],
+            "normalization_trace": [],
+            "mapping_trace": [
+              "需复核员确认条款/说明书是否包含保单贷款权益"
+            ]
+          }
+        },
+        {
+          "item_id": "item_reduce",
+          "coverage_name": "减保",
+          "status": "candidate_ready",
+          "candidate_summary": "支持",
+          "final_value": "",
+          "is_tier_a": false,
+          "review_priority": 6,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_reduce_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 24,
+              "block_id": "1010003851_p24_b18",
+              "title_path": ["保单权益", "减保"],
+              "source_raw_value": "经申请可以减少基本保险金额",
+              "md_text": "投保人可以申请减少基本保险金额。",
+              "block_text": "投保人可以申请减少基本保险金额。",
+              "raw_value": "可以申请减少基本保险金额",
+              "normalized_value": "支持",
+              "confidence": 0.92,
+              "extract_method": "rule: support_flag",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款保单权益章节命中"
+            ],
+            "normalization_trace": [
+              "可以申请减少基本保险金额 -> 支持"
+            ],
+            "mapping_trace": [
+              "coverage_name=减保",
+              "standard_content=支持"
+            ]
+          }
+        },
+        {
+          "item_id": "item_convert",
+          "coverage_name": "转换权",
+          "status": "not_extracted",
+          "candidate_summary": "—",
+          "final_value": "",
+          "is_tier_a": false,
+          "review_priority": 2,
+          "source_count": 0,
+          "sources": [],
+          "logic_trace": {
+            "priority_trace": [
+              "模板存在，但抽取层未产出"
+            ],
+            "normalization_trace": [],
+            "mapping_trace": [
+              "需复核员确认是否存在转换权"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group_type": "tier_exemption",
+      "group_name": "责任免除",
+      "items": [
+        {
+          "item_id": "item_disease_exemption_count",
+          "coverage_name": "疾病免责数量",
+          "status": "candidate_ready",
+          "candidate_summary": "7条",
+          "final_value": "",
+          "is_tier_a": false,
+          "review_priority": 6,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_exempt_count_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 27,
+              "block_id": "1010003851_p27_b21",
+              "title_path": ["责任免除"],
+              "source_raw_value": "共7条责任免除",
+              "md_text": "本合同共列明7条疾病责任免除情形。",
+              "block_text": "本合同共列明7条疾病责任免除情形。",
+              "raw_value": "7条疾病责任免除",
+              "normalized_value": "7条",
+              "confidence": 0.91,
+              "extract_method": "rule: exemption_count",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款责任免除章节"
+            ],
+            "normalization_trace": [
+              "7条疾病责任免除 -> 7条"
+            ],
+            "mapping_trace": [
+              "coverage_name=疾病免责数量",
+              "standard_content=7条"
+            ]
+          }
+        },
+        {
+          "item_id": "item_disease_exemption_detail",
+          "coverage_name": "疾病具体免责条款",
+          "status": "review_required",
+          "candidate_summary": "完整免责条款原文",
+          "final_value": "",
+          "is_tier_a": false,
+          "review_priority": 5,
+          "source_count": 1,
+          "sources": [
+            {
+              "source_id": "src_exempt_detail_clause",
+              "source_type": "clause",
+              "file_name": "招商信诺真惠保重大疾病保险（互联网专属）-条款.pdf",
+              "page": 27,
+              "block_id": "1010003851_p27_b22",
+              "title_path": ["责任免除"],
+              "source_raw_value": "因以下情形之一导致发生重大疾病的，我们不承担给付责任……",
+              "md_text": "因以下情形之一导致发生重大疾病的，我们不承担给付责任：投保人故意伤害、被保险人故意犯罪……",
+              "block_text": "因以下情形之一导致发生重大疾病的，我们不承担给付责任：投保人故意伤害、被保险人故意犯罪……",
+              "raw_value": "完整免责条款原文",
+              "normalized_value": "完整免责条款原文",
+              "confidence": 0.84,
+              "extract_method": "rule: exemption_detail",
+              "conflict": false
+            }
+          ],
+          "logic_trace": {
+            "priority_trace": [
+              "条款责任免除章节命中"
+            ],
+            "normalization_trace": [
+              "免责原文长文本保留"
+            ],
+            "mapping_trace": [
+              "coverage_name=疾病具体免责条款"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group_type": "dynamic_not_extracted",
+      "group_name": "未抽取字段",
+      "is_dynamic": true,
+      "item_ids": ["item_ci_interval", "item_loan", "item_convert"]
+    },
+    {
+      "group_type": "dynamic_missing",
+      "group_name": "缺失字段",
+      "is_dynamic": true,
+      "item_ids": ["item_specific_disease_count"]
+    }
+  ],
+  "dependency_groups": [
+    {
+      "dependency_group_id": "ci_chain",
+      "group_name": "重疾责任链",
+      "members": ["重疾赔付次数", "重疾分组", "重疾数量"],
+      "rules": [
+        "次数=1次 -> 分组通常为不涉及",
+        "次数>1次 -> 分组应为不分组或N组"
+      ]
+    }
+  ],
+  "conflict_count": 1,
+  "missing_count": 1,
+  "not_extracted_count": 3,
+  "pending_review_count": 12,
+  "total_items": 16
+}

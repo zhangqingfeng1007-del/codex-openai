@@ -6,6 +6,11 @@ import json
 import re
 from pathlib import Path
 
+try:
+    from openpyxl import load_workbook
+except ImportError:  # pragma: no cover - optional dependency in local env
+    load_workbook = None
+
 
 TARGET_FIELDS = [
     "投保年龄",
@@ -40,6 +45,15 @@ PAY_FREQ_ORDER = ["趸交", "年交", "半年交", "季交", "月交"]
 WAITING_PRIORITY_TITLES = ("等待期", "观察期", "投保须知")
 WAITING_SKIP_HINTS = ("案例", "举例", "示例", "利益演示", "演示")
 WAITING_SKIP_TEXT_HINTS = ("确诊日起满", "保单周年日", "小王", "案例")
+PAY_PERIOD_TITLES = [
+    "交费期间", "交费期限", "交费年期",
+    "缴费期间", "缴费期限", "缴费年期",
+    "保险费缴纳期间", "缴费方式",
+]
+RATE_SEARCH_ROOTS = [
+    Path("/Users/zqf-openclaw/Desktop/开发材料/10款重疾"),
+    Path("/Users/zqf-openclaw/Desktop/开发材料/招行数据"),
+]
 
 
 def chinese_to_int(text: str) -> int | None:
@@ -237,24 +251,67 @@ def extract_insurance_period(text: str) -> str | None:
     return None
 
 
+def _format_pay_periods_from_text(compact: str) -> str | None:
+    freqs: list[str] = []
+    if any(k in compact for k in ["趸交", "一次性交付", "一次交清", "一次性付清"]):
+        freqs.append("趸交")
+    compact_clean = re.sub(r"(\d{1,2})年交\1(?=\d{1,2}年交)", r"\1年交", compact)
+    compact_clean = re.sub(r"(\d{1,2})年交\1(?=[^\d]|$)", r"\1年交", compact_clean)
+    years: set[int] = {int(x) for x in re.findall(r"(\d+)年交", compact_clean)}
+    for raw in re.findall(r"([一二三四五六七八九十百零〇]{1,4})年交", compact):
+        val = chinese_to_int(raw)
+        if val is not None:
+            years.add(val)
+    if not years:
+        m = re.search(
+            r"交费期间(?:分为|包括)(.+?)(?:两种|三种|四种|五种|六种|七种|八种|九种|十种|，|。|交费方式)",
+            compact,
+        )
+        if m:
+            segment = m.group(1)
+            years |= {int(x) for x in re.findall(r"(\d+)年", segment)}
+            for raw in re.findall(r"([一二三四五六七八九十百零〇]{1,4})年", segment):
+                val = chinese_to_int(raw)
+                if val is not None:
+                    years.add(val)
+    if years:
+        freqs.append("/".join(str(y) for y in sorted(years)) + "年交")
+    age_match = re.search(r"交至(\d+)周岁", compact)
+    if age_match:
+        freqs.append(f"交至{age_match.group(1)}周岁")
+    if not freqs:
+        return None
+    ordered: list[str] = []
+    for item in freqs:
+        if item not in ordered:
+            ordered.append(item)
+    return "，".join(ordered)
+
+
 def extract_pay_period(text: str) -> str | None:
     compact = normalize_spaces(text)
-    if not any(k in compact for k in ["交费期间", "缴费期间", "交费方式和交费期间", "保险费的支付"]):
+    if not any(k in compact for k in PAY_PERIOD_TITLES + ["交费方式和交费期间", "保险费的支付"]):
         return None
-    freqs = []
-    if "趸交" in compact:
-        freqs.append("趸交")
-    years = sorted({int(x) for x in re.findall(r"(\d+)年交", compact)})
-    if years:
-        parts = [str(y) for y in years]
-        freqs.append("/".join(parts) + "年交")
-    if not freqs and re.search(r"交至\d+岁", compact):
-        return re.search(r"(交至\d+岁)", compact).group(1)
-    return "，".join(freqs) if freqs else None
+    return _format_pay_periods_from_text(compact)
 
 
 def extract_pay_frequency(text: str) -> str | None:
     compact = normalize_spaces(text)
+    definition_like_patterns = [
+        "根据交费方式确定",
+        "对应的日期",
+        "每月每季每半年或每年对应的日",
+        "保单周年日",
+        "保险费约定支付日",
+        "生效对应日",
+        "每年至少一次",
+        "合同生效后每年的对应日",
+        "合同生效后每月的对应日",
+        "合同生效日在合同生效后",
+    ]
+    normalized_compact = compact.replace("、", "").replace("，", "").replace("（", "").replace("）", "")
+    if any(pat.replace("、", "").replace("，", "").replace("（", "").replace("）", "") in normalized_compact for pat in definition_like_patterns):
+        return None
     if not any(k in compact for k in ["交费频率", "交费方式", "保险费的支付"]):
         if not any(k in compact for k in ["每月", "每季", "每半年", "每年", "趸交"]):
             return None
@@ -270,6 +327,64 @@ def extract_pay_frequency(text: str) -> str | None:
             found.append(freq)
     found = [freq for freq in PAY_FREQ_ORDER if freq in found]
     return "，".join(found) if found else None
+
+
+def locate_rate_xlsx(item: dict) -> Path | None:
+    clause_pdf_path = item.get("clause_pdf_path")
+    product_id = item.get("product_id", "")
+    if clause_pdf_path:
+        product_dir = Path(clause_pdf_path).expanduser().resolve().parent
+        if product_dir.exists():
+            for pattern in ("*费率*.xlsx", "*费率*.xls"):
+                candidates = sorted(product_dir.glob(pattern))
+                if candidates:
+                    return candidates[0]
+    if product_id:
+        for root in RATE_SEARCH_ROOTS:
+            if not root.exists():
+                continue
+            for pattern in (f"*{product_id}*费率表.xlsx", f"*{product_id}*费率表.xls"):
+                candidates = sorted(root.rglob(pattern))
+                if candidates:
+                    return candidates[0]
+    return None
+
+
+def extract_pay_frequency_from_rate_xlsx(item: dict) -> tuple[str, str] | None:
+    if load_workbook is None:
+        return None
+    rate_path = locate_rate_xlsx(item)
+    if rate_path is None or not rate_path.exists():
+        return None
+    try:
+        workbook = load_workbook(rate_path, read_only=True, data_only=True)
+    except Exception:
+        return None
+
+    try:
+        for sheet in workbook.worksheets:
+            # max_row may be 0/None in read_only mode for some xlsx — collect all rows then take last 5
+            all_parts: list[str] = []
+            for row in sheet.iter_rows(values_only=True):
+                for cell in row:
+                    if cell is None:
+                        continue
+                    text = str(cell).strip()
+                    if text:
+                        all_parts.append(text)
+            # Use the last 30 tokens (footer area)
+            tail_text = normalize_spaces("".join(all_parts[-30:]))
+            tail_text = (
+                tail_text.replace("一次交清", "趸交")
+                .replace("一次性付清", "趸交")
+                .replace("一次性交付", "趸交")
+            )
+            found = [freq for freq in PAY_FREQ_ORDER if freq in tail_text]
+            if found:
+                return "，".join(found), sheet.title
+    finally:
+        workbook.close()
+    return None
 
 
 def extract_ci_pay_times(text: str) -> str | None:
@@ -362,6 +477,81 @@ def extract_ci_count(text: str) -> str | None:
     return None
 
 
+def should_skip_ci_count_block(block: dict) -> bool:
+    title_path = "".join(block.get("title_path", []) or [])
+    text = normalize_spaces(block.get("text", ""))
+    compact = f"{title_path}{text}"
+    skip_keywords = [
+        "轻度疾病",
+        "轻症",
+        "中度疾病",
+        "中症",
+        "少儿特定",
+    ]
+    return any(keyword in compact for keyword in skip_keywords)
+
+
+def extract_ci_count_from_disease_seq(blocks: list[dict]) -> str | None:
+    max_seq = 0
+    for block in blocks:
+        if should_skip_ci_count_block(block):
+            continue
+        text = block.get("text", "")
+        if not text:
+            continue
+        compact = normalize_spaces(text)
+        if "重大疾病" not in compact and "重度疾病" not in compact and "恶性肿瘤" not in compact:
+            # 序号段正文通常不再重复写“重大疾病”，但至少要避开明显非重疾病章节；
+            # 这里仅用章节排除做约束，允许正文本身只保留病种列表。
+            pass
+        seqs = [int(num) for num in re.findall(r"(?<!\d)(\d{1,3})[\.、]\s*[^\n]{2,20}", text)]
+        if seqs:
+            max_seq = max(max_seq, max(seqs))
+    # 兜底只接受明显像病种附表的大序号，避免把章节编号/责任条款编号误当成病种数。
+    return f"{max_seq}种" if max_seq >= 50 else None
+
+
+def extract_ci_count_from_section_numbering(blocks: list[dict]) -> str | None:
+    section_no = None
+    section_pattern = re.compile(r"^\s*(\d+)\s+重[大度]疾病(?:的)?定义")
+    skip_keywords = ("轻度疾病", "中度疾病", "少儿特定")
+
+    for idx, block in enumerate(blocks):
+        text = (block.get("text") or "").strip()
+        title_text = "".join(block.get("title_path", []) or []).strip()
+        haystack = text or title_text
+        if not haystack:
+            continue
+        match = section_pattern.search(haystack)
+        if match:
+            section_no = match.group(1)
+            break
+
+    if section_no is None:
+        return None
+
+    max_sub = 0
+    sub_pattern = re.compile(rf"\b{re.escape(section_no)}\.(\d{{1,3}})\b")
+
+    for block in blocks:
+        text = (block.get("text") or "").strip()
+        title_text = "".join(block.get("title_path", []) or []).strip()
+        haystack = f"{title_text} {text}".strip()
+        if not haystack:
+            continue
+
+        if any(keyword in haystack for keyword in skip_keywords):
+            continue
+
+        for raw in sub_pattern.findall(haystack):
+            try:
+                max_sub = max(max_sub, int(raw))
+            except ValueError:
+                continue
+
+    return f"{max_sub}种" if max_sub >= 10 else None
+
+
 def ci_count_confidence(text: str) -> float:
     compact = normalize_spaces(text)
     if any(pat in compact for pat in ["重大疾病（共", "重大疾病共有", "我们提供保障的重大疾病共有"]):
@@ -371,21 +561,27 @@ def ci_count_confidence(text: str) -> float:
     return 0.8
 
 
-def extract_candidates(blocks: list[dict]) -> dict:
+def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dict:
     results: dict = {}
     grouping_match: dict | None = None
     text_blocks: list[dict] = []
-    for block in blocks:
+    for idx, block in enumerate(blocks):
         if block["block_type"] not in {"paragraph", "title"}:
             continue
         text = block["text"]
+        pay_period_text = text
+        title_text = " ".join(block.get("title_path", []))
+        if any(keyword in text or keyword in title_text for keyword in PAY_PERIOD_TITLES):
+            next_block = blocks[idx + 1] if idx + 1 < len(blocks) else None
+            if next_block and next_block.get("block_type") in {"paragraph", "title"}:
+                pay_period_text = f"{text} {next_block.get('text', '')}".strip()
         text_blocks.append(block)
 
         add_candidate(results, "投保年龄", extract_age(text), block, 0.95 if "投保年龄" in text else 0.82, "rule: age_pattern")
         _ip_val = extract_insurance_period(text)
         _ip_conf = 0.97 if any("保险期间" in t for t in block.get("title_path", [])) else 0.93
         add_candidate(results, "保险期间", _ip_val, block, _ip_conf, "rule: insurance_period_pattern")
-        add_candidate(results, "交费期间", extract_pay_period(text), block, 0.9, "rule: pay_period_pattern")
+        add_candidate(results, "交费期间", extract_pay_period(pay_period_text), block, 0.9, "rule: pay_period_pattern")
         add_candidate(results, "交费频率", extract_pay_frequency(text), block, 0.9, "rule: pay_frequency_pattern")
 
         waiting_raw, waiting_simple = extract_waiting(text)
@@ -409,8 +605,9 @@ def extract_candidates(blocks: list[dict]) -> dict:
             }
             if grouping_match is None or candidate["confidence"] > grouping_match["confidence"]:
                 grouping_match = candidate
-        count_value = extract_ci_count(text)
-        add_candidate(results, "重疾数量", count_value, block, ci_count_confidence(text), "rule: ci_count")
+        if not should_skip_ci_count_block(block):
+            count_value = extract_ci_count(text)
+            add_candidate(results, "重疾数量", count_value, block, ci_count_confidence(text), "rule: ci_count")
 
     # 跨block兜底：重疾赔付次数单次判定
     if "重疾赔付次数" not in results:
@@ -510,6 +707,16 @@ def extract_candidates(blocks: list[dict]) -> dict:
                     add_candidate(results, "等待期（简化）", simplified, b, 0.75, "rule: waiting_embedded_coverage_clause")
                 break
 
+    if "重疾数量" not in results:
+        section_count = extract_ci_count_from_section_numbering(blocks)
+        if section_count:
+            add_candidate(results, "重疾数量", section_count, blocks[0] if blocks else None, 0.88, "rule: ci_count_section_numbering")
+
+    if "重疾数量" not in results:
+        seq_count = extract_ci_count_from_disease_seq(blocks)
+        if seq_count:
+            add_candidate(results, "重疾数量", seq_count, blocks[0] if blocks else None, 0.84, "rule: ci_count_from_disease_seq")
+
     return results
 
 
@@ -532,17 +739,107 @@ def main() -> None:
     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
     rows = []
     for item in manifest:
-        if item["product_id"] == "1548A":
-            continue
         if item.get("phase1_eligible") is False:
             continue
         if item.get("status") == "phase1_excluded":
             continue
         blocks_path = Path(blocks_dir_arg) / f"{item['product_id']}_blocks.json"
         if not blocks_path.exists():
-            continue
+            degraded_path = Path(blocks_dir_arg) / f"{item['product_id']}_blocks_degraded.json"
+            if not degraded_path.exists():
+                continue
+            blocks_path = degraded_path
         blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
-        extracted = extract_candidates(blocks)
+        extracted = extract_candidates(blocks, item["product_id"])
+        shuomingshu_blocks_path = Path(blocks_dir_arg) / f"{item['product_id']}_说明书_blocks.json"
+        if shuomingshu_blocks_path.exists() and ("投保年龄" not in extracted or "交费期间" not in extracted):
+            shuomingshu_blocks = json.loads(shuomingshu_blocks_path.read_text(encoding="utf-8"))
+            extra = extract_candidates(shuomingshu_blocks, item["product_id"])
+            if "投保年龄" not in extracted and "投保年龄" in extra:
+                age_candidate = extra["投保年龄"].copy()
+                age_candidate["note"] = "rule: age_from_shuomingshu"
+                age_candidate["source_type"] = "product_brochure"
+                extracted["投保年龄"] = age_candidate
+            if "交费期间" not in extracted and "交费期间" in extra:
+                pay_period_candidate = extra["交费期间"].copy()
+                pay_period_candidate["note"] = "rule: pay_period_shuomingshu"
+                pay_period_candidate["source_type"] = "product_brochure"
+                extracted["交费期间"] = pay_period_candidate
+        # 若已有交费期间候选但仅有"趸交"（无年期），且来源为说明书，则也尝试费率表补全
+        _pp_existing = extracted.get("交费期间")
+        _pp_only_lump = (
+            _pp_existing is not None
+            and _pp_existing.get("value") == "趸交"
+            and "shuomingshu" in _pp_existing.get("note", "")
+        )
+        if "交费期间" not in extracted or _pp_only_lump:
+            rate_xlsx = locate_rate_xlsx(item)
+            if rate_xlsx and rate_xlsx.exists():
+                try:
+                    from openpyxl import load_workbook as _lw
+
+                    _LUMP_SYNONYMS = {"趸交", "一次性付清", "一次交清", "一次性交付"}
+
+                    def _fmt_periods(periods: list) -> str | None:
+                        has_lump = any(p in _LUMP_SYNONYMS for p in periods)
+                        yrs = sorted({int(m2.group(1)) for p in periods for m2 in [re.fullmatch(r"(\d+)年交", p)] if m2})
+                        parts = (["趸交"] if has_lump else []) + (["/".join(str(y) for y in yrs) + "年交"] if yrs else [])
+                        return "，".join(parts) if parts else None
+
+                    wb = _lw(rate_xlsx, read_only=True, data_only=True)
+                    sheet = next(
+                        (s for s in wb.sheetnames if not any(k in s for k in ("次标准", "次标准体", "优选体"))),
+                        wb.sheetnames[0],
+                    )
+                    ws = wb[sheet]
+                    pay_periods_found: list[str] = []
+                    for row in ws.iter_rows(min_row=1, max_row=6, values_only=True):
+                        for cell in row:
+                            if cell is None:
+                                continue
+                            val = str(cell).strip()
+                            if val in _LUMP_SYNONYMS:
+                                pay_periods_found.append("趸交")
+                            m = re.fullmatch(r"(\d+)年交", val)
+                            if m:
+                                pay_periods_found.append(val)
+                    if pay_periods_found:
+                        formatted = _fmt_periods(pay_periods_found)
+                        if formatted:
+                            extracted["交费期间"] = {
+                                "coverage_name": "交费期间",
+                                "value": formatted,
+                                "confidence": 0.82,
+                                "note": f"rule: rate_xlsx_header[{sheet}]",
+                                "block_id": None,
+                                "page": None,
+                                "evidence_text": str(rate_xlsx),
+                            }
+                except Exception:
+                    pass
+        if "交费频率" not in extracted:
+            rate_freq = extract_pay_frequency_from_rate_xlsx(item)
+            if rate_freq:
+                value, sheet_name = rate_freq
+                extracted["交费频率"] = {
+                    "coverage_name": "交费频率",
+                    "value": value,
+                    "confidence": 0.9,
+                    "note": f"rule: pay_freq_rate_table[{sheet_name}]",
+                    "block_id": None,
+                    "page": None,
+                    "evidence_text": None,
+                }
+        # 趸交联动：交费期间含趸交但交费频率未含趸交时，补充趸交
+        if "交费频率" in extracted and "交费期间" in extracted:
+            pp_val = extracted["交费期间"].get("value") or ""
+            freq_cand = extracted["交费频率"]
+            freq_val = freq_cand.get("value") or ""
+            if "趸交" in pp_val and "趸交" not in freq_val:
+                freq_cand = dict(freq_cand)
+                freq_cand["value"] = "趸交，" + freq_val
+                freq_cand["note"] = (freq_cand.get("note") or "") + "+趸交(linked from 交费期间)"
+                extracted["交费频率"] = freq_cand
         rows.append(
             {
                 "product_id": item["product_id"],
