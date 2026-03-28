@@ -3,7 +3,7 @@
 build_product_manifest.py — Auto-scan product directories and generate manifest.
 
 Given one or more root directories, scans each immediate subdirectory as one product,
-calls file_router.route_file() for every file, groups results by doc_category, and
+calls file_router.route_file() for every file, groups results into files[], and
 outputs a manifest JSON consumable by extract_tier_a_rules.py.
 
 CLI usage:
@@ -47,7 +47,7 @@ from file_router import route_file  # noqa: E402
 # Matches patterns like: 889, 851A, 1548A, 1010003676
 _PRODUCT_ID_RE = re.compile(r'^(\d+[A-Z]?)-')
 
-# doc_categories that go into source_files (all others are logged in warnings only)
+# doc_categories that go into files[] (all others are logged in warnings only)
 _SOURCE_CATEGORIES = frozenset(
     {"clause", "product_brochure", "raw_rate", "cash_value", "underwriting_rule"}
 )
@@ -101,9 +101,7 @@ def scan_product_directory(dir_path: Path) -> dict:
       db_product_id    : null   (not populated; requires DB lookup)
       directory        : str    (absolute path)
       scan_time        : str    (ISO 8601 UTC)
-      source_files     : dict   — keys: clause, product_brochure, raw_rate,
-                                         cash_value, underwriting_rule
-                                  values: list of file dicts
+      files            : list[dict]
       warnings         : list[str]
       phase1_eligible  : null   (must be set manually after review)
       status           : "pending_review"
@@ -116,14 +114,7 @@ def scan_product_directory(dir_path: Path) -> dict:
 
     product_name = _extract_product_name(dir_path.name)
 
-    # Initialise source_files buckets
-    source_files: dict[str, list[dict]] = {
-        "clause": [],
-        "product_brochure": [],
-        "raw_rate": [],
-        "cash_value": [],
-        "underwriting_rule": [],
-    }
+    files: list[dict] = []
 
     # Scan direct children only (no recursion into sub-subdirectories)
     try:
@@ -159,18 +150,26 @@ def scan_product_directory(dir_path: Path) -> dict:
             continue
 
         file_entry = {
+            "doc_category": doc_category,
+            "source_file": str(entry),
             "file_name": entry.name,
-            "local_path": str(entry),
             "parse_quality": result["parse_quality"],
             "is_raw": result["is_raw"],
-            "extractor": result["extractor"],
+            "parser_route": result["extractor"],
             "phase": result["phase"],
         }
 
         if result["warnings"]:
             file_entry["router_warnings"] = result["warnings"]
 
-        source_files[doc_category].append(file_entry)
+        files.append(file_entry)
+
+    files.sort(key=lambda item: (item["doc_category"], item["file_name"]))
+
+    clause_pdf_path = next(
+        (item["source_file"] for item in files if item["doc_category"] == "clause"),
+        None,
+    )
 
     return {
         "product_id": product_id,
@@ -178,7 +177,8 @@ def scan_product_directory(dir_path: Path) -> dict:
         "db_product_id": None,
         "directory": str(dir_path),
         "scan_time": _now_iso(),
-        "source_files": source_files,
+        "files": files,
+        "clause_pdf_path": clause_pdf_path,
         "warnings": warnings,
         "phase1_eligible": None,
         "status": "pending_review",

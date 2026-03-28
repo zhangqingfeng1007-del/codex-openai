@@ -251,11 +251,24 @@ def parse_markdown(product_id: str, md_text: str) -> list[dict]:
     return all_blocks
 
 
+def serialize_blocks_payload(blocks: list[dict], meta: dict | None = None) -> dict | list[dict]:
+    if not meta:
+        return blocks
+    return {
+        "_meta": meta,
+        "blocks": blocks,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Parse Markdown clause files into structured blocks.")
     parser.add_argument("--product-id", required=True, help="Logical product_id used in file names.")
     parser.add_argument("--input", required=True, help="Input Markdown file path.")
     parser.add_argument("--output", required=True, help="Output JSON file path.")
+    parser.add_argument(
+        "--meta-json",
+        help="Optional JSON object to store as top-level _meta; preserves legacy block format under blocks[].",
+    )
     args = parser.parse_args()
 
     input_path = Path(args.input)
@@ -264,7 +277,9 @@ def main() -> None:
 
     md_text = input_path.read_text(encoding="utf-8")
     blocks = parse_markdown(args.product_id, md_text)
-    output_path.write_text(json.dumps(blocks, ensure_ascii=False, indent=2), encoding="utf-8")
+    meta = json.loads(args.meta_json) if args.meta_json else None
+    payload = serialize_blocks_payload(blocks, meta)
+    output_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"wrote {len(blocks)} blocks to {output_path}")
 

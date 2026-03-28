@@ -86,7 +86,7 @@ def load_manifest_compatible(path: Path) -> list[dict]:
             continue
 
         clause_pdf_path = item.get("clause_pdf_path")
-        files: list[dict] = []
+        files = []
         if clause_pdf_path:
             files.append(
                 {
@@ -476,8 +476,13 @@ def extract_pay_period(text: str) -> str | None:
 def extract_pay_frequency(text: str) -> str | None:
     compact = normalize_spaces(text)
     definition_like_patterns = [
+        "根据本合同交费方式确定",
         "根据交费方式确定",
+        "对应日",
         "对应的日期",
+        "每月第一个营业日",
+        "根据市场情况",
+        "约定利率",
         "每月每季每半年或每年对应的日",
         "保单周年日",
         "保险费约定支付日",
