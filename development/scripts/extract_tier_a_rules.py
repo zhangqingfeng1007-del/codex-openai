@@ -865,14 +865,14 @@ def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dic
     grouping_match: dict | None = None
     text_blocks: list[dict] = []
     for idx, block in enumerate(blocks):
-        if block["block_type"] not in {"paragraph", "title"}:
+        if block["block_type"] not in {"paragraph", "title", "list"}:
             continue
         text = block["text"]
         pay_period_text = text
         title_text = " ".join(block.get("title_path", []))
         if any(keyword in text or keyword in title_text for keyword in PAY_PERIOD_TITLES):
             next_block = blocks[idx + 1] if idx + 1 < len(blocks) else None
-            if next_block and next_block.get("block_type") in {"paragraph", "title"}:
+            if next_block and next_block.get("block_type") in {"paragraph", "title", "list"}:
                 pay_period_text = f"{text} {next_block.get('text', '')}".strip()
         text_blocks.append(block)
 
@@ -1024,6 +1024,18 @@ def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dic
     return results
 
 
+def pay_period_specificity(value: str) -> int:
+    compact = normalize_spaces(value)
+    score = 0
+    if "趸交" in compact:
+        score += 1
+    for raw in re.findall(r"(\d+(?:/\d+)*)年交", compact):
+        score += len([part for part in raw.split("/") if part])
+    if "交至" in compact:
+        score += 10
+    return score
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract Tier A rule-based candidates from blocks.")
     parser.add_argument("manifest_pos", nargs="?")
@@ -1098,7 +1110,11 @@ def main() -> None:
             and _pp_existing.get("value") == "趸交"
             and "shuomingshu" in _pp_existing.get("note", "")
         )
-        if "交费期间" not in extracted or _pp_only_lump:
+        _pp_from_shuomingshu = (
+            _pp_existing is not None
+            and "shuomingshu" in (_pp_existing.get("note") or "")
+        )
+        if "交费期间" not in extracted or _pp_only_lump or _pp_from_shuomingshu:
             rate_xlsx = locate_rate_xlsx(item)
             if rate_xlsx and rate_xlsx.exists():
                 try:
@@ -1132,15 +1148,25 @@ def main() -> None:
                     if pay_periods_found:
                         formatted = _fmt_periods(pay_periods_found)
                         if formatted:
-                            extracted["交费期间"] = {
-                                "coverage_name": "交费期间",
-                                "value": formatted,
-                                "confidence": 0.82,
-                                "note": f"rule: rate_xlsx_header[{sheet}]",
-                                "block_id": None,
-                                "page": None,
-                                "evidence_text": str(rate_xlsx),
-                            }
+                            should_replace = (
+                                "交费期间" not in extracted
+                                or _pp_only_lump
+                                or (
+                                    _pp_from_shuomingshu
+                                    and pay_period_specificity(formatted)
+                                    > pay_period_specificity(_pp_existing.get("value") or "")
+                                )
+                            )
+                            if should_replace:
+                                extracted["交费期间"] = {
+                                    "coverage_name": "交费期间",
+                                    "value": formatted,
+                                    "confidence": 0.82,
+                                    "note": f"rule: rate_xlsx_header[{sheet}]",
+                                    "block_id": None,
+                                    "page": None,
+                                    "evidence_text": str(rate_xlsx),
+                                }
                 except Exception:
                     pass
         if "交费频率" not in extracted:
@@ -1193,8 +1219,19 @@ def main() -> None:
             except Exception:
                 structured_candidates = {}
             for field in ("保险期间", "交费期间", "交费频率"):
-                if field not in extracted and field in structured_candidates:
+                if field not in structured_candidates:
+                    continue
+                if field not in extracted:
                     extracted[field] = structured_candidates[field]
+                    continue
+                if field == "交费期间":
+                    existing = extracted[field]
+                    if (
+                        "shuomingshu" in (existing.get("note") or "")
+                        and pay_period_specificity(structured_candidates[field].get("value") or "")
+                        > pay_period_specificity(existing.get("value") or "")
+                    ):
+                        extracted[field] = structured_candidates[field]
         rows.append(
             {
                 "product_id": item["product_id"],

@@ -23,6 +23,7 @@ from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).parent
 _REPO_ROOT = _SCRIPT_DIR.parent
+OCR_PYTHON = Path("/Users/zqf-openclaw/codex-openai/development/.venv_ocr/bin/python")
 
 BLOCKS_DIR    = _REPO_ROOT / "data" / "blocks"
 TABLES_DIR    = _REPO_ROOT / "data" / "tables"
@@ -88,9 +89,6 @@ def step_blocks(manifest_path: Path, skip: bool) -> dict[str, int]:
             cat = entry.get("doc_category", "")
             if cat not in _TEXT_CATEGORIES:
                 continue
-            if entry.get("parse_quality") == "scan_pdf":
-                print(f"  [SKIP] {product_id} {cat}: scan_pdf (Phase 2)")
-                continue
             if not entry.get("is_raw"):
                 continue
 
@@ -100,6 +98,20 @@ def step_blocks(manifest_path: Path, skip: bool) -> dict[str, int]:
             # Skip if already up-to-date (source older than output)
             if out.exists() and out.stat().st_mtime >= source.stat().st_mtime:
                 print(f"  [SKIP] {product_id} {cat}: up-to-date")
+                continue
+
+            if entry.get("parse_quality") == "scan_pdf":
+                cmd = [
+                    str(OCR_PYTHON),
+                    str(_SCRIPT_DIR / "pdf_ocr_extractor.py"),
+                    "--input", str(source),
+                    "--product-id", product_id,
+                    "--doc-category", cat,
+                    "--output", str(out),
+                ]
+                ok = run(cmd, f"{product_id} {cat} [OCR]")
+                if ok:
+                    summary[f"{product_id}_{cat}"] = 1
                 continue
 
             cmd = [
