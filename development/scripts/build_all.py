@@ -28,15 +28,19 @@ BLOCKS_DIR    = _REPO_ROOT / "data" / "blocks"
 TABLES_DIR    = _REPO_ROOT / "data" / "tables"
 MANIFEST_DEFAULT = _REPO_ROOT / "data" / "manifests" / "manifest_latest.json"
 
-# doc_category 值映射到 blocks 文件名后缀
-_BLOCKS_SUFFIX: dict[str, str] = {
-    "clause":           "clause",
-    "product_brochure": "brochure",
-    "underwriting_rule":"underwriting",
+# doc_category 值映射到 blocks 文件名（{product_id}_{name} 或 {product_id}_blocks.json）
+# 与 extract_tier_a_rules.py 消费路径保持一致：
+#   clause           → {product_id}_blocks.json
+#   product_brochure → {product_id}_说明书_blocks.json
+#   underwriting_rule→ {product_id}_underwriting_blocks.json（主链暂未消费）
+_BLOCKS_FILENAME: dict[str, str] = {
+    "clause":            "{product_id}_blocks.json",
+    "product_brochure":  "{product_id}_说明书_blocks.json",
+    "underwriting_rule": "{product_id}_underwriting_blocks.json",
 }
 
 # 只有这些 doc_category 需要生成 blocks
-_TEXT_CATEGORIES = frozenset(_BLOCKS_SUFFIX.keys())
+_TEXT_CATEGORIES = frozenset(_BLOCKS_FILENAME.keys())
 
 
 def run(cmd: list[str], label: str) -> bool:
@@ -91,8 +95,7 @@ def step_blocks(manifest_path: Path, skip: bool) -> dict[str, int]:
                 continue
 
             source = Path(entry["source_file"])
-            suffix = _BLOCKS_SUFFIX[cat]
-            out = BLOCKS_DIR / f"{product_id}_{suffix}_blocks.json"
+            out = BLOCKS_DIR / _BLOCKS_FILENAME[cat].format(product_id=product_id)
 
             # Skip if already up-to-date (source older than output)
             if out.exists() and out.stat().st_mtime >= source.stat().st_mtime:
@@ -119,15 +122,20 @@ def step_tables(input_dirs: list[Path], skip: bool) -> bool:
         print("  [SKIP] structured_tables (--skip-tables)")
         return True
     TABLES_DIR.mkdir(parents=True, exist_ok=True)
-    cmd = [
-        sys.executable,
-        str(_SCRIPT_DIR / "build_rate_tables_batch.py"),
-        "--output-dir", str(TABLES_DIR),
-        "--summary", str(TABLES_DIR / "batch_summary.json"),
-    ]
-    # Pass first input dir as root (batch runner takes single root)
-    cmd += ["--input-root", str(input_dirs[0])]
-    return run(cmd, "structured_tables batch")
+    # build_rate_tables_batch.py takes a single --input-root; run once per directory.
+    ok = True
+    for i, d in enumerate(input_dirs):
+        summary_name = f"batch_summary_{i}.json" if len(input_dirs) > 1 else "batch_summary.json"
+        cmd = [
+            sys.executable,
+            str(_SCRIPT_DIR / "build_rate_tables_batch.py"),
+            "--output-dir", str(TABLES_DIR),
+            "--summary", str(TABLES_DIR / summary_name),
+            "--input-root", str(d),
+        ]
+        if not run(cmd, f"structured_tables {d.name}"):
+            ok = False
+    return ok
 
 
 def main() -> None:
