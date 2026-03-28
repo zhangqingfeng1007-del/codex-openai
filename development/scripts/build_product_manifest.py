@@ -155,7 +155,7 @@ def scan_product_directory(dir_path: Path) -> dict:
             "file_name": entry.name,
             "parse_quality": result["parse_quality"],
             "is_raw": result["is_raw"],
-            "parser_route": result["extractor"],
+            "extractor": result["extractor"],
             "phase": result["phase"],
         }
 

@@ -92,7 +92,7 @@ def load_manifest_compatible(path: Path) -> list[dict]:
                 {
                     "doc_category": "clause",
                     "source_file": clause_pdf_path,
-                    "parser_route": "pdf_text_extractor",
+                    "extractor": "pdf_text_extractor",
                     "is_raw": True,
                 }
             )

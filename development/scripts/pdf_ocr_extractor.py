@@ -305,6 +305,8 @@ def build_meta(
     product_id: str,
     doc_category: str,
     source_file: Path,
+    char_count: int,
+    page_count: int | None,
     warnings: list[str],
 ) -> dict:
     return {
@@ -313,6 +315,8 @@ def build_meta(
         "source_file": str(source_file),
         "parse_method": "paddleocr",
         "parse_quality": "scan_pdf",
+        "char_count": char_count,
+        "page_count": page_count,
         "generated_at": utc_now(),
         "warnings": warnings,
     }
@@ -348,10 +352,14 @@ def main() -> None:
         warnings.append("layout:double_column_detected")
 
     blocks = parse_markdown(args.product_id, md_text)
+    char_count = sum(len((block.get("text") or "")) for block in blocks)
+    page_count = len(md_text.split("\f")) if md_text else 0
     meta = build_meta(
         product_id=args.product_id,
         doc_category=args.doc_category,
         source_file=input_path,
+        char_count=char_count,
+        page_count=page_count,
         warnings=warnings,
     )
     if len(blocks) < DEGRADED_BLOCK_THRESHOLD:

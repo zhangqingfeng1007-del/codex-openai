@@ -29,6 +29,19 @@ def utc_now() -> str:
     return datetime.now(tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def get_pdf_page_count(pdf_path: Path) -> int | None:
+    if fitz is None:
+        return None
+    try:
+        doc = fitz.open(str(pdf_path))
+    except Exception:
+        return None
+    try:
+        return int(doc.page_count)
+    finally:
+        doc.close()
+
+
 def detect_parse_quality(pdf_path: Path) -> str:
     if fitz is None:
         return "unknown"
@@ -102,6 +115,8 @@ def build_meta(
     source_file: Path,
     parse_method: str,
     parse_quality: str,
+    char_count: int,
+    page_count: int | None,
     warnings: list[str],
 ) -> dict:
     return {
@@ -110,6 +125,8 @@ def build_meta(
         "source_file": str(source_file),
         "parse_method": parse_method,
         "parse_quality": parse_quality,
+        "char_count": char_count,
+        "page_count": page_count,
         "generated_at": utc_now(),
         "warnings": warnings,
     }
@@ -146,12 +163,17 @@ def main() -> None:
         parse_quality = "degraded"
         warnings.append(f"too_few_blocks:{len(blocks)}")
 
+    char_count = sum(len((block.get("text") or "")) for block in blocks)
+    page_count = get_pdf_page_count(input_path)
+
     meta = build_meta(
         product_id=args.product_id,
         doc_category=args.doc_category,
         source_file=input_path,
         parse_method=parse_method,
         parse_quality=parse_quality,
+        char_count=char_count,
+        page_count=page_count,
         warnings=warnings,
     )
     payload = serialize_blocks_payload(blocks, meta)

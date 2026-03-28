@@ -4,7 +4,7 @@ build_all.py — 从产品目录一键生成 manifest + blocks + structured_tabl
 
 Phase 1 批量入口：给定一个或多个产品根目录，依次执行：
   1. build_product_manifest  → manifest.json
-  2. pdf_text_extractor       → data/blocks/{product_id}_{doc_category}_blocks.json
+  2. pdf_text_extractor       → data/blocks/{product_id}_blocks.json / {product_id}_说明书_blocks.json
   3. build_rate_tables_batch  → data/tables/{product_id}_structured_table.json
 
 用法：
