@@ -269,6 +269,18 @@ def _extract_pdf_pay_periods_by_lines(page_texts: list[str]) -> list[str]:
             normalized = _normalize_pay_period_token(item)
             if normalized:
                 candidates.append(normalized)
+        # Some PDFs keep pay-period column headings as bare numbers (e.g. 10 / 20 / 30)
+        # near the page tail instead of adjacent to "交费期间". Only use this heuristic
+        # when no explicit period token was found from the page text itself.
+        if not candidates:
+            tail_numbers: list[str] = []
+            for item in lines[-8:]:
+                if re.fullmatch(r"\d{1,2}", item):
+                    years = int(item)
+                    if 2 <= years <= 60:
+                        tail_numbers.append(f"{years}年交")
+            if tail_numbers:
+                candidates.extend(tail_numbers)
     return format_pay_periods(candidates)
 
 
@@ -373,7 +385,12 @@ def extract_from_xlsx(product_id: str, doc_category: str, input_file: Path) -> d
                         tokens.append(val)
 
             token_text = normalize_spaces(" ".join(tokens))
-            pay_periods.extend(_extract_pay_period_tokens(token_text))
+            for token in tokens:
+                normalized = _normalize_pay_period_token(str(token).strip())
+                if normalized:
+                    pay_periods.append(normalized)
+            if not pay_periods:
+                pay_periods.extend(_extract_pay_period_tokens(token_text))
 
             tail_parts: list[str] = []
             for row in sheet.iter_rows(values_only=True):
