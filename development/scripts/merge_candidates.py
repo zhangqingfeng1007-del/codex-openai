@@ -8,7 +8,6 @@ from pathlib import Path
 
 PROJECT_ROOT = Path.home() / "codex-openai"
 RULE_CANDIDATES_PATH = PROJECT_ROOT / "development/data/extractions/tier_a_rule_candidates_v2.json"
-RATE_TABLE_PATH = PROJECT_ROOT / "development/data/extractions/rate_table_candidates_v1.json"
 OUTPUT_PATH = PROJECT_ROOT / "development/data/extractions/tier_a_merged_candidates_v1.json"
 
 
@@ -39,43 +38,12 @@ def format_pay_periods(pay_periods: list[str]) -> str | None:
     return "，".join(parts)
 
 
-def build_rate_table_index(rate_rows: list[dict]) -> dict[str, dict]:
-    return {row["product_id"]: row for row in rate_rows}
-
-
-def has_pay_period_candidate(row: dict) -> bool:
-    return any(candidate.get("coverage_name") == "交费期间" for candidate in row.get("candidates", []))
-
-
-def build_rate_table_candidate(value: str) -> dict:
-    return {
-        "coverage_name": "交费期间",
-        "value": value,
-        "confidence": 0.85,
-        "note": "source: rate_table",
-        "block_id": None,
-        "page": None,
-        "evidence_text": None,
-    }
-
-
 def main() -> None:
     rule_rows = load_json(RULE_CANDIDATES_PATH)
-    rate_rows = load_json(RATE_TABLE_PATH)
-    rate_index = build_rate_table_index(rate_rows)
-
     merged_rows: list[dict] = []
     for row in rule_rows:
-        product_id = row["product_id"]
         new_row = dict(row)
         candidates = [dict(candidate) for candidate in row.get("candidates", [])]
-
-        if not has_pay_period_candidate(row):
-            rate_row = rate_index.get(product_id)
-            if rate_row and rate_row.get("status") == "ok":
-                value = format_pay_periods(rate_row.get("pay_periods") or [])
-                if value:
-                    candidates.append(build_rate_table_candidate(value))
 
         new_row["candidates"] = candidates
         merged_rows.append(new_row)

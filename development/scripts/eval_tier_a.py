@@ -30,8 +30,6 @@ def load_gold(gold_dir: Path) -> dict:
         product_id = path.stem.replace("_gold", "")
         if product_id == "1548A":
             continue
-        if product_id == "889":
-            continue
         data = json.loads(path.read_text(encoding="utf-8"))
         by_product[product_id] = {
             item["coverage_name"]: item["standard_content"]
