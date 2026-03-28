@@ -18,6 +18,8 @@ from parse_md_blocks import parse_markdown, serialize_blocks_payload
 
 
 TEXT_PDF_MIN_CHARS = 50
+TEXT_PDF_STRONG_PAGE_CHARS = 150
+TEXT_PDF_PROBE_PAGES = 3
 DEGRADED_BLOCK_THRESHOLD = 10
 VENDOR_DOC_TO_MD_DIR = Path("/Users/zqf-openclaw/codex-openai/development/vendor/doc_to_md")
 DOC_TO_MD_PYTHON = Path("/Users/zqf-openclaw/codex-openai/development/.venv_doc_to_md/bin/python")
@@ -37,8 +39,15 @@ def detect_parse_quality(pdf_path: Path) -> str:
     try:
         if not doc.page_count:
             return "unknown"
-        text = (doc[0].get_text("text") or "").strip()
-        return "scan_pdf" if len(text) <= TEXT_PDF_MIN_CHARS else "text_pdf"
+        total_chars = 0
+        page_limit = min(doc.page_count, TEXT_PDF_PROBE_PAGES)
+        for page_index in range(page_limit):
+            text = (doc[page_index].get_text("text") or "").strip()
+            char_count = len(text)
+            if char_count >= TEXT_PDF_STRONG_PAGE_CHARS:
+                return "text_pdf"
+            total_chars += char_count
+        return "scan_pdf" if total_chars <= TEXT_PDF_MIN_CHARS else "text_pdf"
     finally:
         doc.close()
 

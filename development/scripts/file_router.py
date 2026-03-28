@@ -68,6 +68,8 @@ IMAGE_EXTENSIONS: frozenset[str] = frozenset({".png", ".jpg", ".jpeg"})
 
 # A PDF page with fewer than this many characters is treated as scan_pdf.
 TEXT_PDF_MIN_CHARS = 50
+TEXT_PDF_STRONG_PAGE_CHARS = 150
+TEXT_PDF_PROBE_PAGES = 3
 
 # doc_categories that belong to the "structured table" pipeline
 RATE_CATEGORIES: frozenset[str] = frozenset({"raw_rate", "cash_value"})
@@ -108,7 +110,7 @@ def _is_raw_file(filename: str) -> bool:
 
 def _check_pdf_quality(filepath: Path) -> str:
     """
-    Probe the first page of a PDF to decide text_pdf vs scan_pdf.
+    Probe the first few pages of a PDF to decide text_pdf vs scan_pdf.
     Uses PyMuPDF (fitz) as primary; falls back to 'unknown' if unavailable.
     """
     try:
@@ -124,9 +126,15 @@ def _check_pdf_quality(filepath: Path) -> str:
     try:
         if not doc.page_count:
             return "unknown"
-        page = doc[0]
-        text = page.get_text("text") or ""
-        return "text_pdf" if len(text.strip()) > TEXT_PDF_MIN_CHARS else "scan_pdf"
+        total_chars = 0
+        page_limit = min(doc.page_count, TEXT_PDF_PROBE_PAGES)
+        for page_index in range(page_limit):
+            text = (doc[page_index].get_text("text") or "").strip()
+            char_count = len(text)
+            if char_count >= TEXT_PDF_STRONG_PAGE_CHARS:
+                return "text_pdf"
+            total_chars += char_count
+        return "text_pdf" if total_chars > TEXT_PDF_MIN_CHARS else "scan_pdf"
     except Exception:
         return "unknown"
     finally:
