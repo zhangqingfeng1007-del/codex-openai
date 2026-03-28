@@ -11,6 +11,11 @@ try:
 except ImportError:  # pragma: no cover - optional dependency in local env
     load_workbook = None
 
+try:
+    import fitz
+except ImportError:  # pragma: no cover - optional dependency in local env
+    fitz = None
+
 
 TARGET_FIELDS = [
     "投保年龄",
@@ -54,6 +59,179 @@ RATE_SEARCH_ROOTS = [
     Path("/Users/zqf-openclaw/Desktop/开发材料/10款重疾"),
     Path("/Users/zqf-openclaw/Desktop/开发材料/招行数据"),
 ]
+RATE_TABLES_DIR = Path(__file__).resolve().parents[1] / "data" / "tables"
+
+
+def load_blocks_compatible(path: Path) -> tuple[dict | None, list[dict]]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(raw, dict) and "blocks" in raw:
+        return raw.get("_meta"), raw["blocks"]
+    if isinstance(raw, list):
+        return None, raw
+    raise ValueError(f"unsupported blocks payload: {path}")
+
+
+def load_manifest_compatible(path: Path) -> list[dict]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, list):
+        raise ValueError(f"unsupported manifest payload: {path}")
+
+    normalized: list[dict] = []
+    for item in raw:
+        if not isinstance(item, dict):
+            raise ValueError(f"unsupported manifest row: {item!r}")
+
+        if "files" in item:
+            normalized.append(item)
+            continue
+
+        clause_pdf_path = item.get("clause_pdf_path")
+        files: list[dict] = []
+        if clause_pdf_path:
+            files.append(
+                {
+                    "doc_category": "clause",
+                    "source_file": clause_pdf_path,
+                    "parser_route": "pdf_text_extractor",
+                    "is_raw": True,
+                }
+            )
+
+        normalized_item = dict(item)
+        normalized_item["files"] = files
+        normalized.append(normalized_item)
+
+    return normalized
+
+
+def load_structured_table_compatible(path: Path) -> tuple[dict | None, list[dict], dict]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise ValueError(f"unsupported structured table payload: {path}")
+    return raw.get("_meta"), raw.get("tables", []), raw.get("extracted_fields", {})
+
+
+def locate_structured_table_json(item: dict, doc_category: str = "raw_rate") -> Path | None:
+    product_id = item.get("product_id", "")
+    candidates: list[Path] = []
+
+    files = item.get("files") or []
+    for file_entry in files:
+        if file_entry.get("doc_category") != doc_category:
+            continue
+        source_file = file_entry.get("source_file")
+        if not source_file:
+            continue
+        stem = Path(source_file).stem
+        candidates.append(RATE_TABLES_DIR / f"{stem}_structured_table.json")
+
+    if product_id:
+        suffix = "rate" if doc_category == "raw_rate" else doc_category
+        candidates.extend(
+            [
+                RATE_TABLES_DIR / f"{product_id}_{suffix}_structured_table.json",
+                RATE_TABLES_DIR / f"{product_id}_{doc_category}_structured_table.json",
+                RATE_TABLES_DIR / f"{product_id}_structured_table.json",
+            ]
+        )
+
+    seen: set[Path] = set()
+    for candidate in candidates:
+        if candidate in seen:
+            continue
+        seen.add(candidate)
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def _format_pay_period_candidate(values: list[str]) -> str | None:
+    if not values:
+        return None
+    has_lump = any(v == "趸交" for v in values)
+    year_values: set[int] = set()
+    age_periods: list[str] = []
+    for value in values:
+        m = re.fullmatch(r"(\d+)年交", value)
+        if m:
+            year_values.add(int(m.group(1)))
+            continue
+        if value.startswith("交至") and value not in age_periods:
+            age_periods.append(value)
+    parts: list[str] = []
+    if has_lump:
+        parts.append("趸交")
+    if year_values:
+        parts.append("/".join(str(y) for y in sorted(year_values)) + "年交")
+    parts.extend(age_periods)
+    return "，".join(parts) if parts else None
+
+
+def build_candidates_from_structured_table(path: Path) -> dict[str, dict]:
+    meta, _, extracted_fields = load_structured_table_compatible(path)
+    source_file = meta.get("source_file") if meta else str(path)
+    parse_method = meta.get("parse_method") if meta else "structured_table"
+    parse_quality = meta.get("parse_quality") if meta else "unknown"
+    note_suffix = f"[{Path(source_file).name}]"
+
+    candidates: dict[str, dict] = {}
+
+    pay_periods = extracted_fields.get("pay_periods") or []
+    if isinstance(pay_periods, list):
+        value = _format_pay_period_candidate([str(v) for v in pay_periods if v])
+        if value:
+            candidates["交费期间"] = {
+                "coverage_name": "交费期间",
+                "value": value,
+                "confidence": 0.84,
+                "note": f"rule: structured_table_pay_period{note_suffix}",
+                "block_id": None,
+                "page": None,
+                "evidence_text": source_file,
+                "source_type": "structured_table",
+                "parse_method": parse_method,
+                "parse_quality": parse_quality,
+            }
+
+    pay_frequencies = extracted_fields.get("pay_frequencies") or []
+    if isinstance(pay_frequencies, list):
+        ordered = [freq for freq in PAY_FREQ_ORDER if freq in pay_frequencies]
+        if ordered:
+            candidates["交费频率"] = {
+                "coverage_name": "交费频率",
+                "value": "，".join(ordered),
+                "confidence": 0.84,
+                "note": f"rule: structured_table_pay_frequency{note_suffix}",
+                "block_id": None,
+                "page": None,
+                "evidence_text": source_file,
+                "source_type": "structured_table",
+                "parse_method": parse_method,
+                "parse_quality": parse_quality,
+            }
+
+    insurance_periods = extracted_fields.get("insurance_periods") or []
+    if isinstance(insurance_periods, list):
+        unique_periods: list[str] = []
+        for value in insurance_periods:
+            text = str(value).strip()
+            if text and text not in unique_periods:
+                unique_periods.append(text)
+        if unique_periods:
+            candidates["保险期间"] = {
+                "coverage_name": "保险期间",
+                "value": "，".join(unique_periods),
+                "confidence": 0.83,
+                "note": f"rule: structured_table_insurance_period{note_suffix}",
+                "block_id": None,
+                "page": None,
+                "evidence_text": source_file,
+                "source_type": "structured_table",
+                "parse_method": parse_method,
+                "parse_quality": parse_quality,
+            }
+
+    return candidates
 
 
 def chinese_to_int(text: str) -> int | None:
@@ -350,6 +528,70 @@ def locate_rate_xlsx(item: dict) -> Path | None:
     return None
 
 
+def locate_rate_pdf(item: dict) -> Path | None:
+    clause_pdf_path = item.get("clause_pdf_path")
+    product_id = item.get("product_id", "")
+    if clause_pdf_path:
+        product_dir = Path(clause_pdf_path).expanduser().resolve().parent
+        if product_dir.exists():
+            candidates = sorted(product_dir.glob("*费率*.pdf"))
+            if candidates:
+                return candidates[0]
+    if product_id:
+        for root in RATE_SEARCH_ROOTS:
+            if not root.exists():
+                continue
+            candidates = sorted(root.rglob(f"*{product_id}*费率表.pdf"))
+            if candidates:
+                return candidates[0]
+    return None
+
+
+def extract_pay_info_from_rate_pdf(item: dict) -> dict[str, str]:
+    if fitz is None:
+        return {}
+    rate_path = locate_rate_pdf(item)
+    if rate_path is None or not rate_path.exists():
+        return {}
+    try:
+        doc = fitz.open(rate_path)
+    except Exception:
+        return {}
+
+    try:
+        text = "\n".join(page.get_text("text") for page in doc)
+    finally:
+        doc.close()
+
+    compact = normalize_spaces(text)
+    out: dict[str, str] = {}
+
+    years = {int(x) for x in re.findall(r"(\d+)年", compact)}
+    if years:
+        parts: list[str] = []
+        other_years = sorted(y for y in years if y != 1)
+        if 1 in years:
+            parts.append("趸交")
+        if other_years:
+            parts.append("/".join(str(y) for y in other_years) + "年交")
+        if parts:
+            out["交费期间"] = "，".join(parts)
+
+    freqs: list[str] = []
+    if "年缴" in compact:
+        freqs.append("年交")
+    if "半年缴" in compact:
+        freqs.append("半年交")
+    if "季缴" in compact:
+        freqs.append("季交")
+    if "月缴" in compact:
+        freqs.append("月交")
+    if freqs:
+        ordered = [freq for freq in PAY_FREQ_ORDER if freq in freqs]
+        out["交费频率"] = "，".join(ordered)
+    return out
+
+
 def extract_pay_frequency_from_rate_xlsx(item: dict) -> tuple[str, str] | None:
     if load_workbook is None:
         return None
@@ -552,6 +794,58 @@ def extract_ci_count_from_section_numbering(blocks: list[dict]) -> str | None:
     return f"{max_sub}种" if max_sub >= 10 else None
 
 
+def _find_fragmented_appendix_max_seq(blocks: list[dict], appendix_no: int, title_keyword: str) -> int:
+    appendix_start = None
+    appendix_end = len(blocks)
+    appendix_tokens = {f"附录{appendix_no}", f"附录 {appendix_no}"}
+    next_appendix_tokens = {f"附录{appendix_no + 1}", f"附录 {appendix_no + 1}"}
+
+    for idx, block in enumerate(blocks):
+        text = normalize_spaces(block.get("text", ""))
+        if text.count("附录") > 1:
+            continue
+        if any(token in text for token in appendix_tokens) and title_keyword in text:
+            appendix_start = idx
+            break
+        if text in appendix_tokens and idx + 1 < len(blocks):
+            next_text = normalize_spaces(blocks[idx + 1].get("text", ""))
+            if title_keyword in next_text:
+                appendix_start = idx
+                break
+
+    if appendix_start is None:
+        return 0
+
+    for idx in range(appendix_start + 1, len(blocks)):
+        text = normalize_spaces(blocks[idx].get("text", ""))
+        if any(token in text for token in next_appendix_tokens):
+            appendix_end = idx
+            break
+
+    max_seq = 0
+    for idx in range(appendix_start, appendix_end - 1):
+        cur_text = normalize_spaces(blocks[idx].get("text", ""))
+        next_text = normalize_spaces(blocks[idx + 1].get("text", ""))
+        if not re.fullmatch(r"\d{1,3}", cur_text):
+            continue
+        if not (2 <= len(next_text) <= 30):
+            continue
+        if re.search(r"[，。；：:（）()、\d]", next_text):
+            continue
+        max_seq = max(max_seq, int(cur_text))
+    return max_seq
+
+
+def extract_ci_count_from_fragmented_appendix_seq(blocks: list[dict]) -> str | None:
+    main_count = _find_fragmented_appendix_max_seq(blocks, 3, "重大疾病定义")
+    if main_count < 50:
+        return None
+    juvenile_count = _find_fragmented_appendix_max_seq(blocks, 5, "少儿特定疾病定义")
+    if juvenile_count >= 5:
+        return f"{main_count}种重大疾病；{juvenile_count}种少儿重大疾病"
+    return f"{main_count}种"
+
+
 def ci_count_confidence(text: str) -> float:
     compact = normalize_spaces(text)
     if any(pat in compact for pat in ["重大疾病（共", "重大疾病共有", "我们提供保障的重大疾病共有"]):
@@ -713,6 +1007,11 @@ def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dic
             add_candidate(results, "重疾数量", section_count, blocks[0] if blocks else None, 0.88, "rule: ci_count_section_numbering")
 
     if "重疾数量" not in results:
+        fragmented_count = extract_ci_count_from_fragmented_appendix_seq(blocks)
+        if fragmented_count:
+            add_candidate(results, "重疾数量", fragmented_count, blocks[0] if blocks else None, 0.86, "rule: ci_count_fragmented_appendix_seq")
+
+    if "重疾数量" not in results:
         seq_count = extract_ci_count_from_disease_seq(blocks)
         if seq_count:
             add_candidate(results, "重疾数量", seq_count, blocks[0] if blocks else None, 0.84, "rule: ci_count_from_disease_seq")
@@ -736,7 +1035,7 @@ def main() -> None:
     if not manifest_path or not output_path_arg:
         parser.error("must provide manifest and output, either as positional args or with --manifest/--output")
 
-    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    manifest = load_manifest_compatible(Path(manifest_path))
     rows = []
     for item in manifest:
         if item.get("phase1_eligible") is False:
@@ -749,11 +1048,11 @@ def main() -> None:
             if not degraded_path.exists():
                 continue
             blocks_path = degraded_path
-        blocks = json.loads(blocks_path.read_text(encoding="utf-8"))
+        _, blocks = load_blocks_compatible(blocks_path)
         extracted = extract_candidates(blocks, item["product_id"])
         shuomingshu_blocks_path = Path(blocks_dir_arg) / f"{item['product_id']}_说明书_blocks.json"
         if shuomingshu_blocks_path.exists() and ("投保年龄" not in extracted or "交费期间" not in extracted):
-            shuomingshu_blocks = json.loads(shuomingshu_blocks_path.read_text(encoding="utf-8"))
+            _, shuomingshu_blocks = load_blocks_compatible(shuomingshu_blocks_path)
             extra = extract_candidates(shuomingshu_blocks, item["product_id"])
             if "投保年龄" not in extracted and "投保年龄" in extra:
                 age_candidate = extra["投保年龄"].copy()
@@ -765,6 +1064,28 @@ def main() -> None:
                 pay_period_candidate["note"] = "rule: pay_period_shuomingshu"
                 pay_period_candidate["source_type"] = "product_brochure"
                 extracted["交费期间"] = pay_period_candidate
+        if "交费期间" not in extracted or "交费频率" not in extracted:
+            rate_pdf_info = extract_pay_info_from_rate_pdf(item)
+            if "交费期间" not in extracted and rate_pdf_info.get("交费期间"):
+                extracted["交费期间"] = {
+                    "coverage_name": "交费期间",
+                    "value": rate_pdf_info["交费期间"],
+                    "confidence": 0.8,
+                    "note": "rule: rate_pdf_pay_period",
+                    "block_id": None,
+                    "page": None,
+                    "evidence_text": None,
+                }
+            if "交费频率" not in extracted and rate_pdf_info.get("交费频率"):
+                extracted["交费频率"] = {
+                    "coverage_name": "交费频率",
+                    "value": rate_pdf_info["交费频率"],
+                    "confidence": 0.8,
+                    "note": "rule: rate_pdf_pay_frequency",
+                    "block_id": None,
+                    "page": None,
+                    "evidence_text": None,
+                }
         # 若已有交费期间候选但仅有"趸交"（无年期），且来源为说明书，则也尝试费率表补全
         _pp_existing = extracted.get("交费期间")
         _pp_only_lump = (
@@ -840,6 +1161,35 @@ def main() -> None:
                 freq_cand["value"] = "趸交，" + freq_val
                 freq_cand["note"] = (freq_cand.get("note") or "") + "+趸交(linked from 交费期间)"
                 extracted["交费频率"] = freq_cand
+        # 无频率兜底：完全没有交费频率时，按交费期间推断最小频率
+        if "交费频率" not in extracted and "交费期间" in extracted:
+            _pp = extracted["交费期间"].get("value") or ""
+            _has_lump = "趸交" in _pp
+            _has_year = any(k in _pp for k in ["年交", "交至"])
+            if _has_lump or _has_year:
+                _inferred_parts = []
+                if _has_lump:
+                    _inferred_parts.append("趸交")
+                if _has_year:
+                    _inferred_parts.append("年交")
+                extracted["交费频率"] = {
+                    "coverage_name": "交费频率",
+                    "value": "，".join(_inferred_parts),
+                    "confidence": 0.6,
+                    "note": "rule: pay_freq_inferred_from_pay_period",
+                    "block_id": None,
+                    "page": None,
+                    "evidence_text": None,
+                }
+        structured_table_path = locate_structured_table_json(item, "raw_rate")
+        if structured_table_path and structured_table_path.exists():
+            try:
+                structured_candidates = build_candidates_from_structured_table(structured_table_path)
+            except Exception:
+                structured_candidates = {}
+            for field in ("保险期间", "交费期间", "交费频率"):
+                if field not in extracted and field in structured_candidates:
+                    extracted[field] = structured_candidates[field]
         rows.append(
             {
                 "product_id": item["product_id"],
