@@ -5,6 +5,54 @@
 
 ---
 
+## 零、接手第一步（新开发者必读）
+
+**第一步：拉代码确认状态**
+```bash
+git pull
+git log --oneline -6
+# 应看到最新 commit: e4309fbf docs: add CLAUDE.md for project handoff
+```
+
+**第二步：验证 Tier A 提取链**
+```bash
+python3 development/scripts/extract_tier_a_rules.py \
+  --manifest development/data/manifests/sample_manifest.json \
+  --output development/data/extractions/tier_a_merged_candidates_v1.json
+# 应输出：wrote 10 products
+```
+
+**第三步：验证 Tier B 提取链**
+```bash
+python3 development/scripts/extract_responsibility_fields.py
+# 应输出：tier_b_responsibility_candidates_v1.json，10款产品
+```
+
+**第四步：验证匹配链 dry-run**
+```bash
+python3 development/scripts/write_to_db.py \
+  --dry-run \
+  --candidates development/data/extractions/tier_a_merged_candidates_v1.json \
+  --candidates-b development/data/extractions/tier_b_responsibility_candidates_v1.json
+# 应输出：matched_review_required=131, unmatched_new_value=1, unmatched_new_item=0
+```
+
+**第五步：验证数据库连接（仅 Claude Code，Codex 禁止执行）**
+```python
+import pymysql
+conn = pymysql.connect(
+    host='rr-2zepgd433uxa3r58dpo.mysql.rds.aliyuncs.com',
+    user='aixbx_root', password='aix_123456',
+    database='ensure_recognize', charset='utf8mb4'
+)
+# 应成功连接
+```
+
+**当前从哪里继续开发：**
+`extract_responsibility_fields.py` → 继续扩 Tier B 字段（轻症分组规则待确认，参考第六节）
+
+---
+
 ## 一、项目定位
 
 **项目名称：** 保险条款智能拆解系统（Insurance Clause Extraction Pipeline）
