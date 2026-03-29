@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CANDIDATES = ROOT / "data" / "extractions" / "tier_a_merged_candidates_v1.json"
+DEFAULT_CANDIDATES_B = ROOT / "data" / "extractions" / "tier_b_responsibility_candidates_v1.json"
 DEFAULT_STANDARD_FULL = ROOT / "data" / "manifests" / "coverage_standard_full.json"
 DEFAULT_ID_MAPPING = ROOT / "data" / "manifests" / "coverage_id_mapping.json"
 DEFAULT_PATH_MAPPING = ROOT / "data" / "manifests" / "coverage_path_mapping.json"
@@ -14,6 +15,40 @@ DEFAULT_OUTPUT_DIR = ROOT / "data" / "db_write_preview"
 
 def load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def merge_candidate_sources(*datasets):
+    merged = {}
+    order = []
+    for dataset in datasets:
+        if not dataset:
+            continue
+        for product in dataset:
+            product_id = product["product_id"]
+            if product_id not in merged:
+                merged[product_id] = {
+                    "product_id": product_id,
+                    "db_product_id": product.get("db_product_id"),
+                    "product_name": product.get("product_name"),
+                    "source_blocks": product.get("source_blocks"),
+                    "candidates": [],
+                    "missing_fields": [],
+                }
+                order.append(product_id)
+            entry = merged[product_id]
+            if not entry.get("db_product_id") and product.get("db_product_id"):
+                entry["db_product_id"] = product.get("db_product_id")
+            if not entry.get("product_name") and product.get("product_name"):
+                entry["product_name"] = product.get("product_name")
+            if not entry.get("source_blocks") and product.get("source_blocks"):
+                entry["source_blocks"] = product.get("source_blocks")
+            entry["candidates"].extend(product.get("candidates", []))
+            existing_missing = set(entry.get("missing_fields", []))
+            for field in product.get("missing_fields", []):
+                if field not in existing_missing:
+                    entry["missing_fields"].append(field)
+                    existing_missing.add(field)
+    return [merged[product_id] for product_id in order]
 
 
 def normalize_path_key(value):
@@ -189,6 +224,7 @@ def write_outputs(output_dir: Path, matched_rows, unmatched_new_values, unmatche
 def main():
     parser = argparse.ArgumentParser(description="Dry-run match candidates into coverage standard tree.")
     parser.add_argument("--candidates", type=Path, default=DEFAULT_CANDIDATES)
+    parser.add_argument("--candidates-b", type=Path, default=None)
     parser.add_argument("--standard-full", type=Path, default=DEFAULT_STANDARD_FULL)
     parser.add_argument("--id-mapping", type=Path, default=DEFAULT_ID_MAPPING)
     parser.add_argument("--path-mapping", type=Path, default=DEFAULT_PATH_MAPPING)
@@ -200,7 +236,9 @@ def main():
     if not args.dry_run:
         raise SystemExit("Only --dry-run is implemented in Phase 1.")
 
-    candidates_data = load_json(args.candidates)
+    candidates_a = load_json(args.candidates)
+    candidates_b = load_json(args.candidates_b) if args.candidates_b else []
+    candidates_data = merge_candidate_sources(candidates_a, candidates_b)
     standard_full = load_json(args.standard_full)
     id_mapping = load_json(args.id_mapping)
     path_mapping = load_json(args.path_mapping)
