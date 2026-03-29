@@ -39,13 +39,8 @@ python3 development/scripts/write_to_db.py \
 
 **第五步：验证数据库连接（仅 Claude Code，Codex 禁止执行）**
 ```python
-import pymysql
-conn = pymysql.connect(
-    host='rr-2zepgd433uxa3r58dpo.mysql.rds.aliyuncs.com',
-    user='aixbx_root', password='aix_123456',
-    database='ensure_recognize', charset='utf8mb4'
-)
-# 应成功连接
+# 数据库凭证由 PM 单独提供，不存储在代码库中
+# 请向 PM 获取连接信息后验证
 ```
 
 **当前从哪里继续开发：**
@@ -84,18 +79,13 @@ conn = pymysql.connect(
 
 ## 三、数据库连接信息
 
-```
-主机：rr-2zepgd433uxa3r58dpo.mysql.rds.aliyuncs.com
-账号：aixbx_root
-密码：aix_123456
-数据库：ensure_recognize
-```
+**凭证由 PM 单独提供，不存储在代码库中。**
 
 **关键表：**
 - `cmb_coverage`：标准项字段树（depth1/2/3，共960条）
-- `cmb_product_coverage`：每款产品的拆解值（73547条有效记录）
+- `cmb_product_coverage`：每款产品的拆解值
 - `cmb_coverage_standard`：标准值详情（含 standard_id）
-- `cmb_product`：产品主表（重疾险 aix_category_id=6001，在售19款）
+- `cmb_product`：产品主表（重疾险 aix_category_id=6001）
 
 **JOIN 注意：**
 `cmb_product.product_id` = utf8mb4_general_ci，其他表 = utf8mb4_unicode_ci
