@@ -19,6 +19,9 @@ TARGET_FIELDS = [
     ("轻症赔付次数", "疾病责任__轻症责任__轻症赔付次数"),
     ("轻症数量", "疾病责任__轻症责任__轻症数量"),
     ("轻症分组", "疾病责任__轻症责任__轻症分组"),
+    ("中症赔付次数", "疾病责任__中症责任__中症赔付次数"),
+    ("中症数量", "疾病责任__中症责任__中症数量"),
+    ("中症分组", "疾病责任__中症责任__中症分组"),
 ]
 
 
@@ -256,6 +259,77 @@ def extract_mild_group(blocks: list[dict]) -> dict | None:
     return None
 
 
+def extract_middle_pay_times(blocks: list[dict]) -> dict | None:
+    patterns = [
+        r"中症疾病保险金的给付次数(?:以|为)?([一二两三四五六七八九十\d]+)次为限",
+        r"累计给付的中症疾病保险金达到([一二两三四五六七八九十\d]+)次",
+        r"中症疾病保险金的给付累计以([一二两三四五六七八九十\d]+)次为限",
+    ]
+    for block in blocks:
+        text = block.get("text", "")
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if match:
+                value = normalize_times(match.group(1))
+                if value:
+                    return build_candidate("中症赔付次数", "疾病责任__中症责任__中症赔付次数", value, 0.95, "rule: middle_pay_times_pattern", block)
+
+    for idx, block in enumerate(blocks):
+        text = block.get("text", "")
+        if "中症疾病保险金" in text or "中度疾病保险金" in text:
+            window = blocks[idx : idx + 6]
+            for item in window:
+                item_text = item.get("text", "")
+                match = re.search(r"累计给付次数(?:达到|以)([一二两三四五六七八九十\d]+)次", item_text)
+                if match:
+                    value = normalize_times(match.group(1))
+                    if value:
+                        return build_candidate("中症赔付次数", "疾病责任__中症责任__中症赔付次数", value, 0.9, "rule: middle_pay_times_combined_limit", item)
+    return None
+
+
+def extract_middle_count(blocks: list[dict]) -> dict | None:
+    for idx, block in enumerate(blocks):
+        text = block.get("text", "")
+        patterns = [
+            r"中症疾病共\s*([一二两三四五六七八九十\d]+)\s*种",
+            r"中症疾病共有\s*([一二两三四五六七八九十\d]+)\s*种",
+            r"中症疾病列表（([一二两三四五六七八九十\d]+)\s*种）",
+            r"中度疾病.*共计([一二两三四五六七八九十\d]+)种",
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if match:
+                value = normalize_count(match.group(1))
+                if value:
+                    return build_candidate("中症数量", "疾病责任__中症责任__中症数量", value, 0.96, "rule: middle_count_pattern", block)
+
+        if "共计" in text and "种" in text:
+            nearby = " ".join(b.get("text", "") for b in blocks[max(0, idx - 2) : idx + 1])
+            if "中度疾病" in nearby or "中症疾病" in nearby:
+                match = re.search(r"共计([一二两三四五六七八九十\d]+)种", text)
+                if match:
+                    value = normalize_count(match.group(1))
+                    if value:
+                        return build_candidate("中症数量", "疾病责任__中症责任__中症数量", value, 0.9, "rule: middle_count_section_context", block)
+    return None
+
+
+def extract_middle_group(blocks: list[dict]) -> dict | None:
+    for block in blocks:
+        text = block.get("text", "")
+        if "中症" not in text and "中度疾病" not in text:
+            continue
+        if "不分组" in text:
+            return build_candidate("中症分组", "疾病责任__中症责任__中症分组", "不分组", 0.95, "rule: middle_group_pattern", block)
+        match = re.search(r"分为([一二两三四五六七八九十\d]+)组", text)
+        if match:
+            value_num = chinese_to_int(match.group(1))
+            if value_num is not None:
+                return build_candidate("中症分组", "疾病责任__中症责任__中症分组", f"{value_num}组", 0.95, "rule: middle_group_pattern", block)
+    return None
+
+
 def extract_for_product(blocks: list[dict]) -> tuple[list[dict], list[str]]:
     extractors = [
         extract_ci_pay_times,
@@ -263,6 +337,9 @@ def extract_for_product(blocks: list[dict]) -> tuple[list[dict], list[str]]:
         extract_mild_pay_times,
         extract_mild_count,
         extract_mild_group,
+        extract_middle_pay_times,
+        extract_middle_count,
+        extract_middle_group,
     ]
     candidates = []
     present = set()
