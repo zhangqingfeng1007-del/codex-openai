@@ -1,0 +1,377 @@
+[
+  {
+    "product_id": "1134",
+    "db_product_id": "1280003176",
+    "product_name": "国华康佑保B终身重疾计划",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1134_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.9,
+        "note": "rule: ci_pay_times_termination",
+        "block_id": "1134_p3_b112",
+        "page": 3,
+        "evidence_text": "被保险人初次发生（见10.7）并被医院（见10.8）的专科医生（见10.9）确诊患有本 合同约定的重大疾病（见10.10），我们按本合同的重大疾病保险金额给付重大疾病保 险金，本合同终止。"
+      },
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "100种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "1134_p10_b282",
+        "page": 10,
+        "evidence_text": "本合同所指的重大疾病（共100种），是指符合下列定义的疾病、疾病状态或手术："
+      },
+      {
+        "coverage_name": "轻症数量",
+        "coverage_path": "疾病责任__轻症责任__轻症数量",
+        "value": "50种",
+        "confidence": 0.96,
+        "note": "rule: mild_count_pattern",
+        "block_id": "1134_p26_b621",
+        "page": 26,
+        "evidence_text": "本合同所指的轻症疾病（共 50 种），是指符合下列定义的疾病、疾病状态或手术："
+      }
+    ],
+    "missing_fields": [
+      "轻症赔付次数",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "1464",
+    "db_product_id": "1030002195",
+    "product_name": "国寿康欣终身重大疾病保险",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1464_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.9,
+        "note": "rule: ci_pay_times_termination",
+        "block_id": "1464_p5_b90",
+        "page": 5,
+        "evidence_text": "在本合同保险期间内，本公司承担以下保险责任: 一、重大疾病保险金 在本合同保险期间内，被保险人于本合同生效（或最后复效）之日起一百八十日内，初次 发生并经专科医生明确诊断患本合同所指的重大疾病（无论一种或多种），本合同终止，本公 司按本合同所交保险费（不计利息）给付重大疾病保险金；被保险人于本合同生效（或最后复 效）之日起一百八十日后，初次发生并经专科医生明确诊断患本合同所指的重大疾病（无论一 种或多种），本合同终止，本公司按基本保险金额的两倍给付重大疾病保险金。若因意外伤害 导致上述情形，不受一百八十日的限制。 二、恶性肿瘤额外给付保险金 被保险人于本合同生效（或最后复效）之日起一百八十日后，在七十周岁前（含七十周岁）"
+      },
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "30种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "1464_p1_b15",
+        "page": 1,
+        "evidence_text": "本合同所指重大疾病，是被保险人发生符合以下定义所述条件的疾病、疾病状态或手术， 共计三十种，其中第一种至第二十五种为中国保险行业协会制定的《重大疾病保险的疾病定义 使用规范》中列明的疾病，其他为本公司增加的疾病。重大疾病的名称及定义如下："
+      }
+    ],
+    "missing_fields": [
+      "轻症赔付次数",
+      "轻症数量",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "1548A",
+    "db_product_id": "2800007",
+    "product_name": "北京人寿大黄蜂12号少儿重疾险（焕新版）-保终身",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1548A_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "125种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "1548A_p36_b1713",
+        "page": 36,
+        "evidence_text": "或手术，共计125种，其中第1种至第28种为中国保险行业协会制定的《重大疾病"
+      },
+      {
+        "coverage_name": "轻症赔付次数",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付次数",
+        "value": "6次",
+        "confidence": 0.9,
+        "note": "rule: mild_pay_times_combined_limit",
+        "block_id": "1548A_p4_b201",
+        "page": 4,
+        "evidence_text": "以六次为限，当累计给付次数达到六次时，本合同的轻度疾病保险金和中度疾 病保险金责任终止。"
+      },
+      {
+        "coverage_name": "轻症数量",
+        "coverage_path": "疾病责任__轻症责任__轻症数量",
+        "value": "43种",
+        "confidence": 0.9,
+        "note": "rule: mild_count_section_context",
+        "block_id": "1548A_p19_b903",
+        "page": 19,
+        "evidence_text": "或手术，共计43种，其中第1种至第3种为中国保险行业协会制定的《重大疾病保"
+      }
+    ],
+    "missing_fields": [
+      "重疾赔付次数",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "1568",
+    "db_product_id": "1010004001",
+    "product_name": "招商信诺爱享未来少儿重大疾病保险A款",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1568_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.96,
+        "note": "rule: ci_pay_times_pattern",
+        "block_id": "1568_p2_b49",
+        "page": 2,
+        "evidence_text": "重大疾病保险金最多给付一次。"
+      },
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "138种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "1568_p2_b57",
+        "page": 2,
+        "evidence_text": "我们提供保障的重大疾病共有138种。主合同约定的疾病定义于附表中载明，名称如 下："
+      }
+    ],
+    "missing_fields": [
+      "轻症赔付次数",
+      "轻症数量",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "1578",
+    "db_product_id": "1010004022",
+    "product_name": "金小葵·少儿长期重疾险",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1578_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.96,
+        "note": "rule: ci_pay_times_pattern",
+        "block_id": "1578_p2_b60",
+        "page": 2,
+        "evidence_text": "重大疾病保险金最多给付一次。"
+      },
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "162种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "1578_p4_b85",
+        "page": 4,
+        "evidence_text": "重大疾病列表（162种）"
+      },
+      {
+        "coverage_name": "轻症数量",
+        "coverage_path": "疾病责任__轻症责任__轻症数量",
+        "value": "52种",
+        "confidence": 0.96,
+        "note": "rule: mild_count_pattern",
+        "block_id": "1578_p3_b80",
+        "page": 3,
+        "evidence_text": "我们提供保障的重大疾病共有162种，少儿罕见疾病共20种，少儿特定疾病共20种，中 症疾病共30种，轻症疾病共52种。主合同约定的疾病定义于附表中载明，名称如下："
+      }
+    ],
+    "missing_fields": [
+      "轻症赔付次数",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "1803",
+    "db_product_id": "1170004238",
+    "product_name": "中意悦享安康（悠享版）重大疾病保险",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1803_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.9,
+        "note": "rule: ci_pay_times_termination",
+        "block_id": "1803_p3_b104",
+        "page": 3,
+        "evidence_text": "若被保险人在等待期后经专科医生（见 12.7）首次确诊（见 12.8）患 有任何一项符合本合同第 10 条约定保障范围及定义的重度疾病，且 确诊时未满 60 周岁，我们将按下列两项金额中的较大者给付重度疾 病保险金，同时本合同效力终止： （1）被保险人确诊时本合同基本保险金额对应的累计已付保险费的"
+      },
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "128种",
+        "confidence": 0.95,
+        "note": "rule: ci_count_section_numbering",
+        "block_id": "1803_p27_b770",
+        "page": 27,
+        "evidence_text": "10.128  严重脑桥中央髓鞘"
+      }
+    ],
+    "missing_fields": [
+      "轻症赔付次数",
+      "轻症数量",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "851A",
+    "db_product_id": "1520003424",
+    "product_name": "金小葵少儿长期重疾",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/851A_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "128种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "851A_p7_b188",
+        "page": 7,
+        "evidence_text": "我们提供保障的重大疾病共有 128 种，名称见附表一，具体释义见本主险合同“第二十六条 重"
+      },
+      {
+        "coverage_name": "轻症赔付次数",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付次数",
+        "value": "5次",
+        "confidence": 0.95,
+        "note": "rule: mild_pay_times_pattern",
+        "block_id": "851A_p2_b89",
+        "page": 2,
+        "evidence_text": "我们给付重大疾病保险金后，本主险合同现金价值降低为零，同时身故或全残保险金责任终止。 轻症疾病保险金的给付累计以五次为限，中症疾病保险金的给付累计以两次为限。"
+      },
+      {
+        "coverage_name": "轻症数量",
+        "coverage_path": "疾病责任__轻症责任__轻症数量",
+        "value": "50种",
+        "confidence": 0.96,
+        "note": "rule: mild_count_pattern",
+        "block_id": "851A_p6_b165",
+        "page": 6,
+        "evidence_text": "我们提供保障的轻症疾病共有 50 种，名称见附表一，具体释义见本主险合同“第二十四条 轻"
+      }
+    ],
+    "missing_fields": [
+      "重疾赔付次数",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "864",
+    "db_product_id": "1010003564",
+    "product_name": "招商信诺爱享康健（2023）终身重大疾病保险",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/864_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.96,
+        "note": "rule: ci_pay_times_pattern",
+        "block_id": "864_p3_b68",
+        "page": 3,
+        "evidence_text": "重大疾病保险金最多给付一次，我们不累计给付主合同的身故保险金和重大疾病 保险金。 四、轻症疾病保险金"
+      },
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "120种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "864_p3_b76",
+        "page": 3,
+        "evidence_text": "重大疾病列表（120种）"
+      },
+      {
+        "coverage_name": "轻症数量",
+        "coverage_path": "疾病责任__轻症责任__轻症数量",
+        "value": "40种",
+        "confidence": 0.96,
+        "note": "rule: mild_count_pattern",
+        "block_id": "864_p3_b75",
+        "page": 3,
+        "evidence_text": "我们提供保障的重大疾病共有120种，轻症疾病共40种。主合同约定的疾病定义于 附表中载明，名称如下："
+      }
+    ],
+    "missing_fields": [
+      "轻症赔付次数",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "889",
+    "db_product_id": "1530003475",
+    "product_name": "中信保诚「惠康」重大疾病保险（至诚少儿版）",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/889_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.9,
+        "note": "rule: ci_pay_times_termination",
+        "block_id": "889_p3_b83",
+        "page": 3,
+        "evidence_text": "若被保险人因意外伤害事故或在等待期届满后首次发生并由专科医生明确诊断患有 一种或一种以上附录3中列明的重大疾病，我们按确诊时本主险合同基本保险金额给 付重大疾病保险金，给付后本主险合同效力终止。"
+      },
+      {
+        "coverage_name": "轻症赔付次数",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付次数",
+        "value": "6次",
+        "confidence": 0.95,
+        "note": "rule: mild_pay_times_pattern",
+        "block_id": "889_p3_b75",
+        "page": 3,
+        "evidence_text": "每种轻症疾病仅给付一次轻症疾病保险金，给付后该种轻症疾病保险金保险责任终 止；当累计给付的轻症疾病保险金达到六次时，本项保险责任终止。"
+      }
+    ],
+    "missing_fields": [
+      "重疾数量",
+      "轻症数量",
+      "轻症分组"
+    ]
+  },
+  {
+    "product_id": "919A",
+    "db_product_id": "1010003919",
+    "product_name": "招商信诺爱享无忧重大疾病保险",
+    "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/919A_blocks.json",
+    "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次",
+        "confidence": 0.96,
+        "note": "rule: ci_pay_times_pattern",
+        "block_id": "919A_p2_b50",
+        "page": 2,
+        "evidence_text": "重大疾病保险金最多给付一次。"
+      },
+      {
+        "coverage_name": "重疾数量",
+        "coverage_path": "疾病责任__重疾责任__重疾数量",
+        "value": "120种",
+        "confidence": 0.97,
+        "note": "rule: ci_count_pattern",
+        "block_id": "919A_p3_b69",
+        "page": 3,
+        "evidence_text": "我们提供保障的重大疾病共有120种。主合同约定的疾病定义于附表中载明，名称 如下："
+      }
+    ],
+    "missing_fields": [
+      "轻症赔付次数",
+      "轻症数量",
+      "轻症分组"
+    ]
+  }
+]
