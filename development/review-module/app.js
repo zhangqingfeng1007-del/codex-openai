@@ -415,17 +415,63 @@ function renderTopbar() {
           <span>${file.parse_quality}</span>
           ${file.local_path ? `<button type="button" class="file-open-link" data-open-path="${file.local_path}">打开</button>` : `<span class="file-open-link is-disabled">未定位</span>`}
           ${file.local_path ? `<button type="button" class="file-copy-btn" data-path="${file.local_path}">复制路径</button>` : ""}
+          <button type="button" class="file-delete-btn" data-filename="${file.file_name}">删除</button>
         </div>
       </div>
     `;
     packageFiles.appendChild(node);
   });
 
+  // Upload row
+  const uploadRow = document.createElement("div");
+  uploadRow.className = "file-upload-row";
+  uploadRow.innerHTML = `
+    <select class="upload-source-type">
+      <option value="clause">条款</option>
+      <option value="raw_rate">费率表</option>
+      <option value="brochure">说明书</option>
+      <option value="underwriting">核保规则</option>
+      <option value="other">其他</option>
+    </select>
+    <label class="file-upload-label">上传文件<input type="file" class="file-upload-input" style="display:none"></label>
+  `;
+  packageFiles.appendChild(uploadRow);
+
   packageFiles.querySelectorAll(".file-copy-btn").forEach((button) => {
     button.addEventListener("click", () => copyText(button.dataset.path));
   });
   packageFiles.querySelectorAll("[data-open-path]").forEach((button) => {
     button.addEventListener("click", () => openLocalPath(button.dataset.openPath));
+  });
+
+  packageFiles.querySelectorAll(".file-delete-btn").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const filename = button.dataset.filename;
+      const productId = state.task?.product?.product_id || PRODUCT_ID;
+      const res = await fetch(`/tasks/${productId}/file/${encodeURIComponent(filename)}`, { method: "DELETE" });
+      if (res.ok) {
+        const data = await res.json();
+        state.task.document_package = data.document_package;
+        renderTopbar();
+      }
+    });
+  });
+
+  packageFiles.querySelector(".file-upload-input").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const sourceType = uploadRow.querySelector(".upload-source-type").value;
+    const productId = state.task?.product?.product_id || PRODUCT_ID;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("source_type", sourceType);
+    const res = await fetch(`/tasks/${productId}/upload`, { method: "POST", body: formData });
+    if (res.ok) {
+      const data = await res.json();
+      state.task.document_package = data.document_package;
+      renderTopbar();
+    }
+    e.target.value = "";
   });
 
   submitImport.disabled = reviewed !== total || total === 0 || state.submitState === "submitting";

@@ -464,6 +464,42 @@ textarea:focus {
   cursor: default;
 }
 
+.file-delete-btn {
+  border: 0;
+  background: transparent;
+  color: #dc2626;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.file-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0 2px;
+}
+
+.upload-source-type {
+  font: inherit;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 6px;
+  background: #fff;
+}
+
+.file-upload-label {
+  font-size: 13px;
+  color: var(--blue);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  background: #fff;
+  user-select: none;
+}
+
 .source-card.is-conflict {
   border-color: rgba(255, 59, 48, 0.35);
   background: linear-gradient(180deg, rgba(255, 59, 48, 0.04), #fff);
