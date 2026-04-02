@@ -764,3 +764,14 @@ textarea:focus {
   border-color: var(--blue);
   color: var(--blue);
 }
+
+.hint-toggle-btn {
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+}

@@ -3,7 +3,7 @@
 //   local — loads /tasks/{PRODUCT_ID} from server.py (real generated task)
 //   api   — loads from API_BASE (production backend)
 const DATA_SOURCE = "local";
-const PRODUCT_ID = "889";
+const PRODUCT_ID = "0020003306";
 const API_BASE = "http://localhost:3001/api/v1";
 const TASK_ID = "task_20260326_001";
 const MOCK_DATA_URL = "./mock/review-task-v2.json";
@@ -22,11 +22,29 @@ const ACTION_LABELS = [
 const SOURCE_TYPE_LABELS = {
   clause: "条款 clause",
   product_brochure: "说明书 product_brochure",
+  brochure: "说明书 brochure",
   processed_rate: "费率表 processed_rate",
   raw_rate: "原始费率 raw_rate",
+  cash_value: "现价表 cash_value",
   underwriting_rule: "核保规则 underwriting_rule",
+  underwriting: "核保规则 underwriting",
   manual: "人工录入 manual"
 };
+
+const STATUS_DISPLAY_ORDER = {
+  review_required: 0,
+  candidate_ready: 1,
+  accepted: 2,
+  modified: 3,
+  rejected: 4,
+  pending_materials: 5,
+  cannot_extract: 6,
+  cannot_extract_from_clause: 7,
+  not_extracted: 8,
+  not_applicable: 9
+};
+
+const STANDARD_HINTS_VISIBLE_LIMIT = 10;
 
 const state = {
   task: null,
@@ -35,7 +53,8 @@ const state = {
   selectedItemId: null,
   collapsedGroups: new Set(),
   searchTerm: "",
-  submitState: "idle"
+  submitState: "idle",
+  expandedHintFields: new Set()
 };
 
 const productTitle = document.getElementById("productTitle");
@@ -161,7 +180,8 @@ async function loadProductList() {
     const res = await fetch("/tasks");
     if (!res.ok) return [];
     const body = await res.json();
-    return body.product_ids || [];
+    if (Array.isArray(body.products) && body.products.length) return body.products;
+    return (body.product_ids || []).map((id) => ({ product_id: id, product_name: "" }));
   } catch {
     return [];
   }
@@ -306,11 +326,20 @@ function renderStandardHints(item) {
     return;
   }
 
+  const isExpanded = state.expandedHintFields.has(item.coverage_name);
+  const visible = isExpanded ? filtered : filtered.slice(0, STANDARD_HINTS_VISIBLE_LIMIT);
+  const remaining = Math.max(filtered.length - STANDARD_HINTS_VISIBLE_LIMIT, 0);
+
   standardValueHints.innerHTML = `
     <div class="standard-hints-label">已知标准值参考 known standard values（${filtered.length}/${allValues.length}）</div>
-    <div class="standard-hints-chips">${filtered.map((v) =>
+    <div class="standard-hints-chips">${visible.map((v) =>
       `<button type="button" class="hint-chip" data-value="${v.replace(/"/g, "&quot;")}">${v}</button>`
     ).join("")}</div>
+    ${remaining > 0 || isExpanded ? `
+      <button type="button" class="hint-toggle-btn" data-coverage-name="${item.coverage_name.replace(/"/g, "&quot;")}">
+        ${isExpanded ? "收起" : `展开剩余 ${remaining} 个`}
+      </button>
+    ` : ""}
   `;
 }
 
@@ -478,8 +507,8 @@ function renderTopbar() {
 }
 
 async function renderProductSelector() {
-  const productIds = await loadProductList();
-  if (!productIds.length) return;
+  const products = await loadProductList();
+  if (!products.length) return;
 
   let selector = document.getElementById("productSelector");
   if (!selector) {
@@ -487,13 +516,13 @@ async function renderProductSelector() {
     wrap.className = "topbar-subline";
     wrap.innerHTML = `
       <span>切换产品 product</span>
-      <select id="productSelector" class="text-input" style="max-width:220px;padding:6px 10px;font-size:12px;"></select>
+      <select id="productSelector" class="text-input" style="max-width:420px;padding:6px 10px;font-size:12px;"></select>
     `;
     topbarMain?.appendChild(wrap);
     selector = wrap.querySelector("#productSelector");
   }
-  selector.innerHTML = productIds.map((id) =>
-    `<option value="${id}" ${id === state.task?.product?.product_id ? "selected" : ""}>${id}</option>`
+  selector.innerHTML = products.map((product) =>
+    `<option value="${product.product_id}" ${product.product_id === state.task?.product?.product_id ? "selected" : ""}>${product.product_id}${product.product_name ? ` · ${product.product_name}` : ""}</option>`
   ).join("");
 
   if (!selector.dataset.bound) {
@@ -546,6 +575,13 @@ function renderFieldGroups() {
     const visibleItems = items.filter((item) => {
       if (!searchTerm) return true;
       return item.coverage_name.includes(searchTerm) || getItemSummary(item).includes(searchTerm);
+    }).sort((a, b) => {
+      const statusA = getEffectiveStatus(a);
+      const statusB = getEffectiveStatus(b);
+      const orderA = STATUS_DISPLAY_ORDER[statusA] ?? 99;
+      const orderB = STATUS_DISPLAY_ORDER[statusB] ?? 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.coverage_name.localeCompare(b.coverage_name, "zh-CN");
     });
     if (!visibleItems.length) return;
 
@@ -955,6 +991,18 @@ function bindEvents() {
     if (hintChip) {
       finalValueInput.value = hintChip.dataset.value;
       finalValueInput.focus();
+      renderStandardHints(state.selectedItemId ? findItemById(state.selectedItemId) : null);
+      return;
+    }
+    const toggleBtn = event.target.closest(".hint-toggle-btn");
+    if (toggleBtn) {
+      const coverageName = toggleBtn.dataset.coverageName;
+      if (state.expandedHintFields.has(coverageName)) {
+        state.expandedHintFields.delete(coverageName);
+      } else {
+        state.expandedHintFields.add(coverageName);
+      }
+      renderStandardHints(state.selectedItemId ? findItemById(state.selectedItemId) : null);
     }
   });
 }

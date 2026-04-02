@@ -1,5 +1,6 @@
 import argparse
 import json
+import re
 from pathlib import Path
 
 
@@ -107,11 +108,68 @@ def get_standard_values(node):
 
 
 def match_standard(value: str, candidates):
-    v = (value or "").strip()
+    v = (value or "").strip().replace("\r\n", "\n")
     for c in candidates or []:
-        if v == str(c).strip():
+        if v == str(c).strip().replace("\r\n", "\n"):
             return c
     return None
+
+
+# ---------------------------------------------------------------------------
+# 范围补全特例 — semantic candidate matching (whitelist only)
+# ---------------------------------------------------------------------------
+# When exact match fails, attempt controlled semantic matching for whitelisted
+# fields where the candidate value is missing a conventional range qualifier
+# (e.g. 意外/非意外) that standard values commonly include.
+#
+# Rules:
+#   - candidate_value is preserved unchanged
+#   - suggested_standard_value is the range-completed standard value
+#   - match_type = "semantic_candidate_match"
+#   - Final human review required
+
+_SEMANTIC_RULES: dict[str, list[tuple[re.Pattern, str]]] = {
+    "等待期": [
+        # "90天" → "非意外90天，意外0天"
+        (re.compile(r"^(\d+)天$"), "非意外{0}天，意外0天"),
+        # "180天" → "非意外180天，意外0天"
+        (re.compile(r"^(\d+)年$"), "非意外{0}年，意外0天"),
+    ],
+    "被保险人中症豁免": [
+        # "中症，豁免余期保费" → "意外或等待期后中症，豁免余期保费"
+        (re.compile(r"^中症，(.+)$"), "意外或等待期后中症，{0}"),
+    ],
+    "被保险人轻症豁免": [
+        # "轻症，豁免余期保费" → "意外或等待期后轻症，豁免余期保费"
+        (re.compile(r"^轻症，(.+)$"), "意外或等待期后轻症，{0}"),
+    ],
+    "被保险人重疾豁免": [
+        # "重疾，豁免主险余期保费" → "意外或等待期后重疾，豁免主险余期保费"
+        (re.compile(r"^重疾，(.+)$"), "意外或等待期后重疾，{0}"),
+    ],
+}
+
+
+def try_semantic_match(coverage_name: str, candidate_value: str, standard_values: list[str]):
+    """Attempt range-completion semantic match for whitelisted fields.
+
+    Returns (suggested_standard_value, note) if matched, else (None, None).
+    The suggested value must exist in the standard_values list.
+    """
+    rules = _SEMANTIC_RULES.get(coverage_name)
+    if not rules:
+        return None, None
+    v = (candidate_value or "").strip()
+    for pattern, template in rules:
+        m = pattern.match(v)
+        if not m:
+            continue
+        suggested = template.format(*m.groups())
+        # Must exist in standard values — no fabrication
+        if any(suggested == str(sv).strip() for sv in standard_values):
+            note = f"范围补全特例：原值「{v}」补全为「{suggested}」"
+            return suggested, note
+    return None, None
 
 
 def build_evidence(candidate):
@@ -138,6 +196,7 @@ def build_base_record(product, candidate, db_product_id):
 
 def process_candidates(candidates_data, standard_by_id, id_mapping, path_mapping, name_to_ids, product_id_mapping):
     matched_rows = []
+    semantic_matched_rows = []
     unmatched_new_values = []
     unmatched_new_items = []
 
@@ -195,25 +254,46 @@ def process_candidates(candidates_data, standard_by_id, id_mapping, path_mapping
                     }
                 )
             else:
-                unmatched_new_values.append(
-                    {
-                        **base,
-                        "status": "unmatched_new_value",
-                        "coverage_id": coverage_id,
-                        "coverage_path": coverage_path,
-                        "reason": "value_not_found_under_coverage",
-                        "suggested_value": candidate.get("value"),
-                        "known_standard_values_count": len(standard_values),
-                    }
+                # Semantic fallback: range completion for whitelisted fields
+                suggested, sem_note = try_semantic_match(
+                    coverage_name, candidate.get("value", ""), standard_values
                 )
+                if suggested is not None:
+                    semantic_matched_rows.append(
+                        {
+                            **base,
+                            "status": "semantic_candidate_match",
+                            "match_type": "semantic_candidate_match",
+                            "coverage_id": coverage_id,
+                            "coverage_path": coverage_path,
+                            "candidate_value": candidate.get("value"),
+                            "suggested_standard_value": suggested,
+                            "note": sem_note,
+                            "standard_id": "PENDING_LOOKUP",
+                            "is_optional_coverage": 0,
+                        }
+                    )
+                else:
+                    unmatched_new_values.append(
+                        {
+                            **base,
+                            "status": "unmatched_new_value",
+                            "coverage_id": coverage_id,
+                            "coverage_path": coverage_path,
+                            "reason": "value_not_found_under_coverage",
+                            "suggested_value": candidate.get("value"),
+                            "known_standard_values_count": len(standard_values),
+                        }
+                    )
 
-    return matched_rows, unmatched_new_values, unmatched_new_items
+    return matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items
 
 
-def write_outputs(output_dir: Path, matched_rows, unmatched_new_values, unmatched_new_items):
+def write_outputs(output_dir: Path, matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items):
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = {
         "matched_rows_preview.json": matched_rows,
+        "semantic_matched_preview.json": semantic_matched_rows,
         "unmatched_new_values_review.json": unmatched_new_values,
         "unmatched_new_items_review.json": unmatched_new_items,
     }
@@ -245,7 +325,7 @@ def main():
     product_id_mapping = load_json(args.product_id_mapping)
     standard_by_id, _, name_to_ids = build_standard_indexes(standard_full)
 
-    matched_rows, unmatched_new_values, unmatched_new_items = process_candidates(
+    matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items = process_candidates(
         candidates_data,
         standard_by_id,
         id_mapping,
@@ -253,11 +333,12 @@ def main():
         name_to_ids,
         product_id_mapping,
     )
-    write_outputs(args.output_dir, matched_rows, unmatched_new_values, unmatched_new_items)
+    write_outputs(args.output_dir, matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items)
 
     summary = {
         "products": len(candidates_data),
         "matched_review_required": len(matched_rows),
+        "semantic_candidate_match": len(semantic_matched_rows),
         "matched_auto_insertable": 0,
         "unmatched_new_value": len(unmatched_new_values),
         "unmatched_new_item": len(unmatched_new_items),

@@ -6,6 +6,8 @@ import json
 import re
 from pathlib import Path
 
+from block_tagger import tag_blocks
+
 try:
     from openpyxl import load_workbook
 except ImportError:  # pragma: no cover - optional dependency in local env
@@ -48,8 +50,6 @@ CHINESE_DIGITS = {
 
 PAY_FREQ_ORDER = ["趸交", "年交", "半年交", "季交", "月交"]
 WAITING_PRIORITY_TITLES = ("等待期", "观察期", "投保须知")
-WAITING_SKIP_HINTS = ("案例", "举例", "示例", "利益演示", "演示")
-WAITING_SKIP_TEXT_HINTS = ("确诊日起满", "保单周年日", "小王", "案例")
 PAY_PERIOD_TITLES = [
     "交费期间", "交费期限", "交费年期",
     "缴费期间", "缴费期限", "缴费年期",
@@ -154,7 +154,9 @@ def _format_pay_period_candidate(values: list[str]) -> str | None:
     for value in values:
         m = re.fullmatch(r"(\d+)年交", value)
         if m:
-            year_values.add(int(m.group(1)))
+            y = int(m.group(1))
+            if y <= 40:
+                year_values.add(y)
             continue
         if value.startswith("交至") and value not in age_periods:
             age_periods.append(value)
@@ -218,6 +220,14 @@ def build_candidates_from_structured_table(path: Path) -> dict[str, dict]:
             if text and text not in unique_periods:
                 unique_periods.append(text)
         if unique_periods:
+            # Normalize order: "至X周岁" before "终身" (matches standard value format)
+            def _period_sort_key(p: str) -> int:
+                if p.startswith("至") and "周岁" in p:
+                    return 0
+                if p == "终身":
+                    return 1
+                return 2
+            unique_periods.sort(key=_period_sort_key)
             candidates["保险期间"] = {
                 "coverage_name": "保险期间",
                 "value": "，".join(unique_periods),
@@ -267,6 +277,26 @@ def chinese_to_int(text: str) -> int | None:
 
 def normalize_spaces(text: str) -> str:
     return re.sub(r"\s+", "", text)
+
+
+def narrow_evidence(block_text: str, keyword: str, window: int = 150) -> str:
+    """Extract minimal snippet around first occurrence of keyword in block_text."""
+    idx = block_text.find(keyword)
+    if idx == -1:
+        return block_text[:200]
+    # Start: find nearest sentence boundary (。or newline) before keyword
+    start = max(0, idx - 60)
+    for sep in ["。", "\n"]:
+        pos = block_text.rfind(sep, 0, idx)
+        if pos != -1 and pos + 1 > start:
+            start = pos + 1
+    # End: find nearest sentence boundary after keyword
+    end = min(len(block_text), idx + window)
+    for sep in ["。", "\n"]:
+        pos = block_text.find(sep, idx)
+        if pos != -1 and pos + 1 < end:
+            end = pos + 1
+    return block_text[start:end].strip()
 
 
 def add_candidate(results: dict, field: str, value: str | None, block: dict | None, confidence: float, note: str) -> None:
@@ -325,19 +355,42 @@ def extract_age(text: str) -> str | None:
     return None
 
 
-def extract_duration_days(text: str, keyword: str) -> str | None:
+def extract_duration_days(text: str, keyword: str, max_days: int | None = None) -> str | None:
+    """Extract a day-count near *keyword* in *text*.
+
+    Searches in a context window (40 chars before … 100 chars after the first
+    occurrence of *keyword*) so that unrelated numbers elsewhere in the same
+    block do not pollute the result.  Recognises "N个自然日" as well as "N天/日".
+    If *max_days* is given, values exceeding that limit are rejected.
+    """
     compact = normalize_spaces(text)
     if keyword not in compact:
         return None
-    m = re.search(r"(\d+)[天日]", compact)
-    if m:
-        return f"{m.group(1)}天"
-    m = re.search(r"([一二三四五六七八九十百零〇]+)[天日]", compact)
-    if m:
-        val = chinese_to_int(m.group(1))
-        if val is not None:
-            return f"{val}天"
-    return None
+    pos = compact.find(keyword)
+    # Search after the keyword first (preferred), fall back to a broader window
+    # that includes up to 40 chars before the keyword.
+    after = compact[pos : pos + 120]
+    before_and_after = compact[max(0, pos - 40) : pos + 120]
+
+    def _find_days(window: str) -> int | None:
+        m = re.search(r"(\d+)个自然日", window)
+        if not m:
+            m = re.search(r"(\d+)[天日]", window)
+        if m:
+            return int(m.group(1))
+        m_cn = re.search(r"([一二三四五六七八九十百零〇]+)[天日]", window)
+        if m_cn:
+            return chinese_to_int(m_cn.group(1))
+        return None
+
+    val = _find_days(after)
+    if val is None:
+        val = _find_days(before_and_after)
+    if val is None:
+        return None
+    if max_days is not None and val > max_days:
+        return None
+    return f"{val}天"
 
 
 def extract_waiting(text: str) -> tuple[str | None, str | None]:
@@ -366,24 +419,33 @@ def extract_waiting(text: str) -> tuple[str | None, str | None]:
 
 
 def should_skip_waiting_block(block: dict) -> bool:
+    """Use _tags from block_tagger when available, else fall back to inline check."""
+    tags = block.get("_tags")
+    if tags:
+        return not tags["is_matchable"]
+    # Legacy fallback (should not be reached after tag_blocks is wired)
     title_path = "".join(block.get("title_path", []))
     text = block.get("text", "")
     skip_titles = ("举例", "示例", "案例", "理赔案例", "保险金给付案例")
-    skip_texts = ("小王", "小明", "案例", "举例说明")
+    skip_texts = ("小王", "小明", "案例", "举例说明", "举例")
     return any(hint in title_path for hint in skip_titles) or any(hint in text for hint in skip_texts)
 
 
 def waiting_block_confidence(block: dict) -> float:
-    title_path = "".join(block.get("title_path", []))
-    text = block["text"]
     if should_skip_waiting_block(block):
         return 0.0
-    if any(hint in title_path for hint in WAITING_SKIP_HINTS):
+    text = block["text"]
+    # Content-level skip: calculation context, not actual waiting period definition
+    if "确诊日起满" in text or "保单周年日" in text:
         return 0.0
-    if any(hint in text for hint in WAITING_SKIP_TEXT_HINTS):
-        return 0.0
+    title_path = "".join(block.get("title_path", []))
     if any(keyword in title_path for keyword in WAITING_PRIORITY_TITLES):
         return 0.97
+    # 正文直接含等待期/观察期定义（如"等待期为X天""X天等待期"）→ 高置信
+    compact_text = normalize_spaces(text)
+    if re.search(r"(?:等待期|观察期)[^。]{0,50}\d+[天日]", compact_text) or \
+       re.search(r"\d+[天日][^。]{0,50}(?:等待期|观察期)", compact_text):
+        return 0.98
     return 0.93
 
 
@@ -496,7 +558,7 @@ def extract_pay_frequency(text: str) -> str | None:
     if any(pat.replace("、", "").replace("，", "").replace("（", "").replace("）", "") in normalized_compact for pat in definition_like_patterns):
         return None
     if not any(k in compact for k in ["交费频率", "交费方式", "保险费的支付"]):
-        if not any(k in compact for k in ["每月", "每季", "每半年", "每年", "趸交"]):
+        if not any(k in compact for k in ["每月", "每季", "每半年", "每年", "趸交", "一次交清", "一次性付清"]):
             return None
     found = [freq for freq in PAY_FREQ_ORDER if freq in compact]
     mapped = [
@@ -504,6 +566,14 @@ def extract_pay_frequency(text: str) -> str | None:
         ("每季", "季交"),
         ("每半年", "半年交"),
         ("每年", "年交"),
+        ("一次交清", "趸交"),
+        ("一次性付清", "趸交"),
+        ("一次性交付", "趸交"),
+        ("趸缴", "趸交"),
+        ("年缴", "年交"),
+        ("半年缴", "半年交"),
+        ("季缴", "季交"),
+        ("月缴", "月交"),
     ]
     for token, freq in mapped:
         if token in compact and freq not in found:
@@ -571,30 +641,116 @@ def extract_pay_info_from_rate_pdf(item: dict) -> dict[str, str]:
     compact = normalize_spaces(text)
     out: dict[str, str] = {}
 
-    years = {int(x) for x in re.findall(r"(\d+)年", compact)}
-    if years:
+    # Build pay-period set: limit to 1–2 digit year counts to avoid noise from
+    # decimal values (e.g. "0.97362..." → "97362年交" in the old regex).
+    years: set[int] = set()
+    has_lump = any(k in compact for k in ["趸交", "一次交清", "一次性付清", "一次性交付", "趸缴"])
+    # "NX年交" (explicit) takes priority
+    for x in re.findall(r"(?<!\d)(\d{1,2})年交(?!\d)", compact):
+        val = int(x)
+        if val == 1:
+            has_lump = True
+        elif 2 <= val <= 99:
+            years.add(val)
+    # Plain "NX年" (implicit, only if no "交" immediately follows)
+    for x in re.findall(r"(?<!\d)(\d{1,2})年(?!交)(?!\d)", compact):
+        val = int(x)
+        if val == 1:
+            has_lump = True
+        elif 2 <= val <= 99:
+            years.add(val)
+    if has_lump or years:
         parts: list[str] = []
-        other_years = sorted(y for y in years if y != 1)
-        if 1 in years:
+        if has_lump:
             parts.append("趸交")
-        if other_years:
-            parts.append("/".join(str(y) for y in other_years) + "年交")
-        if parts:
-            out["交费期间"] = "，".join(parts)
+        if years:
+            parts.append("/".join(str(y) for y in sorted(years)) + "年交")
+        out["交费期间"] = "，".join(parts)
 
+    # Detect pay frequencies: support both "缴" and "交" terminology
     freqs: list[str] = []
-    if "年缴" in compact:
-        freqs.append("年交")
-    if "半年缴" in compact:
-        freqs.append("半年交")
-    if "季缴" in compact:
-        freqs.append("季交")
-    if "月缴" in compact:
-        freqs.append("月交")
+    freq_tokens = [
+        ("趸交", "趸交"), ("趸缴", "趸交"),
+        ("年缴", "年交"), ("年交", "年交"),
+        ("半年缴", "半年交"), ("半年交", "半年交"),
+        ("季缴", "季交"), ("季交", "季交"),
+        ("月缴", "月交"), ("月交", "月交"),
+    ]
+    for token, freq in freq_tokens:
+        if token in compact and freq not in freqs:
+            freqs.append(freq)
+    if has_lump and "趸交" not in freqs:
+        freqs.append("趸交")
     if freqs:
         ordered = [freq for freq in PAY_FREQ_ORDER if freq in freqs]
         out["交费频率"] = "，".join(ordered)
     return out
+
+
+def extract_age_from_rate_source(item: dict) -> str | None:
+    """Try to extract 投保年龄 from rate XLSX or PDF header rows.
+
+    Rate tables often have cells like "承保年龄：0-60周岁" or
+    "投保年龄 出生满28天-65周岁" in the first 10 rows.
+    """
+    # Try XLSX first
+    if load_workbook is not None:
+        rate_path = locate_rate_xlsx(item)
+        if rate_path and rate_path.exists():
+            try:
+                wb = load_workbook(rate_path, read_only=True, data_only=True)
+                try:
+                    for sheet_name in wb.sheetnames:
+                        ws = wb[sheet_name]
+                        for row in ws.iter_rows(min_row=1, max_row=10, values_only=True):
+                            for cell in row:
+                                if cell is None:
+                                    continue
+                                val = str(cell).strip()
+                                age = extract_age(val)
+                                if age:
+                                    return age
+                                # "承保年龄" / "投保年龄" label followed by range in same cell
+                                compact_cell = normalize_spaces(val)
+                                if any(k in compact_cell for k in ["承保年龄", "投保年龄"]):
+                                    age = extract_age(compact_cell)
+                                    if age:
+                                        return age
+                                    # Try "N-M周岁" or "N至M周岁" pattern directly
+                                    m = re.search(r"(\d+)[至-](\d+)周岁", compact_cell)
+                                    if m:
+                                        return f"{m.group(1)}-{m.group(2)}周岁"
+                finally:
+                    wb.close()
+            except Exception:
+                pass
+
+    # Try PDF
+    if fitz is not None:
+        rate_path = locate_rate_pdf(item)
+        if rate_path and rate_path.exists():
+            try:
+                doc = fitz.open(str(rate_path))
+                try:
+                    for page in doc[:3]:
+                        text = page.get_text("text") or ""
+                        for line in text.splitlines():
+                            line = line.strip()
+                            if not line:
+                                continue
+                            compact_line = normalize_spaces(line)
+                            if any(k in compact_line for k in ["承保年龄", "投保年龄"]):
+                                age = extract_age(compact_line)
+                                if age:
+                                    return age
+                                m = re.search(r"(\d+)[至-](\d+)周岁", compact_line)
+                                if m:
+                                    return f"{m.group(1)}-{m.group(2)}周岁"
+                finally:
+                    doc.close()
+            except Exception:
+                pass
+    return None
 
 
 def extract_pay_frequency_from_rate_xlsx(item: dict) -> tuple[str, str] | None:
@@ -888,8 +1044,15 @@ def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dic
         add_candidate(results, "等待期", waiting_raw, block, waiting_conf, "rule: waiting_period_pattern")
         add_candidate(results, "等待期（简化）", waiting_simple, block, waiting_conf, "rule: waiting_period_simple")
 
-        add_candidate(results, "宽限期", extract_duration_days(text, "宽限期"), block, 0.94, "rule: grace_period_pattern")
-        add_candidate(results, "犹豫期", extract_duration_days(text, "犹豫期"), block, 0.94, "rule: cooling_off_pattern")
+        grace_val = extract_duration_days(text, "宽限期")
+        add_candidate(results, "宽限期", grace_val, block, 0.94, "rule: grace_period_pattern")
+        if grace_val and results.get("宽限期", {}).get("block_id") == block["block_id"]:
+            results["宽限期"]["evidence_text"] = narrow_evidence(text, "宽限期")
+
+        cooling_val = extract_duration_days(text, "犹豫期", max_days=30)
+        add_candidate(results, "犹豫期", cooling_val, block, 0.94, "rule: cooling_off_pattern")
+        if cooling_val and results.get("犹豫期", {}).get("block_id") == block["block_id"]:
+            results["犹豫期"]["evidence_text"] = narrow_evidence(text, "犹豫期")
         add_candidate(results, "重疾赔付次数", extract_ci_pay_times(text), block, 0.82, "rule: ci_pay_times")
         grouping_value = extract_ci_grouping(text)
         if grouping_value:
@@ -954,7 +1117,8 @@ def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dic
     pay_times_value = results.get("重疾赔付次数", {}).get("value")
     multi_pay = is_multi_ci_pay_times(pay_times_value)
     if multi_pay is None:
-        set_candidate(results, "重疾分组", "", None, 0.0, "rule: ci_grouping_review_required", status="review_required")
+        # Cannot determine grouping without knowing pay-times; leave as missing
+        pass
     elif multi_pay is False:
         pay_times_block = results.get("重疾赔付次数")
         set_candidate(
@@ -977,8 +1141,7 @@ def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dic
         )
     elif grouping_match is not None:
         results["重疾分组"] = grouping_match
-    else:
-        set_candidate(results, "重疾分组", "", None, 0.0, "rule: ci_grouping_review_required", status="review_required")
+    # else: multi-pay but no grouping info found → leave as missing
 
     # 等待期跨block升级：抽到纯天数但全文存在"意外无等待期"声明时，升级为完整格式
     if "等待期" in results:
@@ -987,10 +1150,38 @@ def extract_candidates(blocks: list[dict], product_id: str | None = None) -> dic
             all_compact = normalize_spaces(" ".join(b["text"] for b in blocks))
             has_no_waiting_accident = (
                 any("意外" in b["text"] and "无等待期" in b["text"] for b in blocks)
-                or re.search(r"意外伤害.*无等待期|无等待期.*意外伤害", all_compact)
+                or any("意外" in b["text"] and "不设等待期" in b["text"] for b in blocks)
+                or re.search(r"意外(?:伤害)?[^。]{0,20}(?:无等待期|不设等待期|等待期为0[天日])", all_compact)
+                or re.search(r"(?:无等待期|不设等待期)[^。]{0,20}意外(?:伤害)?", all_compact)
+                or re.search(r"意外(?:伤害)?[^。]{0,30}不受[^。]{0,15}等待期", all_compact)
+                or re.search(r"因意外(?:伤害)?[^。]{0,20}0[天日]", all_compact)
             )
             if has_no_waiting_accident:
-                results["等待期"]["value"] = f"非意外{waiting_val}，意外0天"
+                new_waiting_val = f"非意外{waiting_val}，意外0天"
+                results["等待期"]["value"] = new_waiting_val
+                # 找到触发升级的证据 block，同步 block_id/page/evidence_text/note
+                upgrade_block = None
+                for b in blocks:
+                    bt = normalize_spaces(b["text"])
+                    if (("意外" in bt and "无等待期" in bt)
+                            or ("意外" in bt and "不设等待期" in bt)
+                            or re.search(r"意外(?:伤害)?[^。]{0,20}(?:无等待期|不设等待期|等待期为0[天日])", bt)
+                            or re.search(r"(?:无等待期|不设等待期)[^。]{0,20}意外(?:伤害)?", bt)
+                            or re.search(r"意外(?:伤害)?[^。]{0,30}不受[^。]{0,15}等待期", bt)
+                            or re.search(r"因意外(?:伤害)?[^。]{0,20}0[天日]", bt)):
+                        upgrade_block = b
+                        break
+                if upgrade_block is not None:
+                    results["等待期"]["block_id"] = upgrade_block.get("block_id", results["等待期"].get("block_id"))
+                    results["等待期"]["page"] = upgrade_block.get("page", results["等待期"].get("page"))
+                    results["等待期"]["evidence_text"] = upgrade_block["text"][:200]
+                    results["等待期"]["note"] = "cross-block upgrade: accident_no_waiting"
+                # 同步升级 等待期（简化）的 block 引用（值保持简化形式 N天）
+                if "等待期（简化）" in results and upgrade_block is not None:
+                    results["等待期（简化）"]["block_id"] = upgrade_block.get("block_id", results["等待期（简化）"].get("block_id"))
+                    results["等待期（简化）"]["page"] = upgrade_block.get("page", results["等待期（简化）"].get("page"))
+                    results["等待期（简化）"]["evidence_text"] = upgrade_block["text"][:200]
+                    results["等待期（简化）"]["note"] = "cross-block upgrade: accident_no_waiting"
 
     # 等待期跨block兜底：旧式条款用"X日内...若因意外...不受限制"表达等待期，无"等待期"关键词
     if "等待期" not in results:
@@ -1066,10 +1257,12 @@ def main() -> None:
                 continue
             blocks_path = degraded_path
         _, blocks = load_blocks_compatible(blocks_path)
+        blocks = tag_blocks(blocks)
         extracted = extract_candidates(blocks, item["product_id"])
         shuomingshu_blocks_path = Path(blocks_dir_arg) / f"{item['product_id']}_说明书_blocks.json"
         if shuomingshu_blocks_path.exists() and ("投保年龄" not in extracted or "交费期间" not in extracted):
             _, shuomingshu_blocks = load_blocks_compatible(shuomingshu_blocks_path)
+            shuomingshu_blocks = tag_blocks(shuomingshu_blocks)
             extra = extract_candidates(shuomingshu_blocks, item["product_id"])
             if "投保年龄" not in extracted and "投保年龄" in extra:
                 age_candidate = extra["投保年龄"].copy()
@@ -1081,6 +1274,18 @@ def main() -> None:
                 pay_period_candidate["note"] = "rule: pay_period_shuomingshu"
                 pay_period_candidate["source_type"] = "product_brochure"
                 extracted["交费期间"] = pay_period_candidate
+        if "投保年龄" not in extracted:
+            age_from_rate = extract_age_from_rate_source(item)
+            if age_from_rate:
+                extracted["投保年龄"] = {
+                    "coverage_name": "投保年龄",
+                    "value": age_from_rate,
+                    "confidence": 0.8,
+                    "note": "rule: age_from_rate_table_header",
+                    "block_id": None,
+                    "page": None,
+                    "evidence_text": None,
+                }
         if "交费期间" not in extracted or "交费频率" not in extracted:
             rate_pdf_info = extract_pay_info_from_rate_pdf(item)
             if "交费期间" not in extracted and rate_pdf_info.get("交费期间"):
@@ -1226,12 +1431,16 @@ def main() -> None:
                     continue
                 if field == "交费期间":
                     existing = extracted[field]
-                    if (
-                        "shuomingshu" in (existing.get("note") or "")
-                        and pay_period_specificity(structured_candidates[field].get("value") or "")
-                        > pay_period_specificity(existing.get("value") or "")
-                    ):
-                        extracted[field] = structured_candidates[field]
+                    sc = structured_candidates[field]
+                    existing_spec = pay_period_specificity(existing.get("value") or "")
+                    sc_spec = pay_period_specificity(sc.get("value") or "")
+                    if sc_spec > existing_spec:
+                        is_xlsx = sc.get("parse_quality") in ("xlsx", "xls")
+                        from_shuomingshu = "shuomingshu" in (existing.get("note") or "")
+                        # Excel sources always trusted; PDF sources only when
+                        # existing extraction looks incomplete (specificity ≤ 2)
+                        if is_xlsx or from_shuomingshu or existing_spec <= 2:
+                            extracted[field] = sc
         rows.append(
             {
                 "product_id": item["product_id"],

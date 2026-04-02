@@ -1,0 +1,90 @@
+[
+  {
+    "product_id": "851A",
+    "db_product_id": "1520003424",
+    "product_name": "金小葵少儿长期重疾",
+    "coverage_name": "被保险人重疾豁免",
+    "candidate_value": "重疾，豁免余期保费",
+    "confidence": 0.75,
+    "note": "范围补全特例：原值「重疾，豁免余期保费」补全为「意外或等待期后重疾，豁免余期保费」",
+    "reviewer_action": null,
+    "evidence": {
+      "block_id": "851A_p8_b220",
+      "page": 8,
+      "evidence_text": "若被保险人由我们认可的医院的专科医生初次确诊发生本主险合同定义的轻症疾病、中症疾病 或重大疾病，自确诊日9起，我们每年于保险费支付日豁免本主险合同当期应支付的保险费，被豁免 的保险费视为已交纳，本主险合同继续有效。"
+    },
+    "status": "semantic_candidate_match",
+    "match_type": "semantic_candidate_match",
+    "coverage_id": "504742548670382080",
+    "coverage_path": "豁免责任__被保险人豁免__被保险人重疾豁免",
+    "suggested_standard_value": "意外或等待期后重疾，豁免余期保费",
+    "standard_id": "PENDING_LOOKUP",
+    "is_optional_coverage": 0
+  },
+  {
+    "product_id": "851A",
+    "db_product_id": "1520003424",
+    "product_name": "金小葵少儿长期重疾",
+    "coverage_name": "被保险人中症豁免",
+    "candidate_value": "中症，豁免余期保费",
+    "confidence": 0.75,
+    "note": "范围补全特例：原值「中症，豁免余期保费」补全为「意外或等待期后中症，豁免余期保费」",
+    "reviewer_action": null,
+    "evidence": {
+      "block_id": "851A_p8_b220",
+      "page": 8,
+      "evidence_text": "若被保险人由我们认可的医院的专科医生初次确诊发生本主险合同定义的轻症疾病、中症疾病 或重大疾病，自确诊日9起，我们每年于保险费支付日豁免本主险合同当期应支付的保险费，被豁免 的保险费视为已交纳，本主险合同继续有效。"
+    },
+    "status": "semantic_candidate_match",
+    "match_type": "semantic_candidate_match",
+    "coverage_id": "504742512788111360",
+    "coverage_path": "豁免责任__被保险人豁免__被保险人中症豁免",
+    "suggested_standard_value": "意外或等待期后中症，豁免余期保费",
+    "standard_id": "PENDING_LOOKUP",
+    "is_optional_coverage": 0
+  },
+  {
+    "product_id": "851A",
+    "db_product_id": "1520003424",
+    "product_name": "金小葵少儿长期重疾",
+    "coverage_name": "被保险人轻症豁免",
+    "candidate_value": "轻症，豁免余期保费",
+    "confidence": 0.75,
+    "note": "范围补全特例：原值「轻症，豁免余期保费」补全为「意外或等待期后轻症，豁免余期保费」",
+    "reviewer_action": null,
+    "evidence": {
+      "block_id": "851A_p8_b220",
+      "page": 8,
+      "evidence_text": "若被保险人由我们认可的医院的专科医生初次确诊发生本主险合同定义的轻症疾病、中症疾病 或重大疾病，自确诊日9起，我们每年于保险费支付日豁免本主险合同当期应支付的保险费，被豁免 的保险费视为已交纳，本主险合同继续有效。"
+    },
+    "status": "semantic_candidate_match",
+    "match_type": "semantic_candidate_match",
+    "coverage_id": "504742441774350336",
+    "coverage_path": "豁免责任__被保险人豁免__被保险人轻症豁免",
+    "suggested_standard_value": "意外或等待期后轻症，豁免余期保费",
+    "standard_id": "PENDING_LOOKUP",
+    "is_optional_coverage": 0
+  },
+  {
+    "product_id": "1134",
+    "db_product_id": "1280003176",
+    "product_name": "国华康佑保B终身重疾计划",
+    "coverage_name": "被保险人轻症豁免",
+    "candidate_value": "轻症，豁免余期保费",
+    "confidence": 0.75,
+    "note": "范围补全特例：原值「轻症，豁免余期保费」补全为「意外或等待期后轻症，豁免余期保费」",
+    "reviewer_action": null,
+    "evidence": {
+      "block_id": "1134_p3_b114",
+      "page": 3,
+      "evidence_text": "被保险人初次发生并被医院的专科医生确诊患有本合同约定的轻症疾病，我们豁免自 确诊日后本合同应交的剩余各期保险费。被豁免的保险费视为已交纳，本合同继续有 效。"
+    },
+    "status": "semantic_candidate_match",
+    "match_type": "semantic_candidate_match",
+    "coverage_id": "504742441774350336",
+    "coverage_path": "豁免责任__被保险人豁免__被保险人轻症豁免",
+    "suggested_standard_value": "意外或等待期后轻症，豁免余期保费",
+    "standard_id": "PENDING_LOOKUP",
+    "is_optional_coverage": 0
+  }
+]

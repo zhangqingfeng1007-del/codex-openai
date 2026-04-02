@@ -13,6 +13,11 @@ except ImportError:  # pragma: no cover
     load_workbook = None
 
 try:
+    import xlrd
+except ImportError:  # pragma: no cover
+    xlrd = None
+
+try:
     import fitz
 except ImportError:  # pragma: no cover
     fitz = None
@@ -353,7 +358,124 @@ def _build_rows_from_worksheet(sheet) -> list[dict]:
     return rows
 
 
+def _extract_from_xls_xlrd(product_id: str, doc_category: str, input_file: Path) -> dict:
+    """Extract rate table from legacy .xls files using xlrd."""
+    if xlrd is None:
+        raise RuntimeError("xlrd is required for .xls file extraction; install with: pip install xlrd")
+    try:
+        wb = xlrd.open_workbook(str(input_file))
+    except Exception as exc:
+        raise RuntimeError(f"xlrd failed to open {input_file}: {exc}") from exc
+
+    tables: list[dict] = []
+    pay_periods: list[str] = []
+    pay_frequencies: list[str] = []
+    insurance_periods: list[str] = []
+
+    for sheet_idx in range(wb.nsheets):
+        ws = wb.sheet_by_index(sheet_idx)
+        rows_raw: list[list[str]] = []
+        for row_idx in range(ws.nrows):
+            row_vals = []
+            for col_idx in range(ws.ncols):
+                cell = ws.cell(row_idx, col_idx)
+                if cell.ctype == xlrd.XL_CELL_EMPTY:
+                    row_vals.append("")
+                elif cell.ctype == xlrd.XL_CELL_NUMBER:
+                    # Avoid scientific notation for whole numbers
+                    n = cell.value
+                    row_vals.append(str(int(n)) if n == int(n) else str(n))
+                else:
+                    row_vals.append(str(cell.value).strip())
+            if any(row_vals):
+                rows_raw.append(row_vals)
+
+        if not rows_raw:
+            continue
+
+        def _header_score(row: list[str]) -> tuple[int, int]:
+            non_empty = [v for v in row if v]
+            text_like = sum(1 for v in non_empty if re.search(r"[A-Za-z\u4e00-\u9fff]", v))
+            return (text_like, len(non_empty))
+
+        header_idx = max(range(min(len(rows_raw), 12)), key=lambda i: _header_score(rows_raw[i]))
+        header = rows_raw[header_idx]
+        body = rows_raw[header_idx + 1 : header_idx + 5]
+        rows: list[dict] = []
+        for body_row in body:
+            row_obj: dict[str, str] = {}
+            for idx, key in enumerate(header):
+                if not key:
+                    continue
+                row_obj[key] = body_row[idx] if idx < len(body_row) else ""
+            if row_obj:
+                rows.append(row_obj)
+
+        schema = list(rows[0].keys()) if rows else []
+        tables.append({
+            "table_id": f"{product_id}_{ws.name}_tbl_1",
+            "page": 1,
+            "schema": schema,
+            "rows": rows,
+        })
+
+        # Extract pay periods from first 6 rows
+        tokens: list[str] = []
+        for row_idx in range(min(6, ws.nrows)):
+            for col_idx in range(ws.ncols):
+                cell = ws.cell(row_idx, col_idx)
+                val = ""
+                if cell.ctype == xlrd.XL_CELL_NUMBER:
+                    n = cell.value
+                    val = str(int(n)) if n == int(n) else str(n)
+                elif cell.ctype not in (xlrd.XL_CELL_EMPTY, xlrd.XL_CELL_BLANK):
+                    val = str(cell.value).strip()
+                if val:
+                    tokens.append(val)
+                    normalized = _normalize_pay_period_token(val)
+                    if normalized:
+                        pay_periods.append(normalized)
+
+        token_text = normalize_spaces(" ".join(tokens))
+        if not pay_periods:
+            pay_periods.extend(_extract_pay_period_tokens(token_text))
+
+        # Extract pay frequencies from last 30 tokens
+        all_parts: list[str] = []
+        for row_idx in range(ws.nrows):
+            for col_idx in range(ws.ncols):
+                cell = ws.cell(row_idx, col_idx)
+                if cell.ctype not in (xlrd.XL_CELL_EMPTY, xlrd.XL_CELL_BLANK):
+                    val = str(cell.value).strip()
+                    if val:
+                        all_parts.append(val)
+        tail_text = normalize_spaces("".join(all_parts[-30:]))
+        pay_frequencies.extend(_extract_pay_frequencies(tail_text))
+        insurance_periods.extend(_extract_insurance_periods(token_text))
+
+    return {
+        "_meta": {
+            "product_id": product_id,
+            "doc_category": doc_category,
+            "source_file": str(input_file),
+            "parse_method": "xlrd",
+            "table_format": "sheet_grid",
+            "parse_quality": "xls",
+            "generated_at": iso_now(),
+        },
+        "tables": tables,
+        "extracted_fields": {
+            "pay_periods": format_pay_periods(pay_periods),
+            "pay_frequencies": [freq for freq in PAY_FREQ_ORDER if freq in pay_frequencies],
+            "insurance_periods": sorted(set(insurance_periods)),
+        },
+        "notes": [],
+    }
+
+
 def extract_from_xlsx(product_id: str, doc_category: str, input_file: Path) -> dict:
+    if input_file.suffix.lower() == ".xls":
+        return _extract_from_xls_xlrd(product_id, doc_category, input_file)
     if load_workbook is None:
         raise RuntimeError("openpyxl is required for xlsx/xls extraction")
     workbook = load_workbook(input_file, read_only=True, data_only=True)

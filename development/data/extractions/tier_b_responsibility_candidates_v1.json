@@ -1,7 +1,7 @@
 [
   {
     "product_id": "1134",
-    "db_product_id": "1280003176",
+    "db_product_id": null,
     "product_name": "国华康佑保B终身重疾计划",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1134_blocks.json",
     "candidates": [
@@ -34,19 +34,120 @@
         "block_id": "1134_p26_b621",
         "page": 26,
         "evidence_text": "本合同所指的轻症疾病（共 50 种），是指符合下列定义的疾病、疾病状态或手术："
+      },
+      {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不分组",
+        "confidence": 0.85,
+        "note": "rule: mild_group_no_evidence",
+        "block_id": "1134_p1_b60",
+        "page": 1,
+        "evidence_text": "10.6 意外伤害事故 10.7 初次发生 10.8 医院 10.9 专科医生 10.10 重大疾病 10.11 轻症疾病 10.12 男性特定疾病 10.13 女性特定疾病 10.14 酗酒 10.15 毒品"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: middle_group_no_keyword",
+        "block_id": "1134_p1_b1",
+        "page": 1,
+        "evidence_text": "国华人寿[2018]疾病保险 094 号"
+      },
+      {
+        "coverage_name": "保单贷款",
+        "coverage_path": "其他责任__保单功能__保单贷款",
+        "value": "支持（详见条款）",
+        "confidence": 0.6,
+        "note": "rule: bao_dan_dai_kuan_present",
+        "block_id": "1134_p8_b206",
+        "page": 8,
+        "evidence_text": "在您补交保险费、偿还保单贷款及利息、及其他未还款项之日起，合同效力恢复。"
+      },
+      {
+        "coverage_name": "身故免责数量",
+        "coverage_path": "责任免除（人身险）__身故免责__身故免责数量",
+        "value": "6条",
+        "confidence": 0.82,
+        "note": "rule: 身故免责_count",
+        "block_id": "1134_p4_b123",
+        "page": 4,
+        "evidence_text": "“男性特定疾病”或“女性特定疾病”的，我们不承担相应保险责任；若您在投保时 与我们约定选择投保身故保险金，则因下列第（1）至第（6）项情形之一导致被保险 人身故的，我们不承担给付身故保险金的责任： (1) 投保人对被保险人的故意杀害、故意伤害； (2) 被保险人自本合同成立或者合同效力恢复之日起 2 年内自杀，但被保险人自杀时"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "7条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "1134_p4_b122",
+        "page": 4,
+        "evidence_text": "因下列第（1）至第（7）项情形之一导致被保险人发生“重大疾病”、“轻症疾病”、"
+      },
+      {
+        "coverage_name": "被保险人轻症豁免",
+        "coverage_path": "豁免责任__被保险人豁免__被保险人轻症豁免",
+        "value": "轻症，豁免余期保费",
+        "confidence": 0.75,
+        "note": "rule: bei_bao_xian_ren_qing_zheng_huo_mian",
+        "block_id": "1134_p3_b114",
+        "page": 3,
+        "evidence_text": "被保险人初次发生并被医院的专科医生确诊患有本合同约定的轻症疾病，我们豁免自 确诊日后本合同应交的剩余各期保险费。被豁免的保险费视为已交纳，本合同继续有 效。"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "等待期内重疾，退还已交保费；\n意外或等待期后重疾，给付重疾基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "1134_p3_b112",
+        "page": 3,
+        "evidence_text": "被保险人初次发生（见10.7）并被医院（见10.8）的专科医生（见10.9）确诊患有本 合同约定的重大疾病（见10.10），我们按本合同的重大疾病保险金额给付重大疾病保 险金，本合同终止。"
+      },
+      {
+        "coverage_name": "轻症保障说明",
+        "coverage_path": "疾病责任__轻症责任__轻症保障说明",
+        "value": "等待期内轻症，退还已交保费；\n意外或等待期后轻症，给付轻症基本保额",
+        "confidence": 0.65,
+        "note": "rule: qing_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "1134_p3_b113",
+        "page": 3,
+        "evidence_text": "被保险人初次发生并被医院的专科医生确诊患有本合同约定的轻症疾病（见10.11）， 我们按本合同的轻症疾病保险金额给付轻症疾病保险金，该项保险责任终止。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "国华超级至尊保终身重大疾病保险条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "1134_p1_b2",
+        "page": 1,
+        "evidence_text": "国华超级至尊保终身重大疾病保险条款"
       }
     ],
     "missing_fields": [
       "轻症赔付次数",
-      "轻症分组",
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "减保",
+      "豁免免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免"
+    ],
+    "no_coverage_fields": [
       "中症赔付次数",
       "中症数量",
-      "中症分组"
+      "中症保障说明"
     ]
   },
   {
     "product_id": "1464",
-    "db_product_id": "1030002195",
+    "db_product_id": null,
     "product_name": "国寿康欣终身重大疾病保险",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1464_blocks.json",
     "candidates": [
@@ -69,20 +170,85 @@
         "block_id": "1464_p1_b15",
         "page": 1,
         "evidence_text": "本合同所指重大疾病，是被保险人发生符合以下定义所述条件的疾病、疾病状态或手术， 共计三十种，其中第一种至第二十五种为中国保险行业协会制定的《重大疾病保险的疾病定义 使用规范》中列明的疾病，其他为本公司增加的疾病。重大疾病的名称及定义如下："
+      },
+      {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: mild_group_no_keyword",
+        "block_id": "1464_p1_b1",
+        "page": 1,
+        "evidence_text": "中国人寿〔2012〕疾病保险 005 号"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: middle_group_no_keyword",
+        "block_id": "1464_p1_b1",
+        "page": 1,
+        "evidence_text": "中国人寿〔2012〕疾病保险 005 号"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "8条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "1464_p5_b96",
+        "page": 5,
+        "evidence_text": "因下列情形之一导致被保险人身故或患本合同所指重大疾病，本公司不承担给付保险金的"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "等待期内重疾，退还已交保费；\n意外或等待期后重疾，给付2倍基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "1464_p5_b90",
+        "page": 5,
+        "evidence_text": "在本合同保险期间内，本公司承担以下保险责任: 一、重大疾病保险金 在本合同保险期间内，被保险人于本合同生效（或最后复效）之日起一百八十日内，初次 发生并经专科医生明确诊断患本合同所指的重大疾病（无论一种或多种），本合同终止，本公 司按本合同所交保险费（不计利息）给付重大疾病保险金；被保险人于本合同生效（或最后复 效）之日起一百八十日后，初次发生并经专科医生明确诊断患本合同所指的重大疾病（无论一 种或多种），本合同终止，本公司按基本保险金额的两倍给付重大疾病保险金。若因意外伤害 导致上述情形，不受一百八十日的限制。 二、恶性肿瘤额外给付保险金 被保险人于本合同生效（或最后复效）之日起一百八十日后，在七十周岁前（含七十周岁）"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "国寿康欣终身重大疾病保险利益条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "1464_p1_b2",
+        "page": 1,
+        "evidence_text": "中国人寿保险股份有限公司 国寿康欣终身重大疾病保险利益条款"
       }
     ],
     "missing_fields": [
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "保单贷款",
+      "减保",
+      "身故免责数量",
+      "豁免免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": [
       "轻症赔付次数",
       "轻症数量",
-      "轻症分组",
       "中症赔付次数",
       "中症数量",
-      "中症分组"
+      "轻症保障说明",
+      "中症保障说明"
     ]
   },
   {
     "product_id": "1548A",
-    "db_product_id": "2800007",
+    "db_product_id": null,
     "product_name": "北京人寿大黄蜂12号少儿重疾险（焕新版）-保终身",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1548A_blocks.json",
     "candidates": [
@@ -135,17 +301,99 @@
         "block_id": "1548A_p30_b1454",
         "page": 30,
         "evidence_text": "或手术，共计30种。中度疾病的名称及定义如下："
+      },
+      {
+        "coverage_name": "保单贷款",
+        "coverage_path": "其他责任__保单功能__保单贷款",
+        "value": "支持（详见条款）",
+        "confidence": 0.6,
+        "note": "rule: bao_dan_dai_kuan_present",
+        "block_id": "1548A_p16_b764",
+        "page": 16,
+        "evidence_text": "他未还款项之日起，合同效力恢复。 若因保单贷款导致合同效力中止的，经您与我们协商并达成协议，在您偿还全 部保单贷款、累积利息及其他未还款项之日起，合同效力恢复。 若因自动垫交导致合同效力中止的，经您与我们协商并达成协议，在您偿还全 部所垫交的保险费、累积利息及其他未还款项之日起，合同效力恢复。 若因以上两项或者两项以上原因导致合同效力中止的，自同时满足各自对应复 效条件之日起，合同效力恢复。 自本合同效力中止之日起满 2 年您与我们未达成协议的，我们有权解除合同。"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "1548A_p12_b591",
+        "page": 12,
+        "evidence_text": "责任免除"
+      },
+      {
+        "coverage_name": "豁免免责数量",
+        "coverage_path": "责任免除（人身险）__豁免免责__豁免免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 豁免免责_count",
+        "block_id": "1548A_p12_b591",
+        "page": 12,
+        "evidence_text": "责任免除"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "1548A_p5_b243",
+        "page": 5,
+        "evidence_text": "（无论一种或多种），我们按本合同基本保险金额给付首次重度疾病保险金，"
+      },
+      {
+        "coverage_name": "轻症保障说明",
+        "coverage_path": "疾病责任__轻症责任__轻症保障说明",
+        "value": "意外或等待期后轻症，给付30%基本保额",
+        "confidence": 0.65,
+        "note": "rule: qing_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "1548A_p3_b170",
+        "page": 3,
+        "evidence_text": "被保险人于本合同等待期后经专科医生确诊初次发生本合同所指的轻度疾病 （无论一种或多种），我们按本合同基本保险金额的 30%给付轻度疾病保险金。"
+      },
+      {
+        "coverage_name": "中症保障说明",
+        "coverage_path": "疾病责任__中症责任__中症保障说明",
+        "value": "意外或等待期后中症，给付60%基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "1548A_p4_b205",
+        "page": 4,
+        "evidence_text": "（无论一种或多种），我们按本合同基本保险金额的 60%给付中度疾病保险金。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "北京人寿京康宝贝U款重大疾病保险（互联网专属）条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "1548A_p1_b2",
+        "page": 1,
+        "evidence_text": "北京人寿保险股份有限公司 北京人寿京康宝贝 U 款重大疾病保险（互联网专属）条款"
       }
     ],
     "missing_fields": [
       "重疾赔付次数",
       "轻症分组",
-      "中症分组"
-    ]
+      "中症分组",
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "减保",
+      "身故免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": []
   },
   {
     "product_id": "1568",
-    "db_product_id": "1010004001",
+    "db_product_id": null,
     "product_name": "招商信诺爱享未来少儿重大疾病保险A款",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1568_blocks.json",
     "candidates": [
@@ -168,20 +416,85 @@
         "block_id": "1568_p2_b57",
         "page": 2,
         "evidence_text": "我们提供保障的重大疾病共有138种。主合同约定的疾病定义于附表中载明，名称如 下："
+      },
+      {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: mild_group_no_keyword",
+        "block_id": "1568_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: middle_group_no_keyword",
+        "block_id": "1568_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "8条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "1568_p4_b223",
+        "page": 4,
+        "evidence_text": "6. 责任免除"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "等待期内重疾，退还已交保费；\n意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "1568_p2_b48",
+        "page": 2,
+        "evidence_text": "二、重大疾病保险金 如果被保险人在等待期后经医院3专科医生4首次确诊5患有重大疾病，我们按主合同基 本保险金额给付重大疾病保险金。主合同自重大疾病确诊之时起效力终止。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "招商信诺爱享未来少儿重大疾病保险A款条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "1568_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
       }
     ],
     "missing_fields": [
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "保单贷款",
+      "减保",
+      "身故免责数量",
+      "豁免免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": [
       "轻症赔付次数",
       "轻症数量",
-      "轻症分组",
       "中症赔付次数",
       "中症数量",
-      "中症分组"
+      "轻症保障说明",
+      "中症保障说明"
     ]
   },
   {
     "product_id": "1578",
-    "db_product_id": "1010004022",
+    "db_product_id": null,
     "product_name": "金小葵·少儿长期重疾险",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1578_blocks.json",
     "candidates": [
@@ -216,6 +529,16 @@
         "evidence_text": "我们提供保障的重大疾病共有162种，少儿罕见疾病共20种，少儿特定疾病共20种，中 症疾病共30种，轻症疾病共52种。主合同约定的疾病定义于附表中载明，名称如下："
       },
       {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不分组",
+        "confidence": 0.85,
+        "note": "rule: mild_group_no_evidence",
+        "block_id": "1578_p1_b40",
+        "page": 1,
+        "evidence_text": "附表五：主合同约定的轻症疾病"
+      },
+      {
         "coverage_name": "中症数量",
         "coverage_path": "疾病责任__中症责任__中症数量",
         "value": "30种",
@@ -224,18 +547,90 @@
         "block_id": "1578_p6_b244",
         "page": 6,
         "evidence_text": "中症疾病列表（30种）"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不分组",
+        "confidence": 0.85,
+        "note": "rule: middle_group_no_evidence",
+        "block_id": "1578_p1_b39",
+        "page": 1,
+        "evidence_text": "附表四：主合同约定的中症疾病"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "7条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "1578_p7_b256",
+        "page": 7,
+        "evidence_text": "7. 责任免除"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "等待期内重疾，退还已交保费；\n意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "1578_p2_b59",
+        "page": 2,
+        "evidence_text": "二、重大疾病保险金 如果被保险人在等待期后经医院5专科医生6首次确诊7患有重大疾病，我们按主合同基 本保险金额给付重大疾病保险金。主合同自重大疾病确诊之时起效力终止。"
+      },
+      {
+        "coverage_name": "轻症保障说明",
+        "coverage_path": "疾病责任__轻症责任__轻症保障说明",
+        "value": "等待期内轻症，退还已交保费；\n意外或等待期后轻症，给付20%基本保额",
+        "confidence": 0.65,
+        "note": "rule: qing_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "1578_p3_b77",
+        "page": 3,
+        "evidence_text": "如果被保险人在等待期后经医院专科医生首次确诊患有轻症疾病，我们按主合同基本 保险金额的 20%给付轻症疾病保险金。 我们对每种轻症疾病最多给付一次轻症疾病保险金，在保险期间内最多对五种轻症疾 病承担保险责任。除另有约定外，本项保险责任自第五种轻症疾病确诊之时起终止。 如果被保险人因同一疾病原因、同次医疗行为或同次意外伤害导致其首次确诊发生两 种或两种以上的轻症疾病，我们仅按一种轻症疾病给付轻症疾病保险金。 如果被保险人在疾病首次确诊时同时符合轻症疾病和重大疾病的，我们仅按照主合同 约定对重大疾病进行赔付。 如果被保险人在疾病首次确诊时同时符合轻症疾病和中症疾病的，我们仅按照主合同 约定对中症疾病进行赔付。"
+      },
+      {
+        "coverage_name": "中症保障说明",
+        "coverage_path": "疾病责任__中症责任__中症保障说明",
+        "value": "等待期内中症，退还已交保费；\n意外或等待期后中症，给付40%基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "1578_p3_b75",
+        "page": 3,
+        "evidence_text": "如果被保险人在等待期后经医院专科医生首次确诊患有中症疾病，我们按主合同基本 保险金额的 40%给付中症疾病保险金。 我们对每种中症疾病最多给付一次中症疾病保险金，在保险期间内最多对五种中症疾 病承担保险责任。除另有约定外，本项保险责任自第五种中症疾病确诊之时起终止。 如果被保险人因同一疾病原因、同次医疗行为或同次意外伤害导致其首次确诊发生两 种或两种以上的中症疾病，我们仅按一种中症疾病给付中症疾病保险金。 如果被保险人在疾病首次确诊时同时符合中症疾病和重大疾病的，我们仅按照主合同 约定对重大疾病进行赔付。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "招商信诺金小葵少儿重大疾病保险（互联网专属）条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "1578_p1_b2",
+        "page": 1,
+        "evidence_text": "招商信诺金小葵少儿重大疾病保险（互联网专属）条款阅读指引"
       }
     ],
     "missing_fields": [
       "轻症赔付次数",
-      "轻症分组",
       "中症赔付次数",
-      "中症分组"
-    ]
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "保单贷款",
+      "减保",
+      "身故免责数量",
+      "豁免免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": []
   },
   {
     "product_id": "1803",
-    "db_product_id": "1170004238",
+    "db_product_id": null,
     "product_name": "中意悦享安康（悠享版）重大疾病保险",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1803_blocks.json",
     "candidates": [
@@ -258,20 +653,103 @@
         "block_id": "1803_p27_b770",
         "page": 27,
         "evidence_text": "10.128  严重脑桥中央髓鞘"
+      },
+      {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: mild_group_no_keyword",
+        "block_id": "1803_p1_b1",
+        "page": 1,
+        "evidence_text": "中意人寿[2025]疾病保险 091 号"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: middle_group_no_keyword",
+        "block_id": "1803_p1_b1",
+        "page": 1,
+        "evidence_text": "中意人寿[2025]疾病保险 091 号"
+      },
+      {
+        "coverage_name": "指定第二投保人",
+        "coverage_path": "其他责任__保单功能__指定第二投保人",
+        "value": "支持",
+        "confidence": 0.88,
+        "note": "rule: di_er_tou_bao_ren_yes",
+        "block_id": "1803_p1_b49",
+        "page": 1,
+        "evidence_text": "11.6 第二投保人"
+      },
+      {
+        "coverage_name": "保单贷款",
+        "coverage_path": "其他责任__保单功能__保单贷款",
+        "value": "支持（详见条款）",
+        "confidence": 0.6,
+        "note": "rule: bao_dan_dai_kuan_present",
+        "block_id": "1803_p27_b782",
+        "page": 27,
+        "evidence_text": "或返还保险费时，如果您有 欠付的保险费、保单贷款、利息或其他未还款项，我们会在扣除上 述欠款后给付。"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "1803_p3_b114",
+        "page": 3,
+        "evidence_text": "责任免除"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "等待期内重疾，退还已交保费；\n意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "1803_p3_b104",
+        "page": 3,
+        "evidence_text": "若被保险人在等待期后经专科医生（见 12.7）首次确诊（见 12.8）患 有任何一项符合本合同第 10 条约定保障范围及定义的重度疾病，且 确诊时未满 60 周岁，我们将按下列两项金额中的较大者给付重度疾 病保险金，同时本合同效力终止： （1）被保险人确诊时本合同基本保险金额对应的累计已付保险费的"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "中意悦享安康（悠享版）重大疾病保险条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "1803_p2_b57",
+        "page": 2,
+        "evidence_text": "中意悦享安康（悠享版）重大疾病保险条款"
       }
     ],
     "missing_fields": [
+      "减额交清",
+      "转换权",
+      "减保",
+      "身故免责数量",
+      "豁免免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": [
       "轻症赔付次数",
       "轻症数量",
-      "轻症分组",
       "中症赔付次数",
       "中症数量",
-      "中症分组"
+      "轻症保障说明",
+      "中症保障说明"
     ]
   },
   {
     "product_id": "851A",
-    "db_product_id": "1520003424",
+    "db_product_id": null,
     "product_name": "金小葵少儿长期重疾",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/851A_blocks.json",
     "candidates": [
@@ -324,17 +802,135 @@
         "block_id": "851A_p7_b184",
         "page": 7,
         "evidence_text": "我们提供保障的中症疾病共有 20 种，名称见附表一，具体释义见本主险合同“第二十五条 中"
+      },
+      {
+        "coverage_name": "保单贷款",
+        "coverage_path": "其他责任__保单功能__保单贷款",
+        "value": "最高贷款金额：申请时现金价值净额的70%；\n每次贷款最长期限：6个月",
+        "confidence": 0.7,
+        "note": "rule: bao_dan_dai_kuan_extract",
+        "block_id": "851A_p15_b378",
+        "page": 15,
+        "evidence_text": "人书面同意，您可以以书面形式向我们申请 保单贷款，累积的保单贷款本息金额以您提出书面申请时本主险合同所具有的现金价值扣除各项欠 款后余额的百分之七十为限，同时须符合我们当时保单贷款规定。当本主险合同累计保单贷款本息 及其他各项欠款与利息的总金额达到本主险合同的现金价值当日二十四时起，本主险合同效力中止。"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "851A_p10_b272",
+        "page": 10,
+        "evidence_text": "特定疾病、少儿罕见疾病、身故或全残的，我们不承担给付保险金及豁免保险费的责任："
+      },
+      {
+        "coverage_name": "豁免免责数量",
+        "coverage_path": "责任免除（人身险）__豁免免责__豁免免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 豁免免责_count",
+        "block_id": "851A_p10_b272",
+        "page": 10,
+        "evidence_text": "特定疾病、少儿罕见疾病、身故或全残的，我们不承担给付保险金及豁免保险费的责任："
+      },
+      {
+        "coverage_name": "全残免责数量",
+        "coverage_path": "责任免除（人身险）__全残免责__全残免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 全残免责_count",
+        "block_id": "851A_p10_b272",
+        "page": 10,
+        "evidence_text": "特定疾病、少儿罕见疾病、身故或全残的，我们不承担给付保险金及豁免保险费的责任："
+      },
+      {
+        "coverage_name": "被保险人重疾豁免",
+        "coverage_path": "豁免责任__被保险人豁免__被保险人重疾豁免",
+        "value": "重疾，豁免余期保费",
+        "confidence": 0.75,
+        "note": "rule: bei_bao_xian_ren_zhong_ji_huo_mian",
+        "block_id": "851A_p8_b220",
+        "page": 8,
+        "evidence_text": "若被保险人由我们认可的医院的专科医生初次确诊发生本主险合同定义的轻症疾病、中症疾病 或重大疾病，自确诊日9起，我们每年于保险费支付日豁免本主险合同当期应支付的保险费，被豁免 的保险费视为已交纳，本主险合同继续有效。"
+      },
+      {
+        "coverage_name": "被保险人中症豁免",
+        "coverage_path": "豁免责任__被保险人豁免__被保险人中症豁免",
+        "value": "中症，豁免余期保费",
+        "confidence": 0.75,
+        "note": "rule: bei_bao_xian_ren_zhong_zheng_huo_mian",
+        "block_id": "851A_p8_b220",
+        "page": 8,
+        "evidence_text": "若被保险人由我们认可的医院的专科医生初次确诊发生本主险合同定义的轻症疾病、中症疾病 或重大疾病，自确诊日9起，我们每年于保险费支付日豁免本主险合同当期应支付的保险费，被豁免 的保险费视为已交纳，本主险合同继续有效。"
+      },
+      {
+        "coverage_name": "被保险人轻症豁免",
+        "coverage_path": "豁免责任__被保险人豁免__被保险人轻症豁免",
+        "value": "轻症，豁免余期保费",
+        "confidence": 0.75,
+        "note": "rule: bei_bao_xian_ren_qing_zheng_huo_mian",
+        "block_id": "851A_p8_b220",
+        "page": 8,
+        "evidence_text": "若被保险人由我们认可的医院的专科医生初次确诊发生本主险合同定义的轻症疾病、中症疾病 或重大疾病，自确诊日9起，我们每年于保险费支付日豁免本主险合同当期应支付的保险费，被豁免 的保险费视为已交纳，本主险合同继续有效。"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "851A_p7_b187",
+        "page": 7,
+        "evidence_text": "若被保险人由我们认可的医院的专科医生初次确诊发生本主险合同定义的重大疾病（无论一项 或多项，按一项给付），且确诊时被保险人仍生存，我们按本主险合同基本保险金额的 100%给付重 大疾病保险金，本项保险责任终止。"
+      },
+      {
+        "coverage_name": "轻症保障说明",
+        "coverage_path": "疾病责任__轻症责任__轻症保障说明",
+        "value": "意外或等待期后轻症，给付30%基本保额",
+        "confidence": 0.65,
+        "note": "rule: qing_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "851A_p6_b159",
+        "page": 6,
+        "evidence_text": "保险人被确诊的每项轻症疾病，我们按本主险合同基本保险金额的 30%给付轻症疾病保险金。"
+      },
+      {
+        "coverage_name": "中症保障说明",
+        "coverage_path": "疾病责任__中症责任__中症保障说明",
+        "value": "意外或等待期后中症，给付60%基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "851A_p6_b169",
+        "page": 6,
+        "evidence_text": "险人被确诊的每项中症疾病，我们按本主险合同基本保险金额的 60%给付中症疾病保险金。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "招商仁和仁心保贝重大疾病保险（互联网）条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "851A_p1_b2",
+        "page": 1,
+        "evidence_text": "招商仁和仁心保贝重大疾病保险（互联网）条款"
       }
     ],
     "missing_fields": [
       "重疾赔付次数",
       "轻症分组",
-      "中症分组"
-    ]
+      "中症分组",
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "减保",
+      "身故免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免"
+    ],
+    "no_coverage_fields": []
   },
   {
     "product_id": "864",
-    "db_product_id": "1010003564",
+    "db_product_id": null,
     "product_name": "招商信诺爱享康健（2023）终身重大疾病保险",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/864_blocks.json",
     "candidates": [
@@ -367,19 +963,93 @@
         "block_id": "864_p3_b75",
         "page": 3,
         "evidence_text": "我们提供保障的重大疾病共有120种，轻症疾病共40种。主合同约定的疾病定义于 附表中载明，名称如下："
+      },
+      {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不分组",
+        "confidence": 0.85,
+        "note": "rule: mild_group_no_evidence",
+        "block_id": "864_p1_b38",
+        "page": 1,
+        "evidence_text": "附表二：主合同约定的轻症疾"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: middle_group_no_keyword",
+        "block_id": "864_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PMLD0182304 招商信诺[2023]疾病保险 018 号"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "5条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "864_p5_b148",
+        "page": 5,
+        "evidence_text": "发生上述第一项情形导致被保险人身故的，主合同效力终止；您已交足两年以上 保险费的，我们将向投保人以外的被保险人继承人退还主合同的现金价值14。"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "864_p2_b54",
+        "page": 2,
+        "evidence_text": "三、重大疾病保险金 如果被保险人在等待期后经医院6专科医生7首次确诊8患有主合同约定的重大疾 病，我们按主合同基本保险金额给付重大疾病保险金。主合同自重大疾病确诊之 时起效力终止。"
+      },
+      {
+        "coverage_name": "轻症保障说明",
+        "coverage_path": "疾病责任__轻症责任__轻症保障说明",
+        "value": "意外或等待期后轻症，给付30%基本保额",
+        "confidence": 0.65,
+        "note": "rule: qing_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "864_p3_b69",
+        "page": 3,
+        "evidence_text": "被保险人在等待期后经医院专科医生首次确诊患有主合同约定的轻症疾病，我们 按主合同基本保险金额的 30%给付轻症疾病保险金。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "招商信诺终身重大疾病保险A款条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "864_p1_b2",
+        "page": 1,
+        "evidence_text": "招商信诺终身重大疾病保险 A 款条款阅读指引"
       }
     ],
     "missing_fields": [
       "轻症赔付次数",
-      "轻症分组",
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "保单贷款",
+      "减保",
+      "身故免责数量",
+      "豁免免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": [
       "中症赔付次数",
       "中症数量",
-      "中症分组"
+      "中症保障说明"
     ]
   },
   {
     "product_id": "889",
-    "db_product_id": "1530003475",
+    "db_product_id": null,
     "product_name": "中信保诚「惠康」重大疾病保险（至诚少儿版）",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/889_blocks.json",
     "candidates": [
@@ -404,6 +1074,16 @@
         "evidence_text": "每种轻症疾病仅给付一次轻症疾病保险金，给付后该种轻症疾病保险金保险责任终 止；当累计给付的轻症疾病保险金达到六次时，本项保险责任终止。"
       },
       {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不分组",
+        "confidence": 0.85,
+        "note": "rule: mild_group_no_evidence",
+        "block_id": "889_p1_b7",
+        "page": 1,
+        "evidence_text": "u 中信保诚「惠康」重大疾病保险（至诚少儿版）提供轻症疾病保险金、中症疾病保险金、重大疾病 保险金、少儿特定重度恶性肿瘤保险金、少儿特定疾病保险金、少儿特定疾病豁免保险费、生命特 别关爱金、身故或全残保险金。"
+      },
+      {
         "coverage_name": "中症赔付次数",
         "coverage_path": "疾病责任__中症责任__中症赔付次数",
         "value": "6次",
@@ -412,19 +1092,118 @@
         "block_id": "889_p3_b80",
         "page": 3,
         "evidence_text": "每种中症疾病仅给付一次中症疾病保险金，给付后该种中症疾病保险金保险责任终 止；当累计给付的中症疾病保险金达到六次时，本项保险责任终止。"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不分组",
+        "confidence": 0.85,
+        "note": "rule: middle_group_no_evidence",
+        "block_id": "889_p1_b7",
+        "page": 1,
+        "evidence_text": "u 中信保诚「惠康」重大疾病保险（至诚少儿版）提供轻症疾病保险金、中症疾病保险金、重大疾病 保险金、少儿特定重度恶性肿瘤保险金、少儿特定疾病保险金、少儿特定疾病豁免保险费、生命特 别关爱金、身故或全残保险金。"
+      },
+      {
+        "coverage_name": "转换权",
+        "coverage_path": "其他责任__保单功能__转换权",
+        "value": "保险金、现金价值可全部或部分转换成年金",
+        "confidence": 0.72,
+        "note": "rule: zhuan_huan_quan_inferred",
+        "block_id": "889_p2_b40",
+        "page": 2,
+        "evidence_text": "6.5 年金转换权"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "889_p5_b130",
+        "page": 5,
+        "evidence_text": "（2）、（3）种情形之一致被保险人身故时，我们将向您退还现金价值，本主险合"
+      },
+      {
+        "coverage_name": "豁免免责数量",
+        "coverage_path": "责任免除（人身险）__豁免免责__豁免免责数量",
+        "value": "9条",
+        "confidence": 0.82,
+        "note": "rule: 豁免免责_count",
+        "block_id": "889_p5_b130",
+        "page": 5,
+        "evidence_text": "（2）、（3）种情形之一致被保险人身故时，我们将向您退还现金价值，本主险合"
+      },
+      {
+        "coverage_name": "全残免责数量",
+        "coverage_path": "责任免除（人身险）__全残免责__全残免责数量",
+        "value": "3条",
+        "confidence": 0.82,
+        "note": "rule: 全残免责_count",
+        "block_id": "889_p4_b117",
+        "page": 4,
+        "evidence_text": "这部分讲的是我们不承担保险责任的情况。 除外责任"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "889_p3_b83",
+        "page": 3,
+        "evidence_text": "若被保险人因意外伤害事故或在等待期届满后首次发生并由专科医生明确诊断患有 一种或一种以上附录3中列明的重大疾病，我们按确诊时本主险合同基本保险金额给 付重大疾病保险金，给付后本主险合同效力终止。"
+      },
+      {
+        "coverage_name": "轻症保障说明",
+        "coverage_path": "疾病责任__轻症责任__轻症保障说明",
+        "value": "意外或等待期后轻症，给付20%基本保额",
+        "confidence": 0.65,
+        "note": "rule: qing_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "889_p3_b73",
+        "page": 3,
+        "evidence_text": "若被保险人因意外伤害事故或在等待期届满后首次发生并由专科医生（见8名词释 义）明确诊断患有一种或一种以上附录1中列明的轻症疾病，我们按确诊时本主险合 同基本保险金额的20%给付轻症疾病保险金。"
+      },
+      {
+        "coverage_name": "中症保障说明",
+        "coverage_path": "疾病责任__中症责任__中症保障说明",
+        "value": "意外或等待期后中症，给付50%基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_zheng_bao_zhang_shuo_ming_v0",
+        "block_id": "889_p3_b78",
+        "page": 3,
+        "evidence_text": "若被保险人因意外伤害事故或在等待期届满后首次发生并由专科医生明确诊断患有 一种或一种以上附录2中列明的中症疾病，我们按确诊时本主险合同基本保险金额的 50%给付中症疾病保险金。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "中信保诚「惠康」重大疾病保险（至诚少儿版）条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "889_p1_b6",
+        "page": 1,
+        "evidence_text": "中信保诚「惠康」重大疾病保险（至诚少儿版）条款阅读指引"
       }
     ],
     "missing_fields": [
       "重疾数量",
       "轻症数量",
-      "轻症分组",
       "中症数量",
-      "中症分组"
-    ]
+      "减额交清",
+      "指定第二投保人",
+      "保单贷款",
+      "减保",
+      "身故免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": []
   },
   {
     "product_id": "919A",
-    "db_product_id": "1010003919",
+    "db_product_id": null,
     "product_name": "招商信诺爱享无忧重大疾病保险",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/919A_blocks.json",
     "candidates": [
@@ -447,15 +1226,80 @@
         "block_id": "919A_p3_b69",
         "page": 3,
         "evidence_text": "我们提供保障的重大疾病共有120种。主合同约定的疾病定义于附表中载明，名称 如下："
+      },
+      {
+        "coverage_name": "轻症分组",
+        "coverage_path": "疾病责任__轻症责任__轻症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: mild_group_no_keyword",
+        "block_id": "919A_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 招商信诺[2024]疾病保险 050 号"
+      },
+      {
+        "coverage_name": "中症分组",
+        "coverage_path": "疾病责任__中症责任__中症分组",
+        "value": "不涉及",
+        "confidence": 0.88,
+        "note": "rule: middle_group_no_keyword",
+        "block_id": "919A_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 招商信诺[2024]疾病保险 050 号"
+      },
+      {
+        "coverage_name": "疾病免责数量",
+        "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
+        "value": "8条",
+        "confidence": 0.82,
+        "note": "rule: 疾病免责_count",
+        "block_id": "919A_p5_b140",
+        "page": 5,
+        "evidence_text": "6. 责任免除"
+      },
+      {
+        "coverage_name": "重疾保障说明",
+        "coverage_path": "疾病责任__重疾责任__重疾保障说明",
+        "value": "等待期内重疾，退还已交保费；\n意外或等待期后重疾，给付基本保额",
+        "confidence": 0.65,
+        "note": "rule: zhong_ji_bao_zhang_shuo_ming_v0",
+        "block_id": "919A_p2_b49",
+        "page": 2,
+        "evidence_text": "二、重大疾病保险金 如果被保险人在等待期后经医院3专科医生4首次确诊5患有重大疾病，我们按主合同 基本保险金额给付重大疾病保险金。主合同自重大疾病确诊之时起效力终止。"
+      },
+      {
+        "coverage_name": "合同名称（条款名称）",
+        "coverage_path": "基本信息__合同名称（条款名称）",
+        "value": "招商信诺爱享无忧重大疾病保险条款",
+        "confidence": 0.9,
+        "note": "rule: contract_name_from_title",
+        "block_id": "919A_p1_b2",
+        "page": 1,
+        "evidence_text": "招商信诺爱享无忧重大疾病保险条款阅读指引"
       }
     ],
     "missing_fields": [
+      "减额交清",
+      "指定第二投保人",
+      "转换权",
+      "保单贷款",
+      "减保",
+      "身故免责数量",
+      "豁免免责数量",
+      "全残免责数量",
+      "投保人身故豁免",
+      "投保人全残豁免",
+      "被保险人重疾豁免",
+      "被保险人中症豁免",
+      "被保险人轻症豁免"
+    ],
+    "no_coverage_fields": [
       "轻症赔付次数",
       "轻症数量",
-      "轻症分组",
       "中症赔付次数",
       "中症数量",
-      "中症分组"
+      "轻症保障说明",
+      "中症保障说明"
     ]
   }
 ]

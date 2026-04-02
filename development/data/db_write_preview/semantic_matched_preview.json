@@ -1,0 +1,68 @@
+[
+  {
+    "product_id": "1263B",
+    "db_product_id": null,
+    "product_name": "附加幸福成长少儿重大疾病保险",
+    "coverage_name": "等待期",
+    "candidate_value": "90天",
+    "confidence": 0.97,
+    "note": "范围补全特例：原值「90天」补全为「非意外90天，意外0天」",
+    "reviewer_action": null,
+    "evidence": {
+      "block_id": "1263B_p3_b25",
+      "page": 3,
+      "evidence_text": "自本附加合同申请日5次日零时起90日为等待期。如果本附加合同曾一次或多次恢复效力，则自每次合同 效力恢复之日零时起90日均为等待期。"
+    },
+    "status": "semantic_candidate_match",
+    "match_type": "semantic_candidate_match",
+    "coverage_id": "504403966302748672",
+    "coverage_path": null,
+    "suggested_standard_value": "非意外90天，意外0天",
+    "standard_id": "PENDING_LOOKUP",
+    "is_optional_coverage": 0
+  },
+  {
+    "product_id": "773",
+    "db_product_id": null,
+    "product_name": "大家超惠保重大疾病保险",
+    "coverage_name": "被保险人中症豁免",
+    "candidate_value": "中症，豁免余期保费",
+    "confidence": 0.75,
+    "note": "范围补全特例：原值「中症，豁免余期保费」补全为「意外或等待期后中症，豁免余期保费」",
+    "reviewer_action": null,
+    "evidence": {
+      "block_id": "773_p4_b33",
+      "page": 4,
+      "evidence_text": "中症疾病豁免 保险费 被保险人经医院专科医生确诊初次罹患本主险合同所约定的中症疾病，本公司将 豁免本主险合同自中症疾病确诊之日起以后各期保险费。 被豁免的保险费视为已交纳，本主险合同继续有效。"
+    },
+    "status": "semantic_candidate_match",
+    "match_type": "semantic_candidate_match",
+    "coverage_id": "504742512788111360",
+    "coverage_path": "豁免责任__被保险人豁免__被保险人中症豁免",
+    "suggested_standard_value": "意外或等待期后中症，豁免余期保费",
+    "standard_id": "PENDING_LOOKUP",
+    "is_optional_coverage": 0
+  },
+  {
+    "product_id": "773",
+    "db_product_id": null,
+    "product_name": "大家超惠保重大疾病保险",
+    "coverage_name": "被保险人轻症豁免",
+    "candidate_value": "轻症，豁免余期保费",
+    "confidence": 0.75,
+    "note": "范围补全特例：原值「轻症，豁免余期保费」补全为「意外或等待期后轻症，豁免余期保费」",
+    "reviewer_action": null,
+    "evidence": {
+      "block_id": "773_p4_b35",
+      "page": 4,
+      "evidence_text": "轻症疾病豁免 保险费 被保险人经医院专科医生确诊初次罹患本主险合同所约定的轻症疾病，本公司将 豁免本主险合同自轻症疾病确诊之日起以后各期保险费。 被豁免的保险费视为已交纳，本主险合同继续有效。"
+    },
+    "status": "semantic_candidate_match",
+    "match_type": "semantic_candidate_match",
+    "coverage_id": "504742441774350336",
+    "coverage_path": "豁免责任__被保险人豁免__被保险人轻症豁免",
+    "suggested_standard_value": "意外或等待期后轻症，豁免余期保费",
+    "standard_id": "PENDING_LOOKUP",
+    "is_optional_coverage": 0
+  }
+]
