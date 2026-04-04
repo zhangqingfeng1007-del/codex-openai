@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 from block_tagger import tag_blocks
+from field_rule_loader import load_field_rules, apply_value_normalization, get_value_normalization
 
 try:
     from openpyxl import load_workbook
@@ -337,16 +338,15 @@ def extract_age(text: str) -> str | None:
     compact = normalize_spaces(text)
     m = re.search(r"(?:投保年龄.*?为|出生满)(\d+)(?:天|日).*?(\d+)周岁", compact)
     if m:
-        return f"0（{m.group(1)}天）-{m.group(2)}周岁"
+        return f"0-{m.group(2)}周岁"
     m = re.search(r"(?:投保年龄.*?为|接受的投保年龄为)?(\d+)周岁至(\d+)周岁", compact)
     if m:
         return f"{m.group(1)}-{m.group(2)}周岁"
     m = re.search(r"出生([一二三四五六七八九十百零〇]+)日以上.*?([一二三四五六七八九十百零〇\d]+)周岁以下", compact)
     if m:
-        low = chinese_to_int(m.group(1))
         high = chinese_to_int(m.group(2))
-        if low is not None and high is not None:
-            return f"0（{low}天）-{high}周岁"
+        if high is not None:
+            return f"0-{high}周岁"
     m = re.search(r"([一二三四五六七八九十百零〇\d]+)周岁以下", compact)
     if "投保年龄" in compact and m:
         high = chinese_to_int(m.group(1))
@@ -469,7 +469,7 @@ def extract_insurance_period(text: str) -> str | None:
     m = re.search(r"终身[或和及/]至(\d+)周岁", compact)
     if m:
         return f"至{m.group(1)}周岁，终身"
-    m = re.search(r"至(\d+)周岁", compact)
+    m = re.search(r"至(?:被保险人)?(?:年满)?(\d+)周岁", compact)
     age_part = f"至{m.group(1)}周岁" if m else None
     m = re.search(r"保(?:至|到)(\d+)岁", compact)
     if not age_part and m:
@@ -481,8 +481,8 @@ def extract_insurance_period(text: str) -> str | None:
         return "终身"
     if age_part:
         return age_part
-    # 支持"至被保险人 25 周岁"（阿拉伯数字）
-    m = re.search(r"至被保险人\s*(\d+)\s*周岁", compact)
+    # 支持"至被保险人 25 周岁"或"至被保险人年满23周岁"（阿拉伯数字）
+    m = re.search(r"至被保险人\s*(?:年满)?\s*(\d+)\s*周岁", compact)
     if m:
         age_part = f"至{m.group(1)}周岁"
         if "终身" in compact:
@@ -1244,6 +1244,7 @@ def main() -> None:
         parser.error("must provide manifest and output, either as positional args or with --manifest/--output")
 
     manifest = load_manifest_compatible(Path(manifest_path))
+    field_rules = load_field_rules()
     rows = []
     for item in manifest:
         if item.get("phase1_eligible") is False:
@@ -1441,6 +1442,12 @@ def main() -> None:
                         # existing extraction looks incomplete (specificity ≤ 2)
                         if is_xlsx or from_shuomingshu or existing_spec <= 2:
                             extracted[field] = sc
+        # Apply config-driven value_normalization to extracted candidates
+        for field_name, candidate in extracted.items():
+            norm_ops = get_value_normalization(field_rules, field_name)
+            if norm_ops and candidate.get("value"):
+                candidate["value"] = apply_value_normalization(candidate["value"], norm_ops)
+
         rows.append(
             {
                 "product_id": item["product_id"],

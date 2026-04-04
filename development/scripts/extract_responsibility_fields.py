@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 from block_tagger import tag_blocks
+from field_rule_loader import load_field_rules, apply_value_normalization, get_value_normalization
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,10 @@ TARGET_FIELDS = [
     ("中症赔付次数", "疾病责任__中症责任__中症赔付次数"),
     ("中症数量", "疾病责任__中症责任__中症数量"),
     ("中症分组", "疾病责任__中症责任__中症分组"),
+    # 赔付时间间隔
+    ("轻症赔付时间间隔", "疾病责任__轻症责任__轻症赔付时间间隔"),
+    ("中症赔付时间间隔", "疾病责任__中症责任__中症赔付时间间隔"),
+    ("重疾赔付时间间隔", "疾病责任__重疾责任__重疾赔付时间间隔"),
     # 保单功能
     ("减额交清", "其他责任__保单功能__减额交清"),
     ("指定第二投保人", "其他责任__保单功能__指定第二投保人"),
@@ -148,6 +153,18 @@ def build_candidate(coverage_name: str, coverage_path: str, value: str, confiden
 
 
 def extract_ci_pay_times(blocks: list[dict]) -> dict | None:
+    coverage_name = "重疾赔付次数"
+    coverage_path = "疾病责任__重疾责任__重疾赔付次数"
+
+    # Check optional CI multi-pay first
+    optional = _detect_optional_ci_multi_pay(blocks)
+    if optional:
+        max_times, _, evidence_block = optional
+        ref = evidence_block or (blocks[0] if blocks else {"block_id": None, "page": None, "text": ""})
+        value = f"1次（若选择多次给付责任，{max_times}次）"
+        return build_candidate(coverage_name, coverage_path, value, 0.92,
+                               "rule: ci_pay_times_optional_multi_pay", ref)
+
     for idx, block in enumerate(blocks):
         text = block.get("text", "")
         if "重大疾病保险金" not in text and "重度疾病保险金" not in text:
@@ -165,9 +182,9 @@ def extract_ci_pay_times(blocks: list[dict]) -> dict | None:
             if match:
                 value = normalize_times(match.group(1))
                 if value:
-                    return build_candidate("重疾赔付次数", "疾病责任__重疾责任__重疾赔付次数", value, 0.96, "rule: ci_pay_times_pattern", item)
+                    return build_candidate(coverage_name, coverage_path, value, 0.96, "rule: ci_pay_times_pattern", item)
             if "本合同终止" in item_text or (("给付后" in item_text or "同时本合同效力终止" in item_text) and "合同效力终止" in item_text):
-                return build_candidate("重疾赔付次数", "疾病责任__重疾责任__重疾赔付次数", "1次", 0.9, "rule: ci_pay_times_termination", item)
+                return build_candidate(coverage_name, coverage_path, "1次", 0.9, "rule: ci_pay_times_termination", item)
     return None
 
 
@@ -412,6 +429,211 @@ def extract_middle_group(blocks: list[dict]) -> dict | None:
         return build_candidate("中症分组", "疾病责任__中症责任__中症分组", "不分组", 0.85,
                                "rule: middle_group_no_evidence", evidence_block)
     return None
+
+
+# ─────────────────────────────────────────────────────────────────
+# 赔付时间间隔 extractors (轻症 / 中症 / 重疾)
+# ─────────────────────────────────────────────────────────────────
+
+# Regex: "间隔不短于一年", "间隔1年", "间隔365天", "间隔180天" etc.
+_INTERVAL_RE = re.compile(r"间隔[不短满于为的]*(\d+|一|二|三)[年天]")
+# Regex: "确诊日起满一年后", "确诊之日起满 1 年后" etc.
+_INTERVAL_DIAG_RE = re.compile(r"确诊[日之]*(?:日|之日)?起满\s*(\d+|一|二|三)\s*([年天])")
+_CN_INTERVAL = {"一": "1", "二": "2", "三": "3"}
+
+
+def _extract_interval(blocks: list[dict], disease_keywords: list[str],
+                       coverage_name: str, coverage_path: str,
+                       rule_prefix: str) -> dict | None:
+    """Shared logic for 轻症/中症赔付时间间隔."""
+    all_text = " ".join(b.get("text", "") for b in blocks)
+    has_coverage = any(kw in all_text for kw in disease_keywords)
+    ref_block = blocks[0] if blocks else {"block_id": None, "page": None, "text": ""}
+
+    if not has_coverage:
+        return build_candidate(coverage_name, coverage_path, "不涉及", 0.90,
+                               f"rule: {rule_prefix}_no_keyword", ref_block)
+
+    # Scan blocks that mention this disease type for interval patterns
+    for block in blocks:
+        text = block.get("text", "")
+        if not any(kw in text for kw in disease_keywords):
+            continue
+        # Exclude blocks about 恶性肿瘤/心脑血管 multi-pay to avoid contamination
+        if "恶性肿瘤" in text or "心脑血管" in text:
+            continue
+        m = _INTERVAL_RE.search(text)
+        if m:
+            num = _CN_INTERVAL.get(m.group(1), m.group(1))
+            unit = "年" if "年" in text[m.start():m.end() + 2] else "天"
+            value = f"{num}{unit}"
+            # Normalize: "365天" stays as-is, "1年" stays as-is
+            return build_candidate(coverage_name, coverage_path, value, 0.92,
+                                   f"rule: {rule_prefix}_pattern", block)
+
+    # Coverage exists but no interval constraint → "无"
+    evidence_block = next(
+        (b for b in blocks if any(kw in b.get("text", "") for kw in disease_keywords)),
+        ref_block,
+    )
+    return build_candidate(coverage_name, coverage_path, "无", 0.88,
+                           f"rule: {rule_prefix}_no_interval", evidence_block)
+
+
+def extract_mild_interval(blocks: list[dict]) -> dict | None:
+    """轻症赔付时间间隔"""
+    return _extract_interval(
+        blocks, ["轻症", "轻度疾病"],
+        "轻症赔付时间间隔", "疾病责任__轻症责任__轻症赔付时间间隔",
+        "mild_interval")
+
+
+def extract_middle_interval(blocks: list[dict]) -> dict | None:
+    """中症赔付时间间隔"""
+    return _extract_interval(
+        blocks, ["中症", "中度疾病"],
+        "中症赔付时间间隔", "疾病责任__中症责任__中症赔付时间间隔",
+        "middle_interval")
+
+
+_OPTIONAL_SIGNALS = ["可选部分", "可选责任", "可选的第二次"]
+
+_GENERIC_MULTI_SIGNALS = [
+    "第二次重大疾病", "第二次重度疾病", "第2次重大疾病", "第2次重度疾病",
+    "重度疾病多次给付", "重大疾病多次给付",
+    "不同的其他重大疾病", "其他任何一种重度疾病",
+    "再次给付重大疾病", "再次给付重度疾病",
+]
+
+_ORDINAL_RE = re.compile(r"第([二三四五六七八九2-9])次(?:重[大度]疾病)")
+_ORDINAL_MAP = {"二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+
+
+def _detect_optional_ci_multi_pay(blocks: list[dict]):
+    """Detect optional CI multi-pay products.
+
+    Returns (max_times, interval_value, evidence_block) if optional multi-pay detected,
+    else None. max_times includes the base 1st pay (e.g. 第四次 → max=4).
+    """
+    has_optional = False
+    for b in blocks:
+        text = b.get("text", "")
+        if any(sig in text for sig in _OPTIONAL_SIGNALS):
+            has_optional = True
+            break
+    if not has_optional:
+        return None
+
+    # Find the highest ordinal CI pay in optional sections
+    max_ordinal = 0
+    evidence_block = None
+    for b in blocks:
+        text = b.get("text", "")
+        if "恶性肿瘤" in text or "心脑血管" in text:
+            continue
+        for m in _ORDINAL_RE.finditer(text):
+            digit = m.group(1)
+            n = _ORDINAL_MAP.get(digit) or int(digit)
+            if n > max_ordinal:
+                max_ordinal = n
+                evidence_block = b
+    if max_ordinal < 2:
+        return None
+
+    # Extract interval from optional multi-pay blocks (exclude cancer/cardiovascular)
+    interval_value = None
+    for b in blocks:
+        text = b.get("text", "")
+        if "恶性肿瘤" in text or "心脑血管" in text:
+            continue
+        if not any(kw in text for kw in ("重大疾病", "重度疾病")):
+            continue
+        result = _extract_ci_interval_value(text)
+        if result:
+            num, unit = result
+            interval_value = f"{num}{unit}"
+            break
+
+    return max_ordinal, interval_value, evidence_block
+
+
+def _has_generic_ci_multi_pay(blocks: list[dict]) -> bool:
+    """Check if blocks contain *unconditional* generic CI multi-pay.
+
+    Only returns True if multi-pay signals exist outside optional sections.
+    """
+    for b in blocks:
+        text = b.get("text", "")
+        if "恶性肿瘤" in text or "心脑血管" in text:
+            continue
+        # Skip blocks in optional sections
+        title_path = " ".join(b.get("title_path", []))
+        if any(sig in text for sig in _OPTIONAL_SIGNALS) or any(sig in title_path for sig in _OPTIONAL_SIGNALS):
+            continue
+        if any(sig in text for sig in _GENERIC_MULTI_SIGNALS):
+            return True
+    return False
+
+
+def _extract_ci_interval_value(text: str):
+    """Try both interval regex patterns on text, return (num, unit) or None."""
+    m = _INTERVAL_RE.search(text)
+    if m:
+        num = _CN_INTERVAL.get(m.group(1), m.group(1))
+        unit = "年" if "年" in text[m.start():m.end() + 2] else "天"
+        return num, unit
+    m2 = _INTERVAL_DIAG_RE.search(text)
+    if m2:
+        num = _CN_INTERVAL.get(m2.group(1), m2.group(1))
+        unit = m2.group(2)
+        return num, unit
+    return None
+
+
+def extract_ci_interval(blocks: list[dict]) -> dict | None:
+    """重疾赔付时间间隔 — 仅主险通用重疾间隔，排除恶性肿瘤/心脑血管专项。"""
+    coverage_name = "重疾赔付时间间隔"
+    coverage_path = "疾病责任__重疾责任__重疾赔付时间间隔"
+    ref_block = blocks[0] if blocks else {"block_id": None, "page": None, "text": ""}
+
+    # Check optional CI multi-pay first
+    optional = _detect_optional_ci_multi_pay(blocks)
+    if optional:
+        max_times, interval_value, evidence_block = optional
+        if interval_value:
+            value = f"不涉及（若选择多次给付责任，{interval_value}）"
+        else:
+            value = "不涉及（若选择多次给付责任，1年）"
+        return build_candidate(coverage_name, coverage_path, value, 0.92,
+                               "rule: ci_interval_optional_multi_pay",
+                               evidence_block or ref_block)
+
+    if not _has_generic_ci_multi_pay(blocks):
+        return build_candidate(coverage_name, coverage_path, "不涉及", 0.90,
+                               "rule: ci_interval_no_generic_multi_pay", ref_block)
+
+    # Unconditional generic CI multi-pay — scan for interval value
+    ci_keywords = ["重大疾病", "重度疾病"]
+    for block in blocks:
+        text = block.get("text", "")
+        if not any(kw in text for kw in ci_keywords):
+            continue
+        if "恶性肿瘤" in text or "心脑血管" in text:
+            continue
+        result = _extract_ci_interval_value(text)
+        if result:
+            num, unit = result
+            value = f"{num}{unit}"
+            return build_candidate(coverage_name, coverage_path, value, 0.92,
+                                   "rule: ci_interval_pattern", block)
+
+    # Generic multi-pay exists but no interval value found — "无"
+    evidence_block = next(
+        (b for b in blocks if any(kw in b.get("text", "") for kw in ci_keywords)),
+        ref_block,
+    )
+    return build_candidate(coverage_name, coverage_path, "无", 0.88,
+                           "rule: ci_interval_multi_pay_no_interval", evidence_block)
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -1652,6 +1874,12 @@ def extract_contract_name(blocks: list[dict]) -> dict | None:
         for m in _CLAUSE_NAME_RE.finditer(c):
             name = _clean_contract_name(m.group(1))
             if name:
+                # Strip trailing suffixes — field stores product name, not document title
+                for suffix in ("利益条款", "条款", "利益"):
+                    if name.endswith(suffix):
+                        name = name[:-len(suffix)]
+                        break
+                name = name.strip().rstrip("，。、；：")
                 return build_candidate(
                     "合同名称（条款名称）", "基本信息__合同名称（条款名称）", name, 0.90,
                     "rule: contract_name_from_title", block,
@@ -1682,6 +1910,10 @@ def extract_for_product(blocks: list[dict]) -> tuple[list[dict], list[str], list
         extract_middle_pay_times,
         extract_middle_count,
         extract_middle_group,
+        # 赔付时间间隔
+        extract_mild_interval,
+        extract_middle_interval,
+        extract_ci_interval,
         # 保单功能
         extract_jian_e_jiao_qing,
         extract_zhi_ding_di_er_tou_bao_ren,
@@ -1735,6 +1967,7 @@ def main():
     args = parser.parse_args()
 
     manifest = load_json(args.manifest)
+    field_rules = load_field_rules()
     results = []
     for item in manifest:
         product_id = item["product_id"]
@@ -1756,6 +1989,11 @@ def main():
         blocks = load_blocks_compatible(block_path)
         blocks = tag_blocks(blocks)
         candidates, missing, no_coverage = extract_for_product(blocks)
+        # Apply config-driven value_normalization
+        for c in candidates:
+            norm_ops = get_value_normalization(field_rules, c.get("coverage_name", ""))
+            if norm_ops and c.get("value"):
+                c["value"] = apply_value_normalization(c["value"], norm_ops)
         results.append(
             {
                 "product_id": product_id,

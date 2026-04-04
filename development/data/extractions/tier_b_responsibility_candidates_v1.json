@@ -56,6 +56,36 @@
         "evidence_text": "国华人寿[2018]疾病保险 094 号"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: mild_interval_no_interval",
+        "block_id": "1134_p1_b60",
+        "page": 1,
+        "evidence_text": "10.6 意外伤害事故 10.7 初次发生 10.8 医院 10.9 专科医生 10.10 重大疾病 10.11 轻症疾病 10.12 男性特定疾病 10.13 女性特定疾病 10.14 酗酒 10.15 毒品"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: middle_interval_no_keyword",
+        "block_id": "1134_p1_b1",
+        "page": 1,
+        "evidence_text": "国华人寿[2018]疾病保险 094 号"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "1134_p1_b1",
+        "page": 1,
+        "evidence_text": "国华人寿[2018]疾病保险 094 号"
+      },
+      {
         "coverage_name": "保单贷款",
         "coverage_path": "其他责任__保单功能__保单贷款",
         "value": "支持（详见条款）",
@@ -118,7 +148,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "国华超级至尊保终身重大疾病保险条款",
+        "value": "国华超级至尊保终身重大疾病保险",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "1134_p1_b2",
@@ -192,6 +222,36 @@
         "evidence_text": "中国人寿〔2012〕疾病保险 005 号"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: mild_interval_no_keyword",
+        "block_id": "1464_p1_b1",
+        "page": 1,
+        "evidence_text": "中国人寿〔2012〕疾病保险 005 号"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: middle_interval_no_keyword",
+        "block_id": "1464_p1_b1",
+        "page": 1,
+        "evidence_text": "中国人寿〔2012〕疾病保险 005 号"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "1464_p1_b1",
+        "page": 1,
+        "evidence_text": "中国人寿〔2012〕疾病保险 005 号"
+      },
+      {
         "coverage_name": "疾病免责数量",
         "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
         "value": "8条",
@@ -214,7 +274,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "国寿康欣终身重大疾病保险利益条款",
+        "value": "国寿康欣终身重大疾病保险",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "1464_p1_b2",
@@ -252,6 +312,16 @@
     "product_name": "北京人寿大黄蜂12号少儿重疾险（焕新版）-保终身",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/1548A_blocks.json",
     "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次（若选择多次给付责任，4次）",
+        "confidence": 0.92,
+        "note": "rule: ci_pay_times_optional_multi_pay",
+        "block_id": "1548A_p3_b186",
+        "page": 3,
+        "evidence_text": "险金（若有）、第三次重度疾病保险金（若有）、第四次重度疾病保险金（若"
+      },
       {
         "coverage_name": "重疾数量",
         "coverage_path": "疾病责任__重疾责任__重疾数量",
@@ -301,6 +371,36 @@
         "block_id": "1548A_p30_b1454",
         "page": 30,
         "evidence_text": "或手术，共计30种。中度疾病的名称及定义如下："
+      },
+      {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: mild_interval_no_interval",
+        "block_id": "1548A_p1_b40",
+        "page": 1,
+        "evidence_text": "9.7 轻度疾病"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: middle_interval_no_interval",
+        "block_id": "1548A_p1_b41",
+        "page": 1,
+        "evidence_text": "9.8 中度疾病"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及（若选择多次给付责任，1年）",
+        "confidence": 0.92,
+        "note": "rule: ci_interval_optional_multi_pay",
+        "block_id": "1548A_p3_b186",
+        "page": 3,
+        "evidence_text": "险金（若有）、第三次重度疾病保险金（若有）、第四次重度疾病保险金（若"
       },
       {
         "coverage_name": "保单贷款",
@@ -365,7 +465,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "北京人寿京康宝贝U款重大疾病保险（互联网专属）条款",
+        "value": "北京人寿京康宝贝U款重大疾病保险（互联网专属）",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "1548A_p1_b2",
@@ -374,7 +474,6 @@
       }
     ],
     "missing_fields": [
-      "重疾赔付次数",
       "轻症分组",
       "中症分组",
       "减额交清",
@@ -438,6 +537,36 @@
         "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: mild_interval_no_keyword",
+        "block_id": "1568_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: middle_interval_no_keyword",
+        "block_id": "1568_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "1568_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
+      },
+      {
         "coverage_name": "疾病免责数量",
         "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
         "value": "8条",
@@ -460,7 +589,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "招商信诺爱享未来少儿重大疾病保险A款条款",
+        "value": "招商信诺爱享未来少儿重大疾病保险A款",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "1568_p1_b1",
@@ -559,6 +688,36 @@
         "evidence_text": "附表四：主合同约定的中症疾病"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: mild_interval_no_interval",
+        "block_id": "1578_p1_b40",
+        "page": 1,
+        "evidence_text": "附表五：主合同约定的轻症疾病"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: middle_interval_no_interval",
+        "block_id": "1578_p1_b39",
+        "page": 1,
+        "evidence_text": "附表四：主合同约定的中症疾病"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "1578_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 招商信诺[2025]疾病保险 042 号"
+      },
+      {
         "coverage_name": "疾病免责数量",
         "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
         "value": "7条",
@@ -601,7 +760,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "招商信诺金小葵少儿重大疾病保险（互联网专属）条款",
+        "value": "招商信诺金小葵少儿重大疾病保险（互联网专属）",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "1578_p1_b2",
@@ -675,6 +834,36 @@
         "evidence_text": "中意人寿[2025]疾病保险 091 号"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: mild_interval_no_keyword",
+        "block_id": "1803_p1_b1",
+        "page": 1,
+        "evidence_text": "中意人寿[2025]疾病保险 091 号"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: middle_interval_no_keyword",
+        "block_id": "1803_p1_b1",
+        "page": 1,
+        "evidence_text": "中意人寿[2025]疾病保险 091 号"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "1803_p1_b1",
+        "page": 1,
+        "evidence_text": "中意人寿[2025]疾病保险 091 号"
+      },
+      {
         "coverage_name": "指定第二投保人",
         "coverage_path": "其他责任__保单功能__指定第二投保人",
         "value": "支持",
@@ -717,7 +906,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "中意悦享安康（悠享版）重大疾病保险条款",
+        "value": "中意悦享安康（悠享版）重大疾病保险",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "1803_p2_b57",
@@ -753,6 +942,16 @@
     "product_name": "金小葵少儿长期重疾",
     "source_blocks": "/Users/zqf-openclaw/codex-openai/development/data/blocks/851A_blocks.json",
     "candidates": [
+      {
+        "coverage_name": "重疾赔付次数",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付次数",
+        "value": "1次（若选择多次给付责任，2次）",
+        "confidence": 0.92,
+        "note": "rule: ci_pay_times_optional_multi_pay",
+        "block_id": "851A_p2_b76",
+        "page": 2,
+        "evidence_text": "第二次重大疾病保 险金"
+      },
       {
         "coverage_name": "重疾数量",
         "coverage_path": "疾病责任__重疾责任__重疾数量",
@@ -802,6 +1001,36 @@
         "block_id": "851A_p7_b184",
         "page": 7,
         "evidence_text": "我们提供保障的中症疾病共有 20 种，名称见附表一，具体释义见本主险合同“第二十五条 中"
+      },
+      {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: mild_interval_no_interval",
+        "block_id": "851A_p1_b10",
+        "page": 1,
+        "evidence_text": "招商仁和仁心保贝重大疾病保险（互联网）产品提供基本的轻症疾病、中症"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: middle_interval_no_interval",
+        "block_id": "851A_p1_b10",
+        "page": 1,
+        "evidence_text": "招商仁和仁心保贝重大疾病保险（互联网）产品提供基本的轻症疾病、中症"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及（若选择多次给付责任，1年）",
+        "confidence": 0.92,
+        "note": "rule: ci_interval_optional_multi_pay",
+        "block_id": "851A_p2_b76",
+        "page": 2,
+        "evidence_text": "第二次重大疾病保 险金"
       },
       {
         "coverage_name": "保单贷款",
@@ -906,7 +1135,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "招商仁和仁心保贝重大疾病保险（互联网）条款",
+        "value": "招商仁和仁心保贝重大疾病保险（互联网）",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "851A_p1_b2",
@@ -915,7 +1144,6 @@
       }
     ],
     "missing_fields": [
-      "重疾赔付次数",
       "轻症分组",
       "中症分组",
       "减额交清",
@@ -985,6 +1213,36 @@
         "evidence_text": "请扫描以查询验证条款 PMLD0182304 招商信诺[2023]疾病保险 018 号"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "1年",
+        "confidence": 0.92,
+        "note": "rule: mild_interval_pattern",
+        "block_id": "864_p3_b70",
+        "page": 3,
+        "evidence_text": "我们对每种轻症疾病最多给付一次轻症疾病保险金，在保险期间内最多对三种轻 症疾病承担保险责任，但每种轻症疾病首次确诊日期需间隔不短于一年。本项保 险责任自第三种轻症疾病确诊之时起终止。"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: middle_interval_no_keyword",
+        "block_id": "864_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PMLD0182304 招商信诺[2023]疾病保险 018 号"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "864_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 PMLD0182304 招商信诺[2023]疾病保险 018 号"
+      },
+      {
         "coverage_name": "疾病免责数量",
         "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
         "value": "5条",
@@ -1017,7 +1275,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "招商信诺终身重大疾病保险A款条款",
+        "value": "招商信诺终身重大疾病保险A款",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "864_p1_b2",
@@ -1104,6 +1362,36 @@
         "evidence_text": "u 中信保诚「惠康」重大疾病保险（至诚少儿版）提供轻症疾病保险金、中症疾病保险金、重大疾病 保险金、少儿特定重度恶性肿瘤保险金、少儿特定疾病保险金、少儿特定疾病豁免保险费、生命特 别关爱金、身故或全残保险金。"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: mild_interval_no_interval",
+        "block_id": "889_p1_b7",
+        "page": 1,
+        "evidence_text": "u 中信保诚「惠康」重大疾病保险（至诚少儿版）提供轻症疾病保险金、中症疾病保险金、重大疾病 保险金、少儿特定重度恶性肿瘤保险金、少儿特定疾病保险金、少儿特定疾病豁免保险费、生命特 别关爱金、身故或全残保险金。"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "无",
+        "confidence": 0.88,
+        "note": "rule: middle_interval_no_interval",
+        "block_id": "889_p1_b7",
+        "page": 1,
+        "evidence_text": "u 中信保诚「惠康」重大疾病保险（至诚少儿版）提供轻症疾病保险金、中症疾病保险金、重大疾病 保险金、少儿特定重度恶性肿瘤保险金、少儿特定疾病保险金、少儿特定疾病豁免保险费、生命特 别关爱金、身故或全残保险金。"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "889_p1_b1",
+        "page": 1,
+        "evidence_text": "1"
+      },
+      {
         "coverage_name": "转换权",
         "coverage_path": "其他责任__保单功能__转换权",
         "value": "保险金、现金价值可全部或部分转换成年金",
@@ -1176,7 +1464,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "中信保诚「惠康」重大疾病保险（至诚少儿版）条款",
+        "value": "中信保诚「惠康」重大疾病保险（至诚少儿版）",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "889_p1_b6",
@@ -1248,6 +1536,36 @@
         "evidence_text": "请扫描以查询验证条款 招商信诺[2024]疾病保险 050 号"
       },
       {
+        "coverage_name": "轻症赔付时间间隔",
+        "coverage_path": "疾病责任__轻症责任__轻症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: mild_interval_no_keyword",
+        "block_id": "919A_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 招商信诺[2024]疾病保险 050 号"
+      },
+      {
+        "coverage_name": "中症赔付时间间隔",
+        "coverage_path": "疾病责任__中症责任__中症赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: middle_interval_no_keyword",
+        "block_id": "919A_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 招商信诺[2024]疾病保险 050 号"
+      },
+      {
+        "coverage_name": "重疾赔付时间间隔",
+        "coverage_path": "疾病责任__重疾责任__重疾赔付时间间隔",
+        "value": "不涉及",
+        "confidence": 0.9,
+        "note": "rule: ci_interval_no_generic_multi_pay",
+        "block_id": "919A_p1_b1",
+        "page": 1,
+        "evidence_text": "请扫描以查询验证条款 招商信诺[2024]疾病保险 050 号"
+      },
+      {
         "coverage_name": "疾病免责数量",
         "coverage_path": "责任免除（人身险）__疾病免责__疾病免责数量",
         "value": "8条",
@@ -1270,7 +1588,7 @@
       {
         "coverage_name": "合同名称（条款名称）",
         "coverage_path": "基本信息__合同名称（条款名称）",
-        "value": "招商信诺爱享无忧重大疾病保险条款",
+        "value": "招商信诺爱享无忧重大疾病保险",
         "confidence": 0.9,
         "note": "rule: contract_name_from_title",
         "block_id": "919A_p1_b2",

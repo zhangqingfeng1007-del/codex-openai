@@ -2,6 +2,7 @@ import argparse
 import json
 import re
 from pathlib import Path
+from typing import Optional
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,7 +44,17 @@ def merge_candidate_sources(*datasets):
                 entry["product_name"] = product.get("product_name")
             if not entry.get("source_blocks") and product.get("source_blocks"):
                 entry["source_blocks"] = product.get("source_blocks")
-            entry["candidates"].extend(product.get("candidates", []))
+            # Dedup candidates by coverage_name: keep higher confidence
+            existing_by_name = {c["coverage_name"]: i for i, c in enumerate(entry["candidates"])}
+            for c in product.get("candidates", []):
+                name = c.get("coverage_name")
+                if name in existing_by_name:
+                    idx = existing_by_name[name]
+                    if c.get("confidence", 0) > entry["candidates"][idx].get("confidence", 0):
+                        entry["candidates"][idx] = c
+                else:
+                    existing_by_name[name] = len(entry["candidates"])
+                    entry["candidates"].append(c)
             existing_missing = set(entry.get("missing_fields", []))
             for field in product.get("missing_fields", []):
                 if field not in existing_missing:
@@ -107,10 +118,11 @@ def get_standard_values(node):
     return values
 
 
-def match_standard(value: str, candidates):
+def match_standard(value: str, candidates, coverage_name: Optional[str] = None):
     v = (value or "").strip().replace("\r\n", "\n")
     for c in candidates or []:
-        if v == str(c).strip().replace("\r\n", "\n"):
+        c_norm = str(c).strip().replace("\r\n", "\n")
+        if v == c_norm:
             return c
     return None
 
@@ -194,11 +206,16 @@ def build_base_record(product, candidate, db_product_id):
     }
 
 
+    # Fields that are product-unique values — bypass standard-value matching entirely.
+DIRECT_EXTRACT_FIELDS = {"合同名称（条款名称）"}
+
+
 def process_candidates(candidates_data, standard_by_id, id_mapping, path_mapping, name_to_ids, product_id_mapping):
     matched_rows = []
     semantic_matched_rows = []
     unmatched_new_values = []
     unmatched_new_items = []
+    direct_extract_rows = []
 
     for product in candidates_data:
         for candidate in product.get("candidates", []):
@@ -209,6 +226,16 @@ def process_candidates(candidates_data, standard_by_id, id_mapping, path_mapping
                 product.get("db_product_id")
                 or product_id_mapping.get(product.get("product_id"))
             )
+
+            # Product-unique fields: skip matching, store as direct extraction
+            if candidate.get("coverage_name", "").strip() in DIRECT_EXTRACT_FIELDS:
+                base = build_base_record(product, candidate, db_product_id)
+                direct_extract_rows.append({
+                    **base,
+                    "status": "direct_extract",
+                    "coverage_path": candidate.get("coverage_path") or candidate.get("standard_path"),
+                })
+                continue
             base = build_base_record(product, candidate, db_product_id)
             coverage_id, coverage_name, coverage_path = locate_coverage(candidate, id_mapping, path_mapping, name_to_ids)
 
@@ -240,7 +267,7 @@ def process_candidates(candidates_data, standard_by_id, id_mapping, path_mapping
                 continue
 
             standard_values = get_standard_values(node)
-            matched_value = match_standard(candidate.get("value", ""), standard_values)
+            matched_value = match_standard(candidate.get("value", ""), standard_values, coverage_name)
             if matched_value is not None:
                 matched_rows.append(
                     {
@@ -286,10 +313,10 @@ def process_candidates(candidates_data, standard_by_id, id_mapping, path_mapping
                         }
                     )
 
-    return matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items
+    return matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items, direct_extract_rows
 
 
-def write_outputs(output_dir: Path, matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items):
+def write_outputs(output_dir: Path, matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items, direct_extract_rows=None):
     output_dir.mkdir(parents=True, exist_ok=True)
     outputs = {
         "matched_rows_preview.json": matched_rows,
@@ -297,6 +324,8 @@ def write_outputs(output_dir: Path, matched_rows, semantic_matched_rows, unmatch
         "unmatched_new_values_review.json": unmatched_new_values,
         "unmatched_new_items_review.json": unmatched_new_items,
     }
+    if direct_extract_rows is not None:
+        outputs["direct_extract_preview.json"] = direct_extract_rows
     for name, payload in outputs.items():
         (output_dir / name).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -325,7 +354,7 @@ def main():
     product_id_mapping = load_json(args.product_id_mapping)
     standard_by_id, _, name_to_ids = build_standard_indexes(standard_full)
 
-    matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items = process_candidates(
+    matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items, direct_extract_rows = process_candidates(
         candidates_data,
         standard_by_id,
         id_mapping,
@@ -333,13 +362,14 @@ def main():
         name_to_ids,
         product_id_mapping,
     )
-    write_outputs(args.output_dir, matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items)
+    write_outputs(args.output_dir, matched_rows, semantic_matched_rows, unmatched_new_values, unmatched_new_items, direct_extract_rows)
 
     summary = {
         "products": len(candidates_data),
         "matched_review_required": len(matched_rows),
         "semantic_candidate_match": len(semantic_matched_rows),
         "matched_auto_insertable": 0,
+        "direct_extract": len(direct_extract_rows),
         "unmatched_new_value": len(unmatched_new_values),
         "unmatched_new_item": len(unmatched_new_items),
         "output_dir": str(args.output_dir),

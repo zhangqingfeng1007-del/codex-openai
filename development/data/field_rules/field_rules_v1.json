@@ -1,0 +1,155 @@
+{
+  "_meta": {
+    "version": "v1",
+    "description": "字段级拆解规则配置 — 第一期试点（5字段）",
+    "created": "2026-04-04",
+    "schema_ref": "docs/字段级拆解规则规范_V1.md §5"
+  },
+  "fields": [
+    {
+      "coverage_name": "保险期间",
+      "coverage_id": null,
+      "coverage_path": "投核保规则__保险期间",
+      "domain": "重疾主险",
+      "enabled": true,
+      "source_priority": ["条款正文", "费率表"],
+      "disallowed_materials": [],
+      "section_hints": ["保险期间", "保障期间", "我们保多久"],
+      "block_rules": {
+        "must_be_matchable": true,
+        "skip_example": true,
+        "skip_toc": true,
+        "skip_definition": false
+      },
+      "extraction_strategy": "rule_extract",
+      "value_normalization": [],
+      "evidence_strategy": {
+        "mode": "nearest_section",
+        "max_chars": 120
+      },
+      "no_coverage_behavior": "skip",
+      "no_evidence_behavior": "empty",
+      "match_strategy": "exact_match",
+      "special_rules": [
+        "不允许从举例块取值",
+        "优先定位保险期间标题附近句子"
+      ],
+      "status": "active"
+    },
+    {
+      "coverage_name": "交费期间",
+      "coverage_id": null,
+      "coverage_path": "投核保规则__交费期间",
+      "domain": "重疾主险",
+      "enabled": true,
+      "source_priority": ["条款正文", "费率表"],
+      "disallowed_materials": [],
+      "section_hints": ["交费期间", "交费年期", "交费方式", "缴费期间", "缴费期限", "缴费年期"],
+      "block_rules": {
+        "must_be_matchable": true,
+        "skip_example": true,
+        "skip_toc": true
+      },
+      "extraction_strategy": "rule_extract",
+      "value_normalization": [],
+      "evidence_strategy": {
+        "mode": "nearest_section",
+        "max_chars": 160
+      },
+      "no_coverage_behavior": "skip",
+      "no_evidence_behavior": "empty",
+      "match_strategy": "exact_match",
+      "special_rules": [
+        "费率表中需汇总所有交费选项"
+      ],
+      "status": "active"
+    },
+    {
+      "coverage_name": "等待期",
+      "coverage_id": null,
+      "coverage_path": "投核保规则__等待期",
+      "domain": "重疾主险",
+      "enabled": true,
+      "source_priority": ["条款正文"],
+      "disallowed_materials": [],
+      "section_hints": ["等待期", "观察期"],
+      "block_rules": {
+        "must_be_matchable": true,
+        "skip_example": true,
+        "skip_toc": true
+      },
+      "extraction_strategy": "rule_extract",
+      "value_normalization": [],
+      "evidence_strategy": {
+        "mode": "nearest_section",
+        "max_chars": 150
+      },
+      "no_coverage_behavior": "skip",
+      "no_evidence_behavior": "empty",
+      "match_strategy": "exact_match",
+      "special_rules": [
+        "不允许从举例脚注取值",
+        "兜底：当 exact_match 未命中时，允许 semantic_candidate_match 范围补全（非意外/意外组合）"
+      ],
+      "status": "active"
+    },
+    {
+      "coverage_name": "投保年龄",
+      "coverage_id": null,
+      "coverage_path": "投核保规则__投保年龄",
+      "domain": "重疾主险",
+      "enabled": true,
+      "source_priority": ["条款正文", "说明书"],
+      "disallowed_materials": [],
+      "section_hints": ["投保年龄", "申请投保时年龄", "承保年龄"],
+      "block_rules": {
+        "must_be_matchable": true,
+        "skip_example": true,
+        "skip_toc": true
+      },
+      "extraction_strategy": "rule_extract",
+      "value_normalization": [
+        {"precision": "year_only"},
+        {"trim": true}
+      ],
+      "evidence_strategy": {
+        "mode": "nearest_section",
+        "max_chars": 120
+      },
+      "no_coverage_behavior": "skip",
+      "no_evidence_behavior": "empty",
+      "match_strategy": "exact_match",
+      "special_rules": [],
+      "status": "active"
+    },
+    {
+      "coverage_name": "合同名称（条款名称）",
+      "coverage_id": null,
+      "coverage_path": "基本信息__合同名称（条款名称）",
+      "domain": "重疾主险",
+      "enabled": true,
+      "source_priority": ["条款首页标题"],
+      "disallowed_materials": [],
+      "section_hints": [],
+      "block_rules": {
+        "must_be_matchable": false,
+        "skip_example": true,
+        "skip_toc": false
+      },
+      "extraction_strategy": "direct_extract",
+      "value_normalization": [
+        {"strip_suffix": ["利益条款", "条款", "利益"]},
+        {"trim": true}
+      ],
+      "evidence_strategy": {
+        "mode": "title_block",
+        "max_chars": 80
+      },
+      "no_coverage_behavior": "skip",
+      "no_evidence_behavior": "empty",
+      "match_strategy": "direct_extract",
+      "special_rules": [],
+      "status": "active"
+    }
+  ]
+}
