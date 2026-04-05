@@ -36,6 +36,7 @@ CI_REVIEW_GROUPS = [
         "group_type": "tier_a_basic",
         "group_name": "基础规则字段",
         "items": [
+            "合同名称（条款名称）",
             "投保年龄",
             "保险期间",
             "交费期间",

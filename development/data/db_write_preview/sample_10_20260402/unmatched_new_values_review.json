@@ -1,26 +1,5 @@
 [
   {
-    "product_id": "1464",
-    "db_product_id": "1030002195",
-    "product_name": "国寿康欣终身重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "国寿康欣终身重大疾病保险利益条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1464_p1_b2",
-      "page": 1,
-      "evidence_text": "中国人寿保险股份有限公司 国寿康欣终身重大疾病保险利益条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "国寿康欣终身重大疾病保险利益条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "1548A",
     "db_product_id": "2800007",
     "product_name": "北京人寿大黄蜂12号少儿重疾险（焕新版）-保终身",
@@ -105,48 +84,6 @@
     "known_standard_values_count": 16
   },
   {
-    "product_id": "1548A",
-    "db_product_id": "2800007",
-    "product_name": "北京人寿大黄蜂12号少儿重疾险（焕新版）-保终身",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "北京人寿京康宝贝U款重大疾病保险（互联网专属）条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1548A_p1_b2",
-      "page": 1,
-      "evidence_text": "北京人寿保险股份有限公司 北京人寿京康宝贝 U 款重大疾病保险（互联网专属）条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "北京人寿京康宝贝U款重大疾病保险（互联网专属）条款",
-    "known_standard_values_count": 0
-  },
-  {
-    "product_id": "1568",
-    "db_product_id": "1010004001",
-    "product_name": "招商信诺爱享未来少儿重大疾病保险A款",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商信诺爱享未来少儿重大疾病保险A款条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1568_p1_b1",
-      "page": 1,
-      "evidence_text": "请扫描以查询验证条款 PNLD0132502 招商信诺[2025]疾病保险 007 号 招商信诺爱享未来少儿重大疾病保险 A 款条款阅读指引"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商信诺爱享未来少儿重大疾病保险A款条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "1578",
     "db_product_id": "1010004022",
     "product_name": "金小葵·少儿长期重疾险",
@@ -168,27 +105,6 @@
     "known_standard_values_count": 16
   },
   {
-    "product_id": "1578",
-    "db_product_id": "1010004022",
-    "product_name": "金小葵·少儿长期重疾险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商信诺金小葵少儿重大疾病保险（互联网专属）条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1578_p1_b2",
-      "page": 1,
-      "evidence_text": "招商信诺金小葵少儿重大疾病保险（互联网专属）条款阅读指引"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商信诺金小葵少儿重大疾病保险（互联网专属）条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "1803",
     "db_product_id": "1170004238",
     "product_name": "中意悦享安康（悠享版）重大疾病保险",
@@ -208,27 +124,6 @@
     "reason": "value_not_found_under_coverage",
     "suggested_value": "支持（详见条款）",
     "known_standard_values_count": 51
-  },
-  {
-    "product_id": "1803",
-    "db_product_id": "1170004238",
-    "product_name": "中意悦享安康（悠享版）重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "中意悦享安康（悠享版）重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1803_p2_b57",
-      "page": 2,
-      "evidence_text": "中意悦享安康（悠享版）重大疾病保险条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "中意悦享安康（悠享版）重大疾病保险条款",
-    "known_standard_values_count": 0
   },
   {
     "product_id": "851A",
@@ -294,27 +189,6 @@
     "known_standard_values_count": 16
   },
   {
-    "product_id": "851A",
-    "db_product_id": "1520003424",
-    "product_name": "金小葵少儿长期重疾",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商仁和仁心保贝重大疾病保险（互联网）条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "851A_p1_b2",
-      "page": 1,
-      "evidence_text": "招商仁和仁心保贝重大疾病保险（互联网）条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商仁和仁心保贝重大疾病保险（互联网）条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "864",
     "db_product_id": "1010003564",
     "product_name": "招商信诺爱享康健（2023）终身重大疾病保险",
@@ -355,27 +229,6 @@
     "reason": "value_not_found_under_coverage",
     "suggested_value": "意外或等待期后轻症，给付30%基本保额",
     "known_standard_values_count": 39
-  },
-  {
-    "product_id": "864",
-    "db_product_id": "1010003564",
-    "product_name": "招商信诺爱享康健（2023）终身重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商信诺终身重大疾病保险A款条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "864_p1_b2",
-      "page": 1,
-      "evidence_text": "招商信诺终身重大疾病保险 A 款条款阅读指引"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商信诺终身重大疾病保险A款条款",
-    "known_standard_values_count": 0
   },
   {
     "product_id": "889",
@@ -441,48 +294,6 @@
     "known_standard_values_count": 16
   },
   {
-    "product_id": "889",
-    "db_product_id": "1530003475",
-    "product_name": "中信保诚「惠康」重大疾病保险（至诚少儿版）",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "中信保诚「惠康」重大疾病保险（至诚少儿版）条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "889_p1_b6",
-      "page": 1,
-      "evidence_text": "中信保诚「惠康」重大疾病保险（至诚少儿版）条款阅读指引"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "中信保诚「惠康」重大疾病保险（至诚少儿版）条款",
-    "known_standard_values_count": 0
-  },
-  {
-    "product_id": "919A",
-    "db_product_id": "1010003919",
-    "product_name": "招商信诺爱享无忧重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商信诺爱享无忧重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "919A_p1_b2",
-      "page": 1,
-      "evidence_text": "招商信诺爱享无忧重大疾病保险条款阅读指引"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商信诺爱享无忧重大疾病保险条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "1134",
     "db_product_id": "1280003176",
     "product_name": "国华康佑保B终身重疾计划",
@@ -523,26 +334,5 @@
     "reason": "value_not_found_under_coverage",
     "suggested_value": "等待期内重疾，退还已交保费；\n意外或等待期后重疾，给付重疾基本保额",
     "known_standard_values_count": 49
-  },
-  {
-    "product_id": "1134",
-    "db_product_id": "1280003176",
-    "product_name": "国华康佑保B终身重疾计划",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "国华超级至尊保终身重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1134_p1_b2",
-      "page": 1,
-      "evidence_text": "国华超级至尊保终身重大疾病保险条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "国华超级至尊保终身重大疾病保险条款",
-    "known_standard_values_count": 0
   }
 ]

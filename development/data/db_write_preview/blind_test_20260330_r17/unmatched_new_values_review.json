@@ -42,27 +42,6 @@
     "known_standard_values_count": 39
   },
   {
-    "product_id": "824",
-    "db_product_id": null,
-    "product_name": "泰康神奇宝贝（2021款）重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "泰康神奇宝贝（2021款）重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "824_p1_b1",
-      "page": 1,
-      "evidence_text": "神奇宝贝（2021 款）重疾条款 泰康神奇宝贝（2021 款）重大疾病保险条款 阅读指引"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "泰康神奇宝贝（2021款）重大疾病保险条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "696",
     "db_product_id": null,
     "product_name": "招商信诺爱享康健重大疾病保险",
@@ -103,27 +82,6 @@
     "reason": "value_not_found_under_coverage",
     "suggested_value": "意外或等待期后轻症，给付30%基本保额",
     "known_standard_values_count": 39
-  },
-  {
-    "product_id": "696",
-    "db_product_id": null,
-    "product_name": "招商信诺爱享康健重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商信诺爱享康健重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "696_p2_b19",
-      "page": 2,
-      "evidence_text": "BA20220609 招商信诺爱享康健重大疾病保险条款 在本合同中，“您”指投保人，“我们”、“我方”或“本公司”指招商信诺人寿保险有限公司。"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商信诺爱享康健重大疾病保险条款",
-    "known_standard_values_count": 0
   },
   {
     "product_id": "858A",
@@ -189,48 +147,6 @@
     "known_standard_values_count": 16
   },
   {
-    "product_id": "858A",
-    "db_product_id": null,
-    "product_name": "招商信诺臻享康健重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商信诺臻享康健重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "858A_p1_b1",
-      "page": 1,
-      "evidence_text": "请扫描以查询验证条款 招商信诺[2020] 疾病保险031 号 1 招商信诺臻享康健重大疾病保险条款阅读指引"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商信诺臻享康健重大疾病保险条款",
-    "known_standard_values_count": 0
-  },
-  {
-    "product_id": "1244A",
-    "db_product_id": null,
-    "product_name": "生命安心保重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "富德生命安心保重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1244A_p1_b1",
-      "page": 1,
-      "evidence_text": "富德生命安心保重大疾病保险条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "富德生命安心保重大疾病保险条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "1465",
     "db_product_id": null,
     "product_name": "国寿康宁终身重大疾病保险",
@@ -250,48 +166,6 @@
     "reason": "value_not_found_under_coverage",
     "suggested_value": "意外或等待期后重疾，给付3倍基本保额",
     "known_standard_values_count": 49
-  },
-  {
-    "product_id": "1465",
-    "db_product_id": null,
-    "product_name": "国寿康宁终身重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "国寿康宁终身重大疾病保险利益条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1465_p1_b1",
-      "page": 1,
-      "evidence_text": "国寿康宁终身重大疾病保险利益条款（第一页）"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "国寿康宁终身重大疾病保险利益条款",
-    "known_standard_values_count": 0
-  },
-  {
-    "product_id": "1263B",
-    "db_product_id": null,
-    "product_name": "附加幸福成长少儿重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "太平附加幸福成长少儿重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1263B_p1_b2",
-      "page": 1,
-      "evidence_text": "太平附加幸福成长少儿重大疾病保险条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "太平附加幸福成长少儿重大疾病保险条款",
-    "known_standard_values_count": 0
   },
   {
     "product_id": "1027C",
@@ -336,27 +210,6 @@
     "known_standard_values_count": 49
   },
   {
-    "product_id": "1027C",
-    "db_product_id": null,
-    "product_name": "附加鑫康重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "附加鑫康重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "1027C_p1_b1",
-      "page": 1,
-      "evidence_text": "附加鑫康重大疾病保险条款 新华人寿保险股份有限公司 51520141 第1 页[共16 页]"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "附加鑫康重大疾病保险条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "839",
     "db_product_id": null,
     "product_name": "阳光人寿康瑞倍致终身重大疾病保险",
@@ -397,27 +250,6 @@
     "reason": "value_not_found_under_coverage",
     "suggested_value": "意外或等待期后轻症，给付2倍基本保额",
     "known_standard_values_count": 39
-  },
-  {
-    "product_id": "839",
-    "db_product_id": null,
-    "product_name": "阳光人寿康瑞倍致终身重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "阳光人寿康瑞倍致终身重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "839_p1_b1",
-      "page": 1,
-      "evidence_text": "阳光人寿[2019]疾病保险021 号 请扫描以查询验证条款 阳光人寿保险股份有限公司 阳光人寿康瑞倍致终身重大疾病保险条款 阅读指引 BDDJ-1 条款是保险合同的重要内容，为充分保障您的权益，请您仔细阅读本条款 ．．．．．．．．．．．．．．．．．．．．．．．．．．．．．．．．。 本阅读指引有助于您理解条款，对本合同内容的解释以条款为准 ．．．．．．．．．．．．．．．．．．．．．．．．．．．．。 您拥有的重要权益 签收本合同次日起15 日内您可以要求退还所交纳的保险费................................... 1.3 被保险人可以享受本合同提供的保障................................. .................... 2.3 在某些情况下，我们将豁免本合同未来的应交且未交的保险费................................ 2.3 您有按本合同约定申请保单贷款的权利.................................................... 6.2 您有减额交清的权利.................................................................... 6.3 您有退保的权利........................................................................ 8.1 您应当特别注意的事项 我们对免除本公司责任的条款作了特别提示，详见条款正文中背景突出显示的部分 .................................2.3、2.4、2.5、3.2、3.4、4.2、7.1、10.2、10.3、11.5、11.6 被保险人应到我们认可的医院就诊.........................................................2.3 您投保本合同即表明认可并遵从本合同中对轻症重疾、重大疾病的定义...........................3 保险事故发生后，您有及时通知我们的义务.................................................4.2 您应当按时交纳保险费...................................................................5.1 退保会给您造成一定的损失，请您慎重决策.................................................8.1 您有如实告知的义务.....................................................................9.1 我们对本合同累计已交保险费的计算方法进行了解释，请您注意.......... ...................11.9 我们对其他一些重要术语进行了解释，并作了显著标注，请您注意..............................11"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "阳光人寿康瑞倍致终身重大疾病保险条款",
-    "known_standard_values_count": 0
   },
   {
     "product_id": "773",
@@ -483,27 +315,6 @@
     "known_standard_values_count": 16
   },
   {
-    "product_id": "773",
-    "db_product_id": null,
-    "product_name": "大家超惠保重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "大家超惠保重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "773_p1_b3",
-      "page": 1,
-      "evidence_text": "大家超惠保重大疾病保险条款 阅 读 指 引 本阅读指引有助于您理解条款，对本 ．．．．．．．．．．．．．．．．主．险．合同内容的解释以条款为准。在本条款中，“您”指投保人； ．．．．．．．．．．．．．．．．．．．．．．．．．．．“．本公 ．． 司．”．指．大家 ．．人寿保险股份有限公司。 ．．．．．．．．．．． 您拥有的重要权益  签收本主险合同次日零时起15 个自然日（即犹豫期）内您若要求退保，本公司仅扣除工本费...1.4  您有退保的权利......................................................................1.6  本主险合同提供的保障在保险责任条款中列明............................................2.4 您应当特别注意的事项  退保会给您造成一定的损失，请您慎重决策..............................................1.6  本主险合同有90 日的等待期 ..........................................................2.4  在某些情况下，本公司不承担保险责任..................................................2.5  保险事故发生后请您及时通知本公司....................................................3.2  您有如实告知的义务..................................................................5.1  本公司对一些重要术语进行了解释，并作了显著标识，请您注意............................6 条款是保险合同的重要内容，为充分保障您的权益，请您仔细阅读本条款。 条款目录 1.您与本公司的合同 1.1 合同构成 1.2 投保范围 1.3 合同成立与生效和保险责 任开始 1.4 犹豫期 1.5 合同内容变更 1.6 解除合同的手续及风险"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "大家超惠保重大疾病保险条款",
-    "known_standard_values_count": 0
-  },
-  {
     "product_id": "850A",
     "db_product_id": null,
     "product_name": "招商仁和爱倍护重大疾病保险",
@@ -544,26 +355,5 @@
     "reason": "value_not_found_under_coverage",
     "suggested_value": "等待期内轻症，退还已交保费；\n意外或等待期后轻症，给付35%基本保额",
     "known_standard_values_count": 39
-  },
-  {
-    "product_id": "850A",
-    "db_product_id": null,
-    "product_name": "招商仁和爱倍护重大疾病保险",
-    "coverage_name": "合同名称（条款名称）",
-    "candidate_value": "招商仁和爱倍护重大疾病保险条款",
-    "confidence": 0.9,
-    "note": "rule: contract_name_from_title",
-    "reviewer_action": null,
-    "evidence": {
-      "block_id": "850A_p3_b16",
-      "page": 3,
-      "evidence_text": "招商仁和爱倍护重大疾病保险条款"
-    },
-    "status": "unmatched_new_value",
-    "coverage_id": "LOCAL_CONTRACT_NAME",
-    "coverage_path": null,
-    "reason": "value_not_found_under_coverage",
-    "suggested_value": "招商仁和爱倍护重大疾病保险条款",
-    "known_standard_values_count": 0
   }
 ]
